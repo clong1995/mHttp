@@ -1,0 +1,35 @@
+.title {
+    color: blue;
+}
+
+.content {
+    color: orange;
+}
+
+.btn {
+    background: green;
+}
+
+.bg {
+    width: 200px;
+    height: 200px;
+    border: 2px solid red;
+    float: left;
+    background: url("/resource/image/dog.jpg");
+}
+
+.bg1 {
+    width: 200px;
+    height: 200px;
+    border: 2px solid burlywood;
+    float: left;
+    background: url("/image/dog.jpg");
+}
+
+.bg2 {
+    width: 200px;
+    height: 200px;
+    float: left;
+    border: 2px solid green;
+    background: url("image/dog.jpg");
+}

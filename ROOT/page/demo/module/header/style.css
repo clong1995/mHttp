@@ -1,0 +1,13 @@
+.title {
+    color: green;
+}
+
+.box {
+    font-size: 12px;
+    margin-bottom: 0;
+}
+
+.foo,
+.bar > div{
+    background: blue;
+}

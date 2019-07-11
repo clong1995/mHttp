@@ -1,0 +1,21 @@
+{
+  "name": "mhttp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clong1995/mHttp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/clong1995/mHttp/issues"
+  },
+  "homepage": "https://github.com/clong1995/mHttp#readme"
+}

@@ -1,0 +1,12 @@
+.item {
+    float: left;
+    padding: 5px;
+    padding-top: unset;
+    padding-bottom: 10px;
+}
+
+.item > .inner {
+    width: 100%;
+    height: 100%;
+    background: #cecece;
+}

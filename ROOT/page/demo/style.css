@@ -1,0 +1,14 @@
+#header {
+    height: 50px;
+    border: 1px solid yellow;
+}
+
+#main {
+    border: 1px solid gold;
+    overflow: hidden;
+}
+
+#footer {
+    height: 50px;
+    border: 1px solid goldenrod;
+}

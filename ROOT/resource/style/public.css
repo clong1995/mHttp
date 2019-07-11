@@ -1,0 +1,62 @@
+:root {
+    --border: 1px solid #cecece;
+    --background: #ececec;
+    --background2: #fafafa;
+    --background3: #408BFA;
+    --background4: rgba(255, 255, 255, .3);
+    --background5: #cecece;
+    --background6: lime;
+}
+
+body {
+    user-select: none;
+    font-size: 13px;
+    background: var(--background);
+}
+
+@font-face {
+    font-family: 'iconfont';
+    /*src: url('../icon/iconfont.ttf');*/
+    src: url('//at.alicdn.com/t/font_722315_5mf06fupx1l.woff2');
+}
+
+
+.iconfont {
+    font-family: "iconfont" !important;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.input {
+    width: 120px;
+    height: 22px;
+    line-height: 22px;
+    font-size: 11px;
+    border: var(--border);
+    background: var(--background2);
+    border-radius: 2px;
+}
+
+.input:focus {
+    background: #ffffff;
+    font-weight: bold;
+    border: 1px solid #bfbfbf;
+}
+
+.button {
+    font-size: 11px;
+    border: var(--border);
+    background: var(--background2);
+    height: 22px;
+    padding: 0 5px;
+    line-height: 20px;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.button:active {
+    background: #ffffff;
+    font-weight: bold;
+    border: 1px solid #bfbfbf;
+}

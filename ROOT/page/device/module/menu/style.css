@@ -1,0 +1,48 @@
+.chip {
+    width: 100%;
+    height: 30px;
+}
+
+.chip > .name {
+    float: left;
+    margin: 0 0 0 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.chip > .item {
+    float: left;
+    margin: 0 20px;
+    cursor: pointer;
+}
+
+.chip > .item:after {
+    content: "|";
+    position: absolute;
+    right: -20px;
+}
+
+.chip > .item:last-child:after {
+    content: unset;
+}
+
+.chip > .item > .icon,
+.chip > .item > .title {
+    display: block;
+    float: left;
+    height: 30px;
+}
+
+.chip > .item > .icon {
+    font-size: 18px;
+    margin-right: 3px;
+}
+
+.add-device {
+
+}
+
+.add-device > .content {
+    width: 250px;
+    height: 250px;
+}
