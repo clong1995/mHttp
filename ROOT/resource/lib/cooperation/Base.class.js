@@ -74,6 +74,8 @@ class Base {
          */
         this._eventMap = new Map();
 
+        this._global = new Map();
+
         /**
          * 根目录
          * @type {string}
@@ -126,6 +128,10 @@ class Base {
             ? clazz.forEach(v => dom.classList.add(v))
             : dom.classList.add(clazz);
         return dom;
+    }
+
+    global() {
+        return this._global
     }
 
     /**
@@ -1327,7 +1333,7 @@ class Base {
     };
 
     //调整大小
-    _resize(target) {
+    _resize(target, realTarget, cb) {
         let parentDom = target.parentNode;
 
         //父元素有缩放，转化偏移量
@@ -1403,6 +1409,7 @@ class Base {
                 getPositionSize();
                 //解除事件
                 this._disposeWindowOn();
+                cb && cb(target, realTarget);
             }
         };
     }
@@ -2122,6 +2129,26 @@ class Base {
     }
 
     //TODO https://blog.csdn.net/wconvey/article/details/54171693
+
+    /**
+     * 设置临时的数据
+     * @param data
+     * @param key
+     */
+    setLocTempData(data, key = "tmp") {
+        localStorage.setItem(key, data);
+    }
+
+    /**
+     * 取出临时的数据，取出后将会删除
+     * @param data
+     * @param key
+     */
+    getLocTempData(key = "tmp") {
+        let data = localStorage.getItem(key);
+        localStorage.removeItem(key);
+        return data
+    }
 }
 
 !window.cp ? window.cp = new Base() : console.warn('cp 全局变量已被占用！');

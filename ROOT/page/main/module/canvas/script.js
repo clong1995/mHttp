@@ -14,10 +14,6 @@ class Module {
 
     INIT() {
         this.sceneDom = null;
-        this.sliceWidth = 640;
-        this.sliceHeight = 360;
-        this.width = 1920;
-        this.height = 1080;
         this.scale = 0;
         this.autoScale = true;
         this.riftDomArr = [];
@@ -33,12 +29,11 @@ class Module {
 
     EVENT() {
         //slice
-        cp.on('.slice', this.sceneDom, 'drag', t => {
-        });
-        cp.on('.slice', this.sceneDom, 'resize', t => {
-        });
-        cp.on(".slice", this.sceneDom, 'focus', t => this.sliceFocus(t));
-        cp.on(".slice", this.sceneDom, 'blur', t => this.sliceBlur(t));
+        cp.on('.slice', this.sceneDom, 'drag', t => this.dragSlice(t));
+        cp.on('.slice', this.sceneDom, 'resize', t => this.resizeSlice(t));
+
+        cp.on(".slice", this.sceneDom, 'mousedown', t => this.toggleActive(t));
+
         //移动标尺线
         cp.on('.line-X', DOMAIN, 'drag', t => {
         });
@@ -57,13 +52,34 @@ class Module {
         cp.on('.checkbox', this.rangeBoxDom, 'click', t => this.changeScale(t));
     }
 
-    changeScale(target) {
+    dragSlice(target) {
+        let id = target.id.split("_")[1];
+        //改变保存的数据
+        let component = this.APP.getComponentData(id);
+        component.position.top = parseInt(target.style.top);
+        component.position.left = parseInt(target.style.left);
+        //改变右侧的配置
+        MODULE("edit").changePosition(id);
+    }
 
+    resizeSlice(target) {
+        let id = target.id.split("_")[1];
+        //改变保存的数据
+        let component = this.APP.getComponentData(id);
+        component.size.width = parseInt(target.style.width);
+        component.size.height = parseInt(target.style.height);
+        //改变右侧的配置
+        MODULE("edit").changeSize(id);
+    }
+
+    changeScale(target) {
         let checked = target.checked;
         if (checked) {
+            //开启缩放
             cp.removeClass([this.rangeBomNumberDom, this.rangeBomRangeDom], 'disable');
             this.autoScale = false;
         } else {
+            //还原缩放
             cp.addClass([this.rangeBomNumberDom, this.rangeBomRangeDom], 'disable');
             this.autoScale = true;
             this.sceneSize();
@@ -131,22 +147,39 @@ class Module {
         }
     }
 
+    getProjectData() {
+
+        //请求当前project的信息
+
+    }
+
+    //加载场景
     loadScene() {
         //加载场景
         this.sceneDom = cp.createDom();
         cp.addClass(this.sceneDom, 'scene');
+        let pageData = this.APP.getPageData();
         cp.css(this.sceneDom, {
-            width: this.width + 'px',
-            height: this.height + 'px',
+            width: pageData.size.width + 'px',
+            height: pageData.size.height + 'px',
         });
         this.sceneSize(this.autoScale ? null : this.scale);
         cp.append(DOMAIN, this.sceneDom);
+        //加载组件
+        this.loadComponent(this.APP.scene.components);
         //重新计算大小
         window.onresize = () => this.sceneSize(this.autoScale ? null : this.scale);
-
-
     }
 
+    //加载组件
+    loadComponent(data) {
+        data.forEach(v => {
+            //组件
+            this.addSlice(v);
+        });
+    }
+
+    //加载网格
     loadGridDom() {
         this.gridDom = cp.createDom();
         cp.addClass(this.gridDom, ['grid', 'hide']);
@@ -156,16 +189,17 @@ class Module {
         cp.append(this.sceneDom, this.gridDom);
     }
 
+    //加载拼缝
     loadRift(row = 0, column = 0) {
         row++;
         column++;
         //清除拼缝
         cp.remove(this.riftDomArr);
         this.riftDomArr = [];
-
+        let pageData = this.APP.getPageData();
         //重新建立
         if (row > 1) {
-            let rowPlus = this.height / row;
+            let rowPlus = pageData.size.height / row;
             let rowDom = cp.createDom();
             cp.addClass(rowDom, 'row');
             for (let r = 1; r < row; ++r) {
@@ -180,7 +214,7 @@ class Module {
         }
 
         if (column > 1) {
-            let columnPlus = this.width / column;
+            let columnPlus = pageData.size.width / column;
             let columnDom = cp.createDom();
             cp.addClass(columnDom, 'column');
             for (let c = 1; c < column; ++c) {
@@ -195,25 +229,44 @@ class Module {
         }
     }
 
+    setSize(width, height) {
+        this.autoScale = true;
+
+        let pageData = this.APP.getPageData();
+
+        pageData.size.width = width;
+        pageData.size.height = height;
+
+        cp.css(this.sceneDom, {
+            width: pageData.size.width + 'px',
+            height: pageData.size.height + 'px',
+        });
+
+        this.sceneSize();
+    }
+
     sceneSize(scale = null) {
         //获取容器大小
         let {width, height} = cp.domSize(DOMAIN);
         let cWidth = width - (this.rulerWidth + 1) * 2,
             cHeight = height - (this.rulerWidth + this.toolBarHeight + 1) * 2;
         let size = {};
-        //不指定缩放大小
+
+        let pageData = this.APP.getPageData();
+
+        //不指定缩放大小，
         if (!scale && this.autoScale) {
             size = cp.autoSize({
                 w: cWidth, h: cHeight
             }, {
-                w: this.width, h: this.height
+                w: pageData.size.width, h: pageData.size.height
             })
         } else {
             //指定缩放大小
             size.scale = scale;
             //缩放后的感官大小
-            let sWidth = this.width * scale,
-                sHeight = this.height * scale;
+            let sWidth = pageData.size.width * scale,
+                sHeight = pageData.size.height * scale;
             size.l = (cWidth - sWidth) / 2;
             size.t = (cHeight - sHeight) / 2;
         }
@@ -236,50 +289,56 @@ class Module {
             left: (size.l + this.rulerWidth + this.rulerWidth / 2) / this.scale + 'px',
             //适应背景大小
             backgroundSize: (20 / this.scale) + 'px ' + (20 / this.scale) + 'px'
-        })
+        });
+
+        this.rangeBomRangeDom.value = this.rangeBomNumberDom.value = parseInt(this.scale * 100);
     }
 
-    sliceFocus(target) {
+    /**
+     *
+     * @param data 组件容器的数据
+     * @param dom  组件容器的dom
+     * @param single 是否选中
+     */
+    addSlice(data, dom, single = false) {
+        //增加一片
+        let sliceDom = cp.createDom("div", {
+            id: "slice_" + data.id,
+            class: "slice"
+        });
+        let index = cp.query(".slice", this.sceneDom, true).length + 1;
+        data.index = index;
+
+        cp.css(sliceDom, {
+            top: data.position.top + "px",
+            left: data.position.left + "px",
+            width: data.size.width + "px",
+            height: data.size.height + "px",
+            zIndex: index
+        });
+        cp.html(sliceDom, dom);
+        cp.append(this.sceneDom, sliceDom);
+
+        //图层
+        MODULE("coverage").addLayer(data);
+        single && this.toggleActive(sliceDom);
+    }
+
+
+    toggleActive(target) {
         let idstr = target.id;
         let id = idstr.split("_")[1];
         cp.toggleActive(target);
-        MODULE("coverage").addActiveLayer(id);
+        MODULE("coverage").toggleActiveById(id);
+        MODULE("edit").activeComponentEditById(id);
     }
 
-    sliceBlur(target) {
-        let idstr = target.id;
-        let id = idstr.split("_")[1];
-        cp.removeActive(target);
-        MODULE("coverage").removeActiveLayer(id);
-    }
-
-
-    addSlice() {
-        let id = cp.randomNum() + cp.randomChar() + new Date().getTime();
-        //增加一片
-        let sliceDom = cp.createDom("div", {
-            id: "slice_" + id,
-            class: "slice",
-            tabIndex: -1,
-        });
-        let index = this.sceneDom.children.length;
-        cp.css(sliceDom, {
-            top: (this.height - this.sliceHeight) / 2 + "px", left: (this.width - this.sliceWidth) / 2 + "px",
-            width: this.sliceWidth + "px", height: this.sliceHeight + "px",
-            zIndex: index + 1
-        });
-        cp.append(this.sceneDom, sliceDom);
-        //图层
-        MODULE("coverage").addLayer(id, index);
-        sliceDom.focus();
-    }
-
-    toggleActive(id) {
+    toggleActiveById(id) {
         let sliceDom = cp.query("#slice_" + id, this.sceneDom);
         cp.toggleActive(sliceDom)
     }
 
-    removeActiveSlice(id) {
+    removeActiveById(id) {
         let sliceDom = cp.query("#slice_" + id, this.sceneDom);
         cp.removeActive(sliceDom)
     }

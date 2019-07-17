@@ -4,8 +4,7 @@ class Module {
     }
 
     EVENT() {
-        cp.on('.layer', this.listDom, 'focus', t => this.focusLayer(t));
-        cp.on('.layer', this.listDom, 'blur', t => this.blurLayer(t));
+        cp.on('.layer', this.listDom, 'click', t => this.toggleActive(t));
     }
 
     INIT() {
@@ -16,35 +15,32 @@ class Module {
 
     }
 
-    addLayer(id, index) {
-        //增加一片
-        let layerHtml = `<div class="layer" id="layer_${id}" tabindex="-1">
-                            <div class="num">${index}</div>
+    addLayer(data) {
+        //增加图层
+        let layerHtml = `<div class="layer" id="layer_${data.id}">
+                            <div class="num">${data.index}</div>
                             <div class="thumbnail"></div>
-                            <div class="name">柱状图</div>
+                            <div class="name">${data.name}</div>
                         </div>`;
-        cp.html(this.listDom, layerHtml, "beforeend")
+        cp.html(this.listDom, layerHtml, "afterbegin")
     }
 
-    addActiveLayer(id) {
+
+    toggleActiveById(id) {
         let layerDom = cp.query("#layer_" + id, this.listDom);
-        cp.addActive(layerDom)
+        cp.toggleActive(layerDom)
     }
 
-    removeActiveLayer(id) {
-        let layerDom = cp.query("#layer_" + id, this.listDom);
-        cp.removeActive(layerDom)
-    }
-
-    focusLayer(target) {
-        let id = target.id.split("_")[1];
+    toggleActive(target) {
+        let idstr = target.id;
+        let id = idstr.split("_")[1];
         cp.toggleActive(target);
-        MODULE("canvas").toggleActive(id);
+        MODULE("canvas").toggleActiveById(id);
+        MODULE("edit").activeComponentEditById(id);
     }
 
-    blurLayer(target) {
-        let id = target.id.split("_")[1];
-        cp.removeActive(target);
-        MODULE("canvas").removeActiveSlice(id);
+    removeActiveById(id) {
+        let sliceDom = cp.query("#layer_" + id, this.sceneDom);
+        cp.removeActive(sliceDom)
     }
 }

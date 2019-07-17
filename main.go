@@ -22,33 +22,68 @@ type config struct {
 	Root  string
 	Cors  bool
 	Cache bool
+	//TODO 专用
+	Component string
 }
 
 var CONF *config
 
 func main() {
-	addr := flag.String("addr", ":80", "服务器端口")
+	addr := flag.String("addr", ":8800", "服务器端口")
 	root := flag.String("root", "./ROOT", "项目根目录")
 	cors := flag.Bool("cors", true, "跨域")
 	cache := flag.Bool("cache", true, "缓存")
+	//TODO 专用
+	component := flag.String("component", "./component", "组件目录")
 	flag.Parse()
 	CONF = new(config)
 	CONF.Addr = *addr
 	CONF.Root = *root
 	CONF.Cors = *cors
 	CONF.Cache = *cache
+	//TODO 专用
+	CONF.Component = *component
 
 	//静态资源服
 	http.Handle("/resource/", http.StripPrefix("/resource/", http.FileServer(http.Dir(CONF.Root+"/resource"))))
 	//页面和模块内静态资源
 	http.Handle("/page/", http.StripPrefix("/page/", http.FileServer(http.Dir(CONF.Root+"/page"))))
+	//TODO 专用
+	http.HandleFunc("/component/", componentHandle)
 	//动态页面路由
-	http.HandleFunc("/", page)
+	http.HandleFunc("/", pageHandle)
 
 	log.Fatal(http.ListenAndServe(CONF.Addr, nil))
 }
 
-func page(w http.ResponseWriter, r *http.Request) {
+//TODO 专用
+func componentHandle(w http.ResponseWriter, r *http.Request) {
+	urlPath := r.URL.Path
+	comp := strings.Split(urlPath, "/")
+	if len(comp) < 4 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	path := CONF.Component + "/" + comp[2] + "/" + comp[3]
+	//检查三个基本文件是否存在
+	files := [4]string{"/default.json", "/app.html", "/script.js", "/style.css"}
+	for _, v := range files {
+		if !existsAndWrite(path+v, w) {
+			return
+		}
+	}
+	//读取三个文件
+	//读取default
+	defaultStr, _ := ioutil.ReadFile(path + files[0])
+	appStr, _ := ioutil.ReadFile(path + files[1])
+	scriptStr, _ := ioutil.ReadFile(path + files[2])
+	styleStr, _ := ioutil.ReadFile(path + files[3])
+	splitStr := "--- IxD component ---"
+	str := string(defaultStr) + splitStr + string(appStr) + splitStr + string(scriptStr) + splitStr + string(styleStr)
+	_, _ = io.WriteString(w, str)
+}
+
+func pageHandle(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
 	if path == "/favicon.ico" {
 		http.Redirect(w, r, "/resource/image/favicon.ico", http.StatusFound)

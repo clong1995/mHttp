@@ -4,7 +4,7 @@ class Module {
     }
 
     EVENT() {
-        cp.on('.inner', DOMAIN, 'click', t => this.edit());
+        cp.on('.inner', DOMAIN, 'click', t => this.edit(t));
         // coo.on('.close', this.domain, 'click', t => this.hideStory());
     }
 
@@ -16,16 +16,28 @@ class Module {
     }
 
     loadItem() {
+        //假设获取到的项目
+        let item = [
+            {id: "1", name: "测试"},
+            {id: "2", name: "测试"},
+            {id: "3", name: "测试"},
+            {id: "4", name: "测试"},
+            {id: "5", name: "测试"},
+            {id: "6", name: "测试"}
+        ];
+
         let html = '';
-        for (let i = 0; i < 50; i++) {
+        item.forEach(v => {
             html += `<div class="item">
-                <div class="inner"></div>
+                <div class="inner"data-id=${v.id}></div>
             </div>`;
-        }
+        });
         cp.html(DOMAIN, html);
     }
 
-    edit(){
+    edit(target) {
+        let id = cp.getData(target, "id");
+        cp.setLocTempData(id);
         cp.link('/main');
     }
 

@@ -1,23 +1,20 @@
 class Module {
     DOM() {
-        // this.addContentDom = coo.query('.addContent', this.domain);
+        this.addContentDom = cp.query('.addContent', this.domain);
     }
 
     EVENT() {
         cp.on('.back', DOMAIN, 'click', t => this.back());
-        cp.on('.save', DOMAIN, 'click', t => this.save());
+        // coo.on('.close', this.domain, 'click', t => this.hideStory());
     }
 
     INIT() {
         //this.initList();
     }
 
+
     back() {
         cp.link('/content')
-    }
-
-    save() {
-        console.log(this.APP.scene);
     }
 
     showStory() {

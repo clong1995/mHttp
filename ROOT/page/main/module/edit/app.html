@@ -1,21 +1,59 @@
-<div class="title">编辑
+<div class="title">
+    <div class="tab pageTab active">页面设置</div>
+    <div class="tab componentTab">组件设置</div>
     <span class="iconfont select">&#xe616;</span>
 </div>
 <div class="content">
-    <div class="row x1">
-        <div class="name">名称</div>
-        <input class="value input" type="text" value="祝张图">
+    <div class="item page">
+        <div class="row name">
+            <div class="name">页面名</div>
+            <input class="value input name-value" type="text" value="">
+        </div>
+        <div class="row size">
+            <div class="name">宽度</div>
+            <input class="value input width-value" type="number" value="">
+            <div class="name">高度</div>
+            <input class="value input height-value" type="number" value="">
+        </div>
+        <div class="row fill">
+            <div class="name">填充</div>
+            <select class="value input fill-value">
+                <option selected>原尺寸</option>
+                <option>自适应</option>
+                <option>等比拉伸</option>
+                <option>完全填充</option>
+            </select>
+        </div>
+        <div class="row color">
+            <div class="name">背景色</div>
+            <input type="color" class="value input color-value" value="#000000"><input type="text"
+                                                                                class="value input color-text-value"
+                                                                                value="#000000">
+        </div>
+        <div class="row image">
+            <div class="name">背景图</div>
+            <input type="text" class="value input image-value" readonly value="">
+        </div>
+        <div class="row flip-over">
+            <div class="name">翻页</div>
+            <select class="value input flip-over-value">
+                <option selected>无动效</option>
+                <option>飞入</option>
+                <option>旋转</option>
+                <option>淡入</option>
+            </select>
+        </div>
+        <div class="row cover">
+            <div class="name">封面</div>
+            <div class="image cover-value"></div>
+        </div>
+        <div class="row comment">
+            <div class="name">备注</div>
+            <textarea class="value input comment-value"></textarea>
+        </div>
     </div>
-    <div class="row x4">
-        <div class="name">宽度</div>
-        <input class="value input" type="text" value="1920">
-        <div class="name">高度</div>
-        <input class="value input" type="text" value="1080">
-        <div class="name">顶距</div>
-        <input class="value input" type="text" value="10">
-        <div class="name">侧距</div>
-        <input class="value input" type="text" value="10">
-    </div>
+    <div class="item component hide" tabIndex="-1"></div>
+    <!--
     <div class="row x1">
         <div class="name">播放</div>
         <select class="value input">
@@ -26,4 +64,6 @@
     </div>
     <button class="button">按钮</button>
     <button class="button">自动对齐</button>
+    <button class="button">缩放</button>
+    -->
 </div>

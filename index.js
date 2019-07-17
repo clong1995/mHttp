@@ -1,5 +1,5 @@
 const {app, BrowserWindow} = require('electron');
-const url = 'http://127.0.0.1:80';
+const url = 'http://127.0.0.1:8800';
 let mainWindow;
 
 function createWindow() {
