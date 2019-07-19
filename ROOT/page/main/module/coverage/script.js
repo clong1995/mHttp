@@ -5,6 +5,7 @@ class Module {
 
     EVENT() {
         cp.on('.layer', this.listDom, 'click', t => this.toggleActive(t));
+        cp.on('.layer', this.listDom, 'change', (t1, t2) => this.changeLayer(t1, t2));
     }
 
     INIT() {
@@ -15,12 +16,25 @@ class Module {
 
     }
 
+    changeLayer(target1, target2) {
+        let id = target1.id.split("_")[1];
+        let componentData = this.APP.getComponentData(id);
+
+        if (cp.hasClass(target2, "name")) {
+            let value = target2.value;
+            componentData["nickname"] = value;
+            if (!value) {
+                target2.value = componentData.title
+            }
+        }
+    }
+
     addLayer(data) {
         //增加图层
         let layerHtml = `<div class="layer" id="layer_${data.id}">
                             <div class="num">${data.index}</div>
                             <div class="thumbnail"></div>
-                            <div class="name">${data.name}</div>
+                            <input class="name" value="${data.nickname || data.title}"/>
                         </div>`;
         cp.html(this.listDom, layerHtml, "afterbegin")
     }
@@ -32,8 +46,7 @@ class Module {
     }
 
     toggleActive(target) {
-        let idstr = target.id;
-        let id = idstr.split("_")[1];
+        let id = target.id.split("_")[1];
         cp.toggleActive(target);
         MODULE("canvas").toggleActiveById(id);
         MODULE("edit").activeComponentEditById(id);
@@ -42,5 +55,12 @@ class Module {
     removeActiveById(id) {
         let sliceDom = cp.query("#layer_" + id, this.sceneDom);
         cp.removeActive(sliceDom)
+    }
+
+    setName(id) {
+        let componentData = this.APP.getComponentData(id);
+        let layerDom = cp.query("#layer_" + id, this.listDom);
+
+        cp.html(cp.query(".name", layerDom), componentData.title)
     }
 }

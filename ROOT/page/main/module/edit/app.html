@@ -19,20 +19,27 @@
             <div class="name">填充</div>
             <select class="value input fill-value">
                 <option selected>原尺寸</option>
-                <option>自适应</option>
                 <option>等比拉伸</option>
                 <option>完全填充</option>
             </select>
         </div>
         <div class="row color">
             <div class="name">背景色</div>
-            <input type="color" class="value input color-value" value="#000000"><input type="text"
-                                                                                class="value input color-text-value"
-                                                                                value="#000000">
+            <input type="checkbox" class="value input background-color-check-value"/>
+            <input type="color" class="value input background-color-value" value=""/><input
+                    type="text"
+                    class="value input background-color-text-value"
+                    value=""/>
         </div>
         <div class="row image">
             <div class="name">背景图</div>
-            <input type="text" class="value input image-value" readonly value="">
+            <input type="checkbox" class="value input background-image-check-value">
+            <input type="text" class="value input background-image-value" readonly value="">
+            <select class="value input background-image-fill-value">
+                <option selected>原尺寸</option>
+                <option>等比拉伸</option>
+                <option>完全填充</option>
+            </select>
         </div>
         <div class="row flip-over">
             <div class="name">翻页</div>
@@ -45,14 +52,16 @@
         </div>
         <div class="row cover">
             <div class="name">封面</div>
-            <div class="image cover-value"></div>
+            <div class="image value cover-value"></div>
         </div>
         <div class="row comment">
             <div class="name">备注</div>
             <textarea class="value input comment-value"></textarea>
         </div>
     </div>
-    <div class="item component hide" tabIndex="-1"></div>
+    <div class="item component hide">
+        <div class="info centerWrap">请选中一个组件</div>
+    </div>
     <!--
     <div class="row x1">
         <div class="name">播放</div>

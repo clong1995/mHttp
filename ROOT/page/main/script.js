@@ -5,11 +5,12 @@ class App {
 
     //初始化函数
     INIT() {
-        let project_scene = cp.getLocTempData();
+        let project_scene = cp.getLocTempData();//项目id
+
         if (!project_scene) {
             cp.link('/content')
         } else {
-            let arr = project_scene.split("_");
+            /*let arr = project_scene.split("_");
             //下面的请求同步
             if (arr.length === 1) {
                 //获取当前项目下第一个
@@ -195,6 +196,29 @@ class App {
                         },
                     ]
                 }
+            }*/
+            //根据项目获取场景
+            this.scene = {
+                project: "测试工程",
+                page: {
+                    name: "测试项目",
+                    size: {
+                        width: 1920,
+                        height: 1080,
+                    },
+                    background: {
+                        color: "",
+                        image: "",
+                    },
+                    fill: 1,
+                    flipOver: 1,
+                    cover: "xxx",
+                    comment: "xxx"
+                },
+                //场景列表，用于渲染切换场景的列表
+                scenes: [],
+                //当前的场景的组件
+                components: []
             }
         }
     }

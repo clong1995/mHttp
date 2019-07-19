@@ -223,7 +223,7 @@
 .scene > .slice {
     position: absolute;
     z-index: 2;
-    background: red;
+    /*background: red;*/
     outline: none;
 }
 
@@ -231,4 +231,12 @@
 .scene > .slice.active {
     border: 1px solid rgba(0, 0, 255, 0.25);
     background: rgba(0, 0, 255, 0.1);
+}
+
+.container {
+    position: relative;
+    overflow: auto;
+    width: calc(100% - 15px);
+    height: calc(100% - 15px - 20px);
+    background: red;
 }

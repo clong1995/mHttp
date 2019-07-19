@@ -51,7 +51,9 @@
     line-height: 20px;
     background: var(--background);
     text-align: center;
-    font-size: 10px
+    font-size: 10px;
+    border: none;
+    display: block;
 }
 
 

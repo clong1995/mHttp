@@ -52,6 +52,10 @@ class Module {
         cp.on('.checkbox', this.rangeBoxDom, 'click', t => this.changeScale(t));
     }
 
+    /**
+     * 拖拽
+     * @param target
+     */
     dragSlice(target) {
         let id = target.id.split("_")[1];
         //改变保存的数据
@@ -62,6 +66,10 @@ class Module {
         MODULE("edit").changePosition(id);
     }
 
+    /**
+     * 改变大小
+     * @param target
+     */
     resizeSlice(target) {
         let id = target.id.split("_")[1];
         //改变保存的数据
@@ -72,6 +80,10 @@ class Module {
         MODULE("edit").changeSize(id);
     }
 
+    /**
+     * 改变缩放
+     * @param target
+     */
     changeScale(target) {
         let checked = target.checked;
         if (checked) {
@@ -86,6 +98,10 @@ class Module {
         }
     }
 
+    /**
+     * 改变缩放范围
+     * @param target
+     */
     changeRange(target) {
         let value = target.value;
         //改变数字
@@ -97,17 +113,27 @@ class Module {
         this.sceneSize(value / 100);
     }
 
+    /**
+     * 加载范围
+     */
     loadRange() {
         this.rangeBomNumberDom.value = parseInt(this.scale * 100);
         this.rangeBomRangeDom.value = parseInt(this.scale * 100);
     }
 
+    /**
+     * 改变拼缝
+     */
     changeRift() {
         let row = this.riftBoxNumberDoms.item(0).value,
             column = this.riftBoxNumberDoms.item(1).value;
         this.loadRift(row, column);
     }
 
+    /**
+     * 切换拼缝
+     * @param target
+     */
     toggleRift(target) {
         let checked = target.checked;
         if (checked) {
@@ -119,6 +145,10 @@ class Module {
         }
     }
 
+    /**
+     * 辅助线
+     * @param target
+     */
     toggleAxisLine(target) {
         let checked = target.checked;
 
@@ -138,6 +168,10 @@ class Module {
         }
     }
 
+    /**
+     * 网格
+     * @param target
+     */
     toggleGrid(target) {
         let checked = target.checked;
         if (checked) {
@@ -153,7 +187,9 @@ class Module {
 
     }
 
-    //加载场景
+    /**
+     * 加载场景
+     */
     loadScene() {
         //加载场景
         this.sceneDom = cp.createDom();
@@ -166,20 +202,22 @@ class Module {
         this.sceneSize(this.autoScale ? null : this.scale);
         cp.append(DOMAIN, this.sceneDom);
         //加载组件
-        this.loadComponent(this.APP.scene.components);
+        //this.loadComponent(this.APP.scene.components);
         //重新计算大小
         window.onresize = () => this.sceneSize(this.autoScale ? null : this.scale);
     }
 
     //加载组件
-    loadComponent(data) {
+    /*loadComponent(data) {
         data.forEach(v => {
             //组件
             this.addSlice(v);
         });
-    }
+    }*/
 
-    //加载网格
+    /**
+     * 加载网格
+     */
     loadGridDom() {
         this.gridDom = cp.createDom();
         cp.addClass(this.gridDom, ['grid', 'hide']);
@@ -189,7 +227,11 @@ class Module {
         cp.append(this.sceneDom, this.gridDom);
     }
 
-    //加载拼缝
+    /**
+     * 加载拼缝
+     * @param row
+     * @param column
+     */
     loadRift(row = 0, column = 0) {
         row++;
         column++;
@@ -229,6 +271,11 @@ class Module {
         }
     }
 
+    /**
+     * 改变大小
+     * @param width
+     * @param height
+     */
     setSize(width, height) {
         this.autoScale = true;
 
@@ -245,6 +292,10 @@ class Module {
         this.sceneSize();
     }
 
+    /**
+     * 场景大小
+     * @param scale
+     */
     sceneSize(scale = null) {
         //获取容器大小
         let {width, height} = cp.domSize(DOMAIN);
@@ -295,16 +346,16 @@ class Module {
     }
 
     /**
-     *
+     * 添加组件
      * @param data 组件容器的数据
-     * @param dom  组件容器的dom
+     * @param html  组件容器的html
      * @param single 是否选中
      */
-    addSlice(data, dom, single = false) {
+    addSlice(data, html, single = false) {
         //增加一片
         let sliceDom = cp.createDom("div", {
             id: "slice_" + data.id,
-            class: "slice"
+            class: "slice slice-" + data.name
         });
         let index = cp.query(".slice", this.sceneDom, true).length + 1;
         data.index = index;
@@ -316,15 +367,36 @@ class Module {
             height: data.size.height + "px",
             zIndex: index
         });
-        cp.html(sliceDom, dom);
+        //把html放到容器里
+        cp.html(sliceDom, html);
         cp.append(this.sceneDom, sliceDom);
-
+        //执行
+        //console.log(cp.componentEntity.get(data.id));
         //图层
         MODULE("coverage").addLayer(data);
         single && this.toggleActive(sliceDom);
     }
 
+    /**
+     * 设置背景颜色
+     */
+    setBackgroundColor() {
+        let pageData = this.APP.getPageData();
+        cp.css(this.sceneDom, {
+            backgroundColor: pageData.background.color
+        });
+    }
 
+    removeBackgroundColor() {
+        cp.css(this.sceneDom, {
+            backgroundColor: null
+        });
+    }
+
+    /**
+     * 切换激活状态
+     * @param target
+     */
     toggleActive(target) {
         let idstr = target.id;
         let id = idstr.split("_")[1];
@@ -333,11 +405,19 @@ class Module {
         MODULE("edit").activeComponentEditById(id);
     }
 
+    /**
+     * 根据id切换激活状态
+     * @param id
+     */
     toggleActiveById(id) {
         let sliceDom = cp.query("#slice_" + id, this.sceneDom);
         cp.toggleActive(sliceDom)
     }
 
+    /**
+     * 根据id移除激活状态
+     * @param id
+     */
     removeActiveById(id) {
         let sliceDom = cp.query("#slice_" + id, this.sceneDom);
         cp.removeActive(sliceDom)
