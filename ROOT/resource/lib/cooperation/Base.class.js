@@ -513,10 +513,17 @@ class Base {
      * 格式化css
      */
     formatStyle() {
+        let scrollbar = "";
+        if (navigator.platform.includes("Win")) {
+            scrollbar = `::-webkit-scrollbar {
+                display: none;
+            }`;
+        }
         this.setStrSheet(`
             *{
                 box-sizing: border-box;
             }
+            ${scrollbar}
             blockquote, body, button, dd, dl, dt, fieldset, form, h1, h2, h3, h4, h5, h6, hr, input, legend, li, ol, p, pre, td, textarea, th, ul {
                 margin: 0;
                 padding: 0
@@ -607,6 +614,7 @@ class Base {
                 justify-content: center;
                 align-items: center;
             }
+            
             .alt{
                 position: relative;
                 cursor: pointer;
@@ -1093,7 +1101,7 @@ class Base {
         let path = e.path || (e.composedPath && e.composedPath());
         let domLen = path.length - 4 - 1;//排除body,html,document,window
         //冒泡
-        for (; domLen + 1; --domLen) this._onFunction(path[domLen], target, e.type, e.target);
+        for (; domLen + 1; --domLen) this._onFunction(path[domLen], target, e);
     }
 
 
@@ -1101,12 +1109,13 @@ class Base {
      *
      * @param node
      * @param target
-     * @param event
-     * @param realTarget
-     * @param customEvent
+     * @param e
      * @private
      */
-    _onFunction(node, target, event, realTarget) {
+    _onFunction(node, target, e) {
+
+        let event = e.type;
+        let realTarget = e.target;
 
         let keyArr = [node.nodeName];
         if (node.id) keyArr.push('#' + node.id);
@@ -1122,7 +1131,7 @@ class Base {
                 if (event === 'mouseover') {
                     eventTarget.get(key).has('resize') && eventTarget.get(key).get('resize').forEach(v => this._resize(node, realTarget, v));
                 }
-                eventTarget.get(key).get(event).forEach(v => typeof v === 'function' && v(node, realTarget))
+                eventTarget.get(key).get(event).forEach(v => typeof v === 'function' && v(node, realTarget, e))
             }
         });
     }
@@ -1248,21 +1257,32 @@ class Base {
         };
     }
 
-    autoSize(wrap, content) {
+    /**
+     * 自适应大小
+     * @param wrap
+     * @param content
+     * @param padding
+     * @returns {{t: number, w: number, h: number, scale: number, l: number}}
+     */
+    autoSize(wrap, content, padding = 0) {
+        padding = padding * 2;
+        let ww = wrap.w - padding,
+            wh = wrap.h - padding;
+
         let relW, relH;
-        let ratioW = wrap.w / content.w;
+        let ratioW = ww / content.w;
         let tempH = content.h * ratioW;
-        if (tempH <= wrap.h) {
+        if (tempH <= wh) {
             relW = content.w * ratioW;
             relH = tempH;
         } else {
-            let ratioH = wrap.h / content.h;
+            let ratioH = wh / content.h;
             relW = content.w * ratioH;
             relH = content.h * ratioH;
         }
         return {
             w: relW, h: relH,
-            t: (wrap.h - relH) / 2, l: (wrap.w - relW) / 2,
+            t: (wh - relH + padding) / 2, l: (ww - relW + padding) / 2,
             scale: relW / content.w
         }
     }

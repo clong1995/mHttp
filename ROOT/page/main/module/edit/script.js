@@ -109,31 +109,26 @@ class Module {
         //通知到组件
         let id = this.componentDom.id.split("_")[1];
         let componentData = this.APP.getComponentData(id);
-
         //修改宽度
         if (cp.hasClass(target, "width-value")) {
             componentData.size.width = target.value;
             this.setComponent("width")
         }
-
         //修改高度
         else if (cp.hasClass(target, "height-value")) {
             componentData.size.height = target.value;
             this.setComponent("height")
         }
-
         //修改top
         else if (cp.hasClass(target, "top-value")) {
             componentData.position.top = target.value;
             this.setComponent("top")
         }
-
         //修改left
         else if (cp.hasClass(target, "left-value")) {
             componentData.position.left = target.value;
             this.setComponent("left")
         }
-
         //修改背景颜色的开启状态
         else if (cp.hasClass(target, "background-color-check-value")) {
             if (!target.checked) {
@@ -186,8 +181,10 @@ class Module {
                 });
             } else {
                 componentData.data.some(v => {
-                    v.value = value;
-                    return true
+                    if (v.key === key) {
+                        v.value = value;
+                        return true
+                    }
                 })
             }
 
@@ -263,6 +260,9 @@ class Module {
      * @param data
      */
     initComponentPanel(data) {
+
+        console.log(data);
+
         cp.html(this.componentDom, `<div class="hr">${data.title}</div>`);
         //id
         this.componentDom.id = "edit_" + data.id;
@@ -282,7 +282,7 @@ class Module {
 
         //背景
         let backgroundHtml = `
-             <div class="row color">
+            <div class="row color">
                 <div class="name">背景色</div>
                 <input type="checkbox" class="value input background-color-check-value" ${data.background.color ? " checked" : ""} ><input 
                     type="color" class="value input background-color-value" value="${data.background.color || "#ffffff"}"><input 
@@ -350,13 +350,18 @@ class Module {
                     `;
                     break;
                 case "align"://对齐选择
+                    let align = [
+                        {name: "居左", value: "left"},
+                        {name: "居右", value: "right"},
+                        {name: "居中", value: "center"}
+                    ];
                     editHtml += `
                         <div class="row align">
                             <div class="name">${v.name}</div>
                             <select class="value input" data-id="${v.key}">
-                                <option value="left" selected>左对齐</option>
-                                <option value="right">右对齐</option>
-                                <option value="center">水平居中</option>
+                            ${align.map(fv => {
+                        return `<option ${fv.value === v.value ? "selected" : ""} value="${fv.value}">${fv.name}</option>`
+                    })}
                             </select>
                         </div>
                     `;

@@ -2,14 +2,15 @@ class Module {
     DOM() {
         this.tooBarDom = cp.query('.tool-bar', DOMAIN);
         this.rangeBoxDom = cp.query('.range-box', this.tooBarDom);
-        this.rangeBomNumberDom = cp.query('.number', this.rangeBoxDom);
-        this.rangeBomRangeDom = cp.query('.range', this.rangeBoxDom);
+        this.rangeBoxCheckboxDom = cp.query('.checkbox', this.rangeBoxDom);
+        this.rangeBoxNumberDom = cp.query('.number', this.rangeBoxDom);
+        this.rangeBoxRangeDom = cp.query('.range', this.rangeBoxDom);
         this.axisBoxDom = cp.query('.axis-box', this.tooBarDom);
         this.gridBoxDom = cp.query('.grid-box', this.tooBarDom);
         this.riftBoxDom = cp.query('.rift-box', this.tooBarDom);
         this.riftBoxNumberDoms = cp.query('.number', this.riftBoxDom, true);
-
         this.axisLineDoms = cp.query('.axis-line', DOMAIN, true);
+        this.containerDom = cp.query('.container', DOMAIN);
     }
 
     INIT() {
@@ -17,9 +18,9 @@ class Module {
         this.scale = 0;
         this.autoScale = true;
         this.riftDomArr = [];
-        this.toolBarHeight = 20;
-        this.rulerWidth = 15;
+        this.sceneMargin = 10;
         this.gridDom = null;
+        this.ctrlMousewheel = false;
 
         this.loadScene();
         this.loadGridDom();
@@ -31,7 +32,6 @@ class Module {
         //slice
         cp.on('.slice', this.sceneDom, 'drag', t => this.dragSlice(t));
         cp.on('.slice', this.sceneDom, 'resize', t => this.resizeSlice(t));
-
         cp.on(".slice", this.sceneDom, 'mousedown', t => this.toggleActive(t));
 
         //移动标尺线
@@ -50,6 +50,12 @@ class Module {
         cp.on('.number', this.rangeBoxDom, 'change', t => this.changeRange(t));
         cp.on('.range', this.rangeBoxDom, 'change', t => this.changeRange(t));
         cp.on('.checkbox', this.rangeBoxDom, 'click', t => this.changeScale(t));
+
+        //滚轮缩放
+        document.onkeydown = e => this.keydownScale(e);
+        document.onkeyup = e => this.keyupScale(e);
+        cp.on('.container', DOMAIN, 'mousewheel', (_, __, e) => this.mousewheelScale(e));
+
     }
 
     /**
@@ -88,14 +94,52 @@ class Module {
         let checked = target.checked;
         if (checked) {
             //开启缩放
-            cp.removeClass([this.rangeBomNumberDom, this.rangeBomRangeDom], 'disable');
+            cp.removeClass([this.rangeBoxNumberDom, this.rangeBoxRangeDom], 'disable');
             this.autoScale = false;
         } else {
             //还原缩放
-            cp.addClass([this.rangeBomNumberDom, this.rangeBomRangeDom], 'disable');
+            cp.addClass([this.rangeBoxNumberDom, this.rangeBoxRangeDom], 'disable');
             this.autoScale = true;
             this.sceneSize();
         }
+    }
+
+
+    keydownScale(e) {
+        if (e.key === "Control") {
+            this.ctrlMousewheel = true
+        }
+    }
+
+    keyupScale(e) {
+        if (e.key === "Control") {
+            this.ctrlMousewheel = false
+        }
+    }
+
+
+    mousewheelScale(e) {
+        //按住ctrl
+        if (!this.ctrlMousewheel) return;
+
+        //开启手动
+        this.rangeBoxCheckboxDom.checked = true;
+        this.changeScale(this.rangeBoxCheckboxDom);
+        //this.autoScale = false;
+        //获取缩放级别
+        let scale = this.rangeBoxNumberDom.value;
+        e.wheelDelta > 0 ? ++scale : --scale;
+        if (scale > 100) {
+            scale = 100;
+        }
+        if (scale < 1) {
+            scale = 1;
+        }
+
+        this.rangeBoxNumberDom.value = scale;
+        this.rangeBoxRangeDom.value = scale;
+
+        this.sceneSize(scale / 100);
     }
 
     /**
@@ -106,8 +150,8 @@ class Module {
         let value = target.value;
         //改变数字
         cp.hasClass(target, 'number')
-            ? this.rangeBomRangeDom.value = value
-            : this.rangeBomNumberDom.value = value;
+            ? this.rangeBoxRangeDom.value = value
+            : this.rangeBoxNumberDom.value = value;
 
         //改变缩放
         this.sceneSize(value / 100);
@@ -117,8 +161,8 @@ class Module {
      * 加载范围
      */
     loadRange() {
-        this.rangeBomNumberDom.value = parseInt(this.scale * 100);
-        this.rangeBomRangeDom.value = parseInt(this.scale * 100);
+        this.rangeBoxNumberDom.value = parseInt(this.scale * 100);
+        this.rangeBoxRangeDom.value = parseInt(this.scale * 100);
     }
 
     /**
@@ -200,20 +244,13 @@ class Module {
             height: pageData.size.height + 'px',
         });
         this.sceneSize(this.autoScale ? null : this.scale);
-        cp.append(DOMAIN, this.sceneDom);
+
+        cp.append(this.containerDom, this.sceneDom);
         //加载组件
         //this.loadComponent(this.APP.scene.components);
         //重新计算大小
         window.onresize = () => this.sceneSize(this.autoScale ? null : this.scale);
     }
-
-    //加载组件
-    /*loadComponent(data) {
-        data.forEach(v => {
-            //组件
-            this.addSlice(v);
-        });
-    }*/
 
     /**
      * 加载网格
@@ -297,32 +334,41 @@ class Module {
      * @param scale
      */
     sceneSize(scale = null) {
+
         //获取容器大小
-        let {width, height} = cp.domSize(DOMAIN);
-        let cWidth = width - (this.rulerWidth + 1) * 2,
-            cHeight = height - (this.rulerWidth + this.toolBarHeight + 1) * 2;
+        let {width, height} = cp.domSize(this.containerDom);
+
         let size = {};
 
         let pageData = this.APP.getPageData();
 
         //不指定缩放大小，
-        if (!scale && this.autoScale) {
+        if (scale === null && this.autoScale) {
             size = cp.autoSize({
-                w: cWidth, h: cHeight
+                w: width, h: height
             }, {
-                w: pageData.size.width, h: pageData.size.height
-            })
+                w: parseInt(pageData.size.width) + 2, h: parseInt(pageData.size.height) + 2
+            }, this.sceneMargin)
         } else {
             //指定缩放大小
             size.scale = scale;
             //缩放后的感官大小
             let sWidth = pageData.size.width * scale,
                 sHeight = pageData.size.height * scale;
-            size.l = (cWidth - sWidth) / 2;
-            size.t = (cHeight - sHeight) / 2;
+            //中心缩放
+            size.l = (width - sWidth) / 2;
+            size.t = (height - sHeight) / 2;
+            if (width < sWidth) {
+                size.l = 0;
+            }
+
+            if (height < sHeight) {
+                size.t = 0;
+            }
         }
 
         this.scale = size.scale;
+
 
         //适应分割线的宽度
         this.riftDomArr.forEach(v => v.style.width
@@ -336,13 +382,13 @@ class Module {
         //返回大小
         cp.css(this.sceneDom, {
             zoom: this.scale,
-            top: (size.t + this.rulerWidth + this.toolBarHeight - (this.toolBarHeight - this.rulerWidth) / 2) / this.scale + 'px',
-            left: (size.l + this.rulerWidth + this.rulerWidth / 2) / this.scale + 'px',
+            top: size.t / this.scale + 'px',
+            left: size.l / this.scale + 'px',
             //适应背景大小
             backgroundSize: (20 / this.scale) + 'px ' + (20 / this.scale) + 'px'
         });
 
-        this.rangeBomRangeDom.value = this.rangeBomNumberDom.value = parseInt(this.scale * 100);
+        this.rangeBoxRangeDom.value = this.rangeBoxNumberDom.value = this.scale.toFixed(2) * 100;
     }
 
     /**
@@ -384,12 +430,6 @@ class Module {
         let pageData = this.APP.getPageData();
         cp.css(this.sceneDom, {
             backgroundColor: pageData.background.color
-        });
-    }
-
-    removeBackgroundColor() {
-        cp.css(this.sceneDom, {
-            backgroundColor: null
         });
     }
 

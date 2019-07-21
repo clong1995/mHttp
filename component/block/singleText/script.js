@@ -24,9 +24,21 @@ class Module {
                 cp.html(this.singleDom, value);
                 break;
             case "text-align":
-                cp.css(this.singleDom, {
-                    textAlign: value
-                });
+                if (value === "center") {//居中
+                    cp.css(this.singleDom, {
+                        justifyContent: null
+                    })
+                }
+                if (value === "left") {//左
+                    cp.css(this.singleDom, {
+                        justifyContent: "flex-start"
+                    })
+                }
+                if (value === "right") {//右
+                    cp.css(this.singleDom, {
+                        justifyContent: "flex-end"
+                    })
+                }
                 break;
             case "font/size":
                 cp.css(this.singleDom, {

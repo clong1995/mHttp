@@ -177,15 +177,46 @@
     font-size: 10px;
 }
 
-.scene {
+
+.container {
+    position: relative;
+    overflow: auto;
+    width: calc(100% - 15px);
+    height: calc(100% - 15px - 20px);
+    box-sizing: border-box;
+}
+
+.container::-webkit-scrollbar {
+    display: unset !important;
+    width: 5px;
+    height: 5px;
+    background: #cccccc;
+}
+
+
+/*外层轨道*/
+.container::-webkit-scrollbar {
+    background: none;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: #666;
+}
+
+.container::-webkit-scrollbar-corner {
+    background: none;
+}
+
+.container > .scene {
     background-image: url("image/bg.png");
     background-repeat: repeat;
     position: absolute;
     border: var(--border);
     z-index: 1;
+    box-sizing: content-box;
 }
 
-.scene > .grid {
+.container > .scene > .grid {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -197,13 +228,13 @@
     pointer-events: none;
 }
 
-.scene > .row,
-.scene > .column {
+.container > .scene > .row,
+.container > .scene > .column {
     position: absolute;
 }
 
 
-.scene > .row {
+.container > .scene > .row {
     background: #000;
     left: 0;
     width: 100%;
@@ -211,7 +242,7 @@
     pointer-events: none;
 }
 
-.scene > .column {
+.container > .scene > .column {
     background: #000;
     top: 0;
     height: 100%;
@@ -220,23 +251,14 @@
 }
 
 
-.scene > .slice {
+.container > .scene > .slice {
     position: absolute;
     z-index: 2;
-    /*background: red;*/
     outline: none;
 }
 
-.scene > .slice:hover,
-.scene > .slice.active {
+.container > .scene > .slice:hover,
+.container > .scene > .slice.active {
     border: 1px solid rgba(0, 0, 255, 0.25);
     background: rgba(0, 0, 255, 0.1);
-}
-
-.container {
-    position: relative;
-    overflow: auto;
-    width: calc(100% - 15px);
-    height: calc(100% - 15px - 20px);
-    background: red;
 }

@@ -23,7 +23,15 @@ class Module {
             {id: "3", name: "测试"},
             {id: "4", name: "测试"},
             {id: "5", name: "测试"},
-            {id: "6", name: "测试"}
+            {id: "6", name: "测试"},
+            {id: "6", name: "测试"},
+            {id: "6", name: "测试"},
+            {id: "6", name: "测试"},
+            {id: "6", name: "测试"},
+            {id: "6", name: "测试"},
+            {id: "6", name: "测试"},
+            {id: "6", name: "测试"},
+            {id: "6", name: "测试"},
         ];
 
         let html = '';

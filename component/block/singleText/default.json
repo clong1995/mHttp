@@ -32,7 +32,7 @@
       "type": "align",
       "key": "text-align",
       "name": "对齐",
-      "value": "left"
+      "value": "center"
     }
   ]
 }
