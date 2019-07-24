@@ -260,9 +260,6 @@ class Module {
      * @param data
      */
     initComponentPanel(data) {
-
-        console.log(data);
-
         cp.html(this.componentDom, `<div class="hr">${data.title}</div>`);
         //id
         this.componentDom.id = "edit_" + data.id;
