@@ -15,15 +15,7 @@
             <div class="name">高度</div>
             <input class="value input height-value" type="number" value="">
         </div>
-        <div class="row fill">
-            <div class="name">填充</div>
-            <select class="value input fill-value">
-                <option selected>原尺寸</option>
-                <option>等比拉伸</option>
-                <option>完全填充</option>
-            </select>
-        </div>
-        <div class="row color">
+        <div class="row backgroundColor">
             <div class="name">背景色</div>
             <input type="checkbox" class="value input background-color-check-value"/>
             <input type="color" class="value input background-color-value" value=""/><input
@@ -34,12 +26,11 @@
         <div class="row image">
             <div class="name">背景图</div>
             <input type="checkbox" class="value input background-image-check-value">
-            <input type="text" class="value input background-image-value" readonly value="">
             <select class="value input background-image-fill-value">
-                <option selected>原尺寸</option>
-                <option>等比拉伸</option>
-                <option>完全填充</option>
+                <option selected>等比</option>
+                <option>填充</option>
             </select>
+            <input type="file" class="value input background-image-value" value="">
         </div>
         <div class="row flip-over">
             <div class="name">翻页</div>
@@ -48,6 +39,14 @@
                 <option>飞入</option>
                 <option>旋转</option>
                 <option>淡入</option>
+            </select>
+        </div>
+        <div class="row fill">
+            <div class="name">填充</div>
+            <select class="value input fill-value">
+                <option selected>原尺寸</option>
+                <option>等比拉伸</option>
+                <option>完全填充</option>
             </select>
         </div>
         <div class="row cover">

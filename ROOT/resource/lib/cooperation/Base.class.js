@@ -371,6 +371,9 @@ class Base {
         if (css == null)
             return this.styleStr2Obj('{' + dom.style.cssText + '}');
         for (let k in css) {
+            if (css[k] === "") {
+                continue
+            }
             if (css[k] === null) {
                 dom.style.removeProperty(this.underscored(k));
             } else {

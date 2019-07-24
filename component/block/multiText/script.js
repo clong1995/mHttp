@@ -1,6 +1,6 @@
 class Module {
     DOM() {
-        this.singleDom = cp.query(".single", DOMAIN);
+        this.multiDom = cp.query(".multi", DOMAIN);
     }
 
     EVENT() {
@@ -20,39 +20,40 @@ class Module {
     OPTION(key, value) {
         console.log(key, value);
         switch (key) {
-            case "text":
-                cp.html(this.singleDom, value);
+            case "textarea":
+                value = value.replace(/\r\n/g, "<br>");
+                value = value.replace(/\n/g, "<br>");
+                cp.html(this.multiDom, value);
                 break;
             case "textAlign":
                 if (value === "center") {//居中
-                    cp.css(this.singleDom, {
-                        justifyContent: null
-                    })
+                    cp.addClass(this.multiDom, "center");
+                    cp.removeClass(this.multiDom, "left");
+                    cp.removeClass(this.multiDom, "right");
                 }
                 if (value === "left") {//左
-                    cp.css(this.singleDom, {
-                        justifyContent: "flex-start"
-                    })
+                    cp.removeClass(this.multiDom, "center");
+                    cp.addClass(this.multiDom, "left");
+                    cp.removeClass(this.multiDom, "right");
                 }
                 if (value === "right") {//右
-                    cp.css(this.singleDom, {
-                        justifyContent: "flex-end"
-                    })
+                    cp.removeClass(this.multiDom, "center");
+                    cp.removeClass(this.multiDom, "left");
+                    cp.addClass(this.multiDom, "right");
                 }
                 break;
             /*case "font/size":
-                cp.css(this.singleDom, {
+                cp.css(this.multiDom, {
                     fontSize: value + "px"
                 });
                 break;
             case "font/family":
-                cp.css(this.singleDom, {
+                cp.css(this.multiDom, {
                     fontFamily: value
                 });
                 break;
-
             case "font/color":
-                cp.css(this.singleDom, {
+                cp.css(this.multiDom, {
                     color: value
                 });
                 break;*/

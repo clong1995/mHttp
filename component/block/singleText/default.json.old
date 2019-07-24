@@ -17,12 +17,6 @@
     "size": 24,
     "family": ""
   },
-  "padding": {
-    "top": 0,
-    "right": 0,
-    "bottom": 0,
-    "left": 0
-  },
   "data": [
     {
       "type": "text",
@@ -31,18 +25,19 @@
       "value": "请输入单行文字"
     },
     {
-      "type": "align",
-      "key": "textAlign",
-      "name": "对齐",
-      "value": "center"
+      "type": "font",
+      "key": "font",
+      "value": {
+        "color": "#cccccc",
+        "size": 24,
+        "family": ""
+      }
     },
     {
-      "type": "compose",
-      "key": "compose",
-      "value": {
-        "letterSpacing": "",
-        "lineHeight": ""
-      }
+      "type": "align",
+      "key": "text-align",
+      "name": "对齐",
+      "value": "center"
     }
   ]
 }

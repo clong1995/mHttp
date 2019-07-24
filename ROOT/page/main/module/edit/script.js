@@ -29,7 +29,12 @@ class Module {
     }
 
     INIT() {
-        this.initPagePanel()
+        this.fontFamily = [
+            {name: "默认", value: ""},
+            {name: "雅黑", value: "雅黑"},
+            {name: "宋体", value: "宋体"},
+        ];
+        this.initPagePanel();
     }
 
     /**
@@ -129,6 +134,28 @@ class Module {
             componentData.position.left = target.value;
             this.setComponent("left")
         }
+        //修改字体大小
+        else if (cp.hasClass(target, "font-size-value")) {
+            componentData.font.size = target.value;
+            this.setComponent("fontSize")
+        }
+        //修改字体样式
+        else if (cp.hasClass(target, "font-family-value")) {
+            componentData.font.family = target.value;
+            this.setComponent("fontFamily")
+        }
+        //修改字体
+        else if (cp.hasClass(target, "font-color-value")) {
+            target.nextSibling.value = target.value;
+            componentData.font.color = target.value;
+            this.setComponent("fontColor")
+        }
+        //修改字体颜色文本
+        else if (cp.hasClass(target, "font-color-text-value")) {
+            target.previousSibling.value = target.value;
+            componentData.font.color = target.value;
+            this.setComponent("fontColor")
+        }
         //修改背景颜色的开启状态
         else if (cp.hasClass(target, "background-color-check-value")) {
             if (!target.checked) {
@@ -198,12 +225,11 @@ class Module {
         }
     }
 
-    getComponentDom() {
-        /*this.compName = cp.query('.name-value', this.componentDom);*/
-        this.compWidth = cp.query('.width-value', this.componentDom);
-        this.compHeight = cp.query('.height-value', this.componentDom);
-        this.compTop = cp.query('.top-value', this.componentDom);
-        this.compLeft = cp.query('.left-value', this.componentDom);
+    getComponentDomPosition() {
+        this.compWidthDom = cp.query('.width-value', this.componentDom);
+        this.compHeightDom = cp.query('.height-value', this.componentDom);
+        this.compTopDom = cp.query('.top-value', this.componentDom);
+        this.compLeftDom = cp.query('.left-value', this.componentDom);
     }
 
     activePageEdit(target) {
@@ -270,6 +296,7 @@ class Module {
                 <input class="value input width-value" type="number" value="${data.size.width}">
                 <div class="name">高度</div>
                 <input class="value input height-value" type="number" value="${data.size.height}">
+                <div class="br"></div>
                 <div class="name">顶距</div>
                 <input class="value input top-value" type="number" value="${data.position.top}">
                 <div class="name">侧距</div>
@@ -279,7 +306,7 @@ class Module {
 
         //背景
         let backgroundHtml = `
-            <div class="row color">
+            <div class="row backgroundColor">
                 <div class="name">背景色</div>
                 <input type="checkbox" class="value input background-color-check-value" ${data.background.color ? " checked" : ""} ><input 
                     type="color" class="value input background-color-value" value="${data.background.color || "#ffffff"}"><input 
@@ -287,60 +314,80 @@ class Module {
             </div>
             <div class="row image">
                 <div class="name">背景图</div>
-                <input type="checkbox" class="value input background-image-check-value"><input 
-                    type="text" class="value input background-image-value" readonly value="${data.background.image}"><select 
+                <input type="checkbox" class="value input background-image-check-value">
+                <select 
                         class="value input background-image-fill-value">
                     <option selected>原尺寸</option>
                     <option>等比拉伸</option>
                     <option>完全填充</option>
                 </select>
+                <input type="file" class="value input background-image-value" value="${data.background.image}">
             </div>
         `;
         cp.html(this.componentDom, backgroundHtml, "beforeend");
+
+        //字体
+        let fontHtml = `
+                        <div class="row font">
+                            <div class="name">字体</div>
+                            <input type="number" class="value input font-size-value" value="${data.font.size}">
+                            <select class="value input font-family-value">
+                                ${this.fontFamily.map(fv => {
+            return `<option ${fv.value === data.font.family ? "selected" : ""} value="${fv.value}">${fv.name}</option>`
+        })}
+                            </select>
+                            <div class="br"></div>
+                            <div class="name">字颜色</div>
+                            <input type="color" class="value input font-color-value" value="${data.font.color}"><input 
+                                    type="text" class="value input font-color-text-value" value="${data.font.color}">
+                        </div>
+                    `;
+        cp.html(this.componentDom, fontHtml, "beforeend");
 
         //其他数据
         let editHtml = `<div class="hr">专有配置</div>`;
         data.data.forEach(v => {
             switch (v.type) {
-                case "color"://颜色
-                    editHtml += `
-                        <div class="row color">
-                            <div class="name">${v.name}</div>
-                            <input type="color" class="value input" data-id="${v.key}" value="${v.value}">
-                            <input type="text" class="value input" data-id="${v.key}" value="${v.value}">
-                        </div>
-                    `;
-                    break;
                 case "text"://文本输入
                     editHtml += `
-                        <div class="row text">
+                        <div class="row ${v.type}">
                             <div class="name">${v.name}</div>
                             <input type="text" class="value input" data-id="${v.key}" value="${v.value}">
                         </div>
                     `;
                     break;
                 case "font"://字体选择
-                    let fontFamily = [
-                        {name: "默认", value: ""},
-                        {name: "雅黑", value: "雅黑"},
-                        {name: "宋体", value: "宋体"},
-                    ];
                     editHtml += `
-                        <div class="row font">
+                        <div class="row ${v.type}">
                             <div class="name">字体</div>
                             <input type="number" class="value input" data-id="${v.key}/size" value="${v.value.size}">
-                            <input type="color" class="value input" data-id="${v.key}/color" value="${v.value.color}">
                             <select class="value input" data-id="${v.key}/family">
-                                ${fontFamily.map(fv => {
+                                ${this.fontFamily.map(fv => {
                         return `<option ${fv.value === v.value.family ? "selected" : ""} value="${fv.value}">${fv.name}</option>`
                     })}
                             </select>
+                        </div>
+                        <div class="br"></div>
+                        <div class="row ${v.type}">
+                            <div class="name">${v.name}</div>
+                            <input type="color" class="value input" data-id="${v.key}" value="${v.value}"><input 
+                                    type="text" class="value input" data-id="${v.key}" value="${v.value}">
+                        </div>
+                    `;
+                    break;
+                case "compose"://排版
+                    editHtml += `
+                        <div class="row ${v.type}">
+                            <div class="name">字间距</div>
+                            <input type="number" class="value input" data-id="${v.key}/letterSpacing" value="${v.value.letterSpacing}">
+                            <div class="name">行高</div>
+                            <input type="number" class="value input" data-id="${v.key}/lineHeight" value="${v.value.lineHeight}">
                         </div>
                     `;
                     break;
                 case "number"://数字输入
                     editHtml += `
-                        <div class="row number">
+                        <div class="row ${v.type}">
                             <div class="name">${v.name}</div>
                             <input type="number" class="value input" data-id="${v.key}" value="${v.value}">
                         </div>
@@ -353,7 +400,7 @@ class Module {
                         {name: "居中", value: "center"}
                     ];
                     editHtml += `
-                        <div class="row align">
+                        <div class="row ${v.type}">
                             <div class="name">${v.name}</div>
                             <select class="value input" data-id="${v.key}">
                             ${align.map(fv => {
@@ -363,24 +410,33 @@ class Module {
                         </div>
                     `;
                     break;
+                case "textarea":
+                    editHtml += `
+                    <div class="row ${v.type}">
+                        <div class="name">${v.name}</div>
+                        <textarea class="value input" data-id="${v.key}">${v.value}</textarea>
+                    </div>
+                    `;
+                    break;
             }
         });
         editHtml && cp.html(this.componentDom, editHtml, "beforeend");
+        //激活组件面板
         this.activeComponentEdit(this.componentTabDom);
-
-        this.getComponentDom();
+        //获取定位，这里是为了组件拖拽的反馈
+        this.getComponentDomPosition();
     }
 
     changePosition(id) {
         let component = this.APP.getComponentData(id);
-        this.compTop.value = component.position.top;
-        this.compLeft.value = component.position.left;
+        this.compTopDom.value = component.position.top;
+        this.compLeftDom.value = component.position.left;
     }
 
     changeSize(id) {
         let component = this.APP.getComponentData(id);
-        this.compWidth.value = component.size.width;
-        this.compHeight.value = component.size.height;
+        this.compWidthDom.value = component.size.width;
+        this.compHeightDom.value = component.size.height;
     }
 
     /**
@@ -411,6 +467,21 @@ class Module {
             case "left":
                 cp.css(componentDom, {
                     left: componentData.position.left + "px"
+                });
+                break;
+            case "fontSize":
+                cp.css(componentDom, {
+                    fontSize: componentData.font.size + "px"
+                });
+                break;
+            case "fontColor":
+                cp.css(componentDom, {
+                    color: componentData.font.color
+                });
+                break;
+            case "fontFamily":
+                cp.css(componentDom, {
+                    fontFamily: componentData.font.family
                 });
                 break;
             case "backgroundColor":

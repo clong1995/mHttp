@@ -392,7 +392,7 @@ class Module {
     }
 
     /**
-     * 添加组件
+     * 添加组件外壳
      * @param data 组件容器的数据
      * @param html  组件容器的html
      * @param single 是否选中
@@ -405,14 +405,19 @@ class Module {
         });
         let index = cp.query(".slice", this.sceneDom, true).length + 1;
         data.index = index;
-
+        //设置外壳配置
         cp.css(sliceDom, {
             top: data.position.top + "px",
             left: data.position.left + "px",
             width: data.size.width + "px",
             height: data.size.height + "px",
-            zIndex: index
+            zIndex: index,
+            backgroundColor: data.background.color,
+            fontSize: data.font.size + "px",
+            fontFamily: data.font.family,
+            color: data.font.color
         });
+
         //把html放到容器里
         cp.html(sliceDom, html);
         cp.append(this.sceneDom, sliceDom);
