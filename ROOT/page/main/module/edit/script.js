@@ -10,11 +10,15 @@ class Module {
         this.pageWidth = cp.query('.width-value', this.pageDom);
         this.pageHeight = cp.query('.height-value', this.pageDom);
         this.pageFill = cp.query('.fill-value', this.pageDom);
+        //背景色
         this.pageColorCheckDom = cp.query('.background-color-check-value', this.pageDom);
         this.pageColorDom = cp.query('.background-color-value', this.pageDom);
         this.pageColorTextDom = cp.query('.background-color-text-value', this.pageDom);
-        this.pageImage = cp.query('.background-image-value', this.pageDom);
-        this.pageFlipOver = cp.query('.flip-over-value', this.pageDom);
+        //背景图
+        this.pageImageCheckDom = cp.query('.background-image-check-value', this.pageDom);
+        this.pageImageDom = cp.query('.background-image-value', this.pageDom);
+        this.pageFlipOverDom = cp.query('.flip-over-value', this.pageDom);
+
         this.pageCover = cp.query('.cover-value', this.pageDom);
         this.pageComment = cp.query('.comment-value', this.pageDom);
     }
@@ -100,9 +104,27 @@ class Module {
             MODULE("canvas").setBackgroundColor();
         }
 
-        //TODO 修改背景图
-        else if (cp.hasClass(target, "image-value")) {
-            pageData.background.image = target.value;
+        //背景图填充方式
+        else if (cp.hasClass(target, "background-image-fill-value")) {
+            this.pageImageCheckDom.checked = true;
+            pageData.background.fill = target.value;
+            MODULE("canvas").setBackgroundFill();
+        }
+        //背景上传
+        else if (cp.hasClass(target, "background-image-value")) {
+            this.pageImageCheckDom.checked = true;
+            MODULE("upload").upload(target, res => {
+                pageData.background.image = res.url;
+                MODULE("canvas").setBackgroundImage();
+            })
+        }
+        //背景图开启
+        else if (cp.hasClass(target, "background-image-check-value")) {
+            if (!target.checked) {
+                pageData.background.image = "";
+                this.pageImageDom.value = null;
+                MODULE("canvas").setBackgroundImage();
+            }
         }
     }
 

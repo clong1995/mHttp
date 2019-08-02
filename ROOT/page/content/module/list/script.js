@@ -13,6 +13,14 @@ class Module {
         this.autoSize();
         this.loadItem();
         window.onresize = () => this.autoSize();
+
+        /*setTimeout(v => {
+            MODULE("dialog").show({
+                type:"loading",
+                text:"正在上传"
+            })
+        }, 1000)*/
+
     }
 
     loadItem() {

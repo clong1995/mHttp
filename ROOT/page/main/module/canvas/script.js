@@ -14,6 +14,8 @@ class Module {
     }
 
     INIT() {
+        this.sliceIndex = 10;
+
         this.sceneDom = null;
         this.scale = 0;
         this.autoScale = true;
@@ -104,7 +106,7 @@ class Module {
         }
     }
 
-
+    //按住ctrl
     keydownScale(e) {
         if (e.key === "Control") {
             this.ctrlMousewheel = true
@@ -117,7 +119,7 @@ class Module {
         }
     }
 
-
+    //滚轮
     mousewheelScale(e) {
         //按住ctrl
         if (!this.ctrlMousewheel) return;
@@ -398,20 +400,20 @@ class Module {
      * @param single 是否选中
      */
     addSlice(data, html, single = false) {
+        ++this.sliceIndex;
         //增加一片
         let sliceDom = cp.createDom("div", {
             id: "slice_" + data.id,
             class: "slice slice-" + data.name
         });
-        let index = cp.query(".slice", this.sceneDom, true).length + 1;
-        data.index = index;
+        data.index = this.sliceIndex;
         //设置外壳配置
         cp.css(sliceDom, {
             top: data.position.top + "px",
             left: data.position.left + "px",
             width: data.size.width + "px",
             height: data.size.height + "px",
-            zIndex: index,
+            zIndex: this.sliceIndex,
             backgroundColor: data.background.color,
             fontSize: data.font.size + "px",
             fontFamily: data.font.family,
@@ -437,6 +439,70 @@ class Module {
             backgroundColor: pageData.background.color
         });
     }
+
+    /**
+     * 设置背景图片
+     */
+    setBackgroundImage() {
+        let pageData = this.APP.getPageData();
+        //是否有背景图
+        let bgDom = cp.query(".sceneBg", this.sceneDom);
+
+        if (pageData.background.image === "") {
+            bgDom && cp.remove(bgDom);
+            return;
+        }
+
+        if (!bgDom) {
+            //背景图容器
+            bgDom = cp.createDom("div", {
+                class: "sceneBg centerWrap"
+            });
+        } else {
+            cp.empty(bgDom)
+        }
+
+        //图片
+        let image = new Image();
+        image.src = pageData.background.image;
+
+        if (pageData.background.fill === 0) {//自适应
+            cp.attr(image, {
+                "style": null
+            })
+        } else {//填充
+            cp.css(image, {
+                width: "100%",
+                height: "100%"
+            })
+        }
+
+        //添加元素
+        cp.append(bgDom, image);
+        cp.append(this.sceneDom, bgDom);
+    }
+
+    //背景填充
+    setBackgroundFill() {
+        let bgDom = cp.query(".sceneBg", this.sceneDom);
+        if (!bgDom) {
+            //TODO 无图片
+            return
+        }
+        let image = cp.query("IMG", bgDom);
+        let pageData = this.APP.getPageData();
+        if (pageData.background.fill === "0") {//自适应
+            cp.attr(image, {
+                style: null
+            })
+        } else {//填充
+            cp.css(image, {
+                width: "100%",
+                height: "100%"
+            })
+        }
+    }
+
 
     /**
      * 切换激活状态

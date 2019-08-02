@@ -51,15 +51,28 @@
 }
 
 .chip > .item > .wrap > .classify {
-    width: 110px;
+    width: 100px;
     height: 100%;
     float: left;
     background: var(--background);
     border-right: var(--border);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.chip > .item > .wrap > .classify::-webkit-scrollbar {
+    display: unset !important;
+    width: 5px;
+    height: 5px;
+    background: none;
+}
+
+.chip > .item > .wrap > .classify::-webkit-scrollbar-thumb {
+    background: #666;
 }
 
 .chip > .item > .wrap > .classify > .sort {
-    width: 110px;
+    width: 100px;
     height: 35px;
     line-height: 35px;
     padding: 0 10px;
@@ -73,14 +86,14 @@
 }
 
 .chip > .item > .wrap > .classify > .sort > .icon {
-    font-size: 18px;
+    font-size: 15px;
     margin-right: 5px;
     float: left;
 }
 
 .chip > .item > .wrap > .classify > .sort > .name {
     float: left;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .chip > .item > .wrap > .content {
@@ -94,6 +107,11 @@
 .chip > .item > .wrap > .content > .ul {
     width: 100%;
     height: 100%;
+    display: none;
+}
+
+.chip > .item > .wrap > .content > .ul.active {
+    display: block;
 }
 
 .chip > .item > .wrap > .content > .ul > .li {

@@ -7,15 +7,157 @@ class Module {
         this.componentCache = new Map();
         cp["componentClassCache"] = new Map();
         cp["componentEntity"] = new Map();
+        this.library();
     }
 
     EVENT() {
+        //添加一个
         cp.on('.slice', DOMAIN, 'click', t => this.addSlice(t));
+        //激活组件
+        cp.on('.sort', DOMAIN, 'click', t => this.activeSort(t));
+    }
+
+    activeSort(target) {
+        cp.toggleActive(target);
+        //显示内容
+        let parent = cp.parent(target, ".wrap");
+        cp.toggleActive(cp.query("." + cp.getData(target), parent))
+    }
+
+    //创建库
+    library() {
+        //控件库
+        let block = {
+            classify: [
+                {
+                    id: "text",
+                    name: "文本",
+                    icon: "&#xe613;"
+                }, {
+                    id: "picture",
+                    name: "图片",
+                    icon: "&#xe888;"
+                }
+            ],
+            content: {
+                text: [
+                    {
+                        id: "block/singleText",
+                        name: "单行文本"
+                    }, {
+                        id: "block/multiText",
+                        name: "多行文本"
+                    }
+                ],
+                picture: [
+                    {
+                        id: "block/image",
+                        name: "图片"
+                    }, {
+                        id: "block/banner01",
+                        name: "轮播01"
+                    }, {
+                        id: "block/banner02",
+                        name: "轮播02"
+                    }
+                ]
+            }
+        };
+        let blockClassifyHtml = "", blockContentHtml = "";
+        block.classify.forEach((v, i) => {
+            blockClassifyHtml += `
+                <div class="sort ${!i && 'active'}" data-id="${v.id}">
+                    <span class="iconfont icon">${v.icon}</span>
+                    <span class="name">${v.name}</span>
+                </div>
+                `;
+            blockContentHtml += `<div class="ul ${!i && 'active'} ${v.id}">`;
+            block.content[v.id].forEach(vv => {
+                blockContentHtml += `
+                    <div class="li slice" data-id="${vv.id}">
+                        <div class="thumbnail">
+                            <span class="iconfont icon">&#xe611;</span>
+                            <span class="iconfont icon">&#xe647;</span>
+                        </div>
+                        <div class="title">${vv.name}</div>
+                    </div>
+                `;
+            });
+            blockContentHtml += `</div>`;
+        });
+        cp.html(cp.query(".block-classify", DOMAIN), blockClassifyHtml);
+        cp.html(cp.query(".block-content", DOMAIN), blockContentHtml);
+
+        //图标库
+        let chart = {
+            classify: [
+                {
+                    id: "line",
+                    name: "折线图",
+                    icon: "&#xe62a;"
+                }, {
+                    id: "bar",
+                    name: "柱状图",
+                    icon: "&#xe620;"
+                }, {
+                    id: "pie",
+                    name: "饼状图",
+                    icon: "&#xe608;"
+                }
+            ],
+            content: {
+                line: [
+                    {
+                        id: "chart/basicLine",
+                        name: "基础折线图"
+                    }, {
+                        id: "chart/basicArea",
+                        name: "基础区线图"
+                    }
+                ],
+                bar: [
+                    {
+                        id: "chart/basicBar",
+                        name: "基础柱状图"
+                    }
+                ],
+                pie: [
+                    {
+                        id: "chart/basicPie",
+                        name: "基础饼状图"
+                    }
+                ]
+            }
+        };
+        let chartClassifyHtml = "", chartContentHtml = "";
+        chart.classify.forEach((v, i) => {
+            chartClassifyHtml += `
+                <div class="sort ${!i && 'active'}" data-id="${v.id}">
+                    <span class="iconfont icon">${v.icon}</span>
+                    <span class="name">${v.name}</span>
+                </div>
+                `;
+            chartContentHtml += `<div class="ul ${!i && 'active'} ${v.id}">`;
+            chart.content[v.id].forEach(vv => {
+                chartContentHtml += `
+                    <div class="li slice" data-id="${vv.id}">
+                        <div class="thumbnail">
+                            <span class="iconfont icon">&#xe611;</span>
+                            <span class="iconfont icon">&#xe647;</span>
+                        </div>
+                        <div class="title">${vv.name}</div>
+                    </div>
+                `;
+            });
+            chartContentHtml += `</div>`;
+        });
+        cp.html(cp.query(".chart-classify", DOMAIN), chartClassifyHtml);
+        cp.html(cp.query(".chart-content", DOMAIN), chartContentHtml);
     }
 
     addSlice(target) {
         //组件类型
-        let name = cp.attr(target, "data-name");
+        let name = cp.attr(target, "data-id");
         //获取组件
         this.getComponent(name);
         cp.parent(target, ".item").blur();
@@ -37,7 +179,6 @@ class Module {
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.send(null);
     }
-
 
     //根据请求到的字符串片段组成组件
     makeComponent(name, compStr) {

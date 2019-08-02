@@ -27,12 +27,12 @@
             <div class="name">背景图</div>
             <input type="checkbox" class="value input background-image-check-value">
             <select class="value input background-image-fill-value">
-                <option selected>等比</option>
-                <option>填充</option>
+                <option selected value="0">等比</option>
+                <option value="1">填充</option>
             </select>
             <input type="file" class="value input background-image-value" value="">
         </div>
-        <div class="row flip-over">
+        <div class="row flip-over disable">
             <div class="name">翻页</div>
             <select class="value input flip-over-value">
                 <option selected>无动效</option>
@@ -41,7 +41,7 @@
                 <option>淡入</option>
             </select>
         </div>
-        <div class="row fill">
+        <div class="row fill disable">
             <div class="name">填充</div>
             <select class="value input fill-value">
                 <option selected>原尺寸</option>
@@ -49,11 +49,11 @@
                 <option>完全填充</option>
             </select>
         </div>
-        <div class="row cover">
+        <div class="row cover disable">
             <div class="name">封面</div>
             <div class="image value cover-value"></div>
         </div>
-        <div class="row comment">
+        <div class="row comment disable">
             <div class="name">备注</div>
             <textarea class="value input comment-value"></textarea>
         </div>

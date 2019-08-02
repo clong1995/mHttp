@@ -1,13 +1,9 @@
 <div class="chip">
-    <div class="item" tabindex="-1">
+    <div class="item disable" tabindex="-1">
         <span class="iconfont icon">&#xe603;</span>
         <span class="title">模板库</span>
         <div class="wrap" style="height:316px;min-height: 316px;min-width:365px;">
             <div class="classify">
-                <div class="sort active">
-                    <span class="iconfont icon">&#xe613;</span>
-                    <span class="name">全部</span>
-                </div>
                 <div class="sort">
                     <span class="iconfont icon">&#xe888;</span>
                     <span class="name">数据可视化</span>
@@ -87,83 +83,40 @@
             </div>
         </div>
     </div>
+
+    <!-- 控件库 -->
     <div class="item" tabindex="-1">
         <span class="iconfont icon">&#xe609;</span>
         <span class="title">控件库</span>
         <div class="wrap" style="height:316px;min-height: 316px;min-width:365px;">
-            <div class="classify">
-                <div class="sort active">
-                    <span class="iconfont icon">&#xe613;</span>
-                    <span class="name">全部</span>
-                </div>
-                <div class="sort">
-                    <span class="iconfont icon">&#xe888;</span>
-                    <span class="name">轮播图</span>
-                </div>
-                <div class="sort">
-                    <span class="iconfont icon">&#xe642;</span>
-                    <span class="name">按钮</span>
-                </div>
-            </div>
-            <div class="content">
-                <div class="ul all">
-                    <div class="li slice" data-name="block/singleText">
-                        <div class="thumbnail">
-                            <span class="iconfont icon">&#xe611;</span>
-                            <span class="iconfont icon">&#xe647;</span>
-                        </div>
-                        <div class="title">单行文本</div>
-                    </div>
-                    <div class="li slice" data-name="block/multiText">
-                        <div class="thumbnail">
-                            <span class="iconfont icon">&#xe611;</span>
-                            <span class="iconfont icon">&#xe647;</span>
-                        </div>
-                        <div class="title">多行文本</div>
-                    </div>
-                    <div class="li slice" data-name="block/staticImage">
-                        <div class="thumbnail">
-                            <span class="iconfont icon">&#xe611;</span>
-                            <span class="iconfont icon">&#xe647;</span>
-                        </div>
-                        <div class="title">静态图片</div>
-                    </div>
-                    <div class="li slice" data-name="block/slideshow">
-                        <div class="thumbnail">
-                            <span class="iconfont icon">&#xe611;</span>
-                            <span class="iconfont icon">&#xe647;</span>
-                        </div>
-                        <div class="title">幻灯片</div>
-                    </div>
-                    <div class="li slice" data-name="block/xxx">
-                        <div class="thumbnail">
-                            <span class="iconfont icon">&#xe611;</span>
-                            <span class="iconfont icon">&#xe647;</span>
-                        </div>
-                        <div class="title">大屏展示</div>
-                    </div>
-                </div>
-            </div>
+            <div class="classify scrollbar block-classify"></div>
+            <div class="content block-content"></div>
         </div>
     </div>
+
+    <!-- 图表库 -->
     <div class="item" tabindex="-1">
         <span class="iconfont icon">&#xe61e;</span>
         <span class="title">图表库</span>
-        <div class="wrap" style="height:316px;min-height: 316px;min-width:365px;"></div>
+        <div class="wrap" style="height:316px;min-height: 316px;min-width:365px;">
+            <div class="classify scrollbar chart-classify"></div>
+            <div class="content chart-content"></div>
+        </div>
     </div>
-    <!--<div class="item">
+
+    <div class="item disable">
         <span class="iconfont icon">&#xe6b2;</span>
         <span class="title">开源库</span>
-    </div>-->
+    </div>
     <!--<div class="item">
         <span class="iconfont icon">&#xe749;</span>
         <span class="title">媒体库</span>
     </div>-->
-    <div class="item">
+    <div class="item disable">
         <span class="iconfont icon">&#xe69b;</span>
         <span class="title">涂鸦板</span>
     </div>
-    <div class="item">
+    <div class="item disable">
         <span class="iconfont icon">&#xe605;</span>
         <span class="title">常用工具</span>
     </div>

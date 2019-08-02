@@ -209,10 +209,15 @@ class App {
                     background: {
                         color: "",
                         image: "",
+                        fill: 0,
                     },
-                    fill: 1,
+                    //页面填充方式
+                    fill: 0,
+                    //TODO 翻页
                     flipOver: 1,
+                    //TODO 封面
                     cover: "xxx",
+                    //TODO 描述
                     comment: "xxx"
                 },
                 //场景列表，用于渲染切换场景的列表

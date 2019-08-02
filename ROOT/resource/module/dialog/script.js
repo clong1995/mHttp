@@ -26,7 +26,7 @@ class Module {
             left: 0,
             zIndex: 999
         });
-        cp.addClass(DOMAIN,['centerWrap','hide'])
+        cp.addClass(DOMAIN, ['centerWrap', 'hide'])
     }
 
     /**
@@ -45,12 +45,20 @@ class Module {
         //提示信息
         let icon = '&#xe665;';
         let title = '提示';
+        //警告信息
         if (type === 'warn') {
             icon = '&#xe63f;';
             title = '警告';
-        } else if (type === 'error') {
+        }
+        //错误信息
+        else if (type === 'error') {
             icon = '&#xe639;';
             title = '错误';
+        }
+        //等待信息
+        else if (type === 'loading') {
+            icon = '&#xe623;';
+            title = '等待';
         }
         cp.text(this.titleDom, title);
         cp.html(this.iconDom, icon);
@@ -61,16 +69,29 @@ class Module {
             ? confirm(this.hide.bind(this))
             : this.hide();
 
+
         //取消，只有在警告级别才会有
         if (type === 'warn' && cancel && typeof cancel === 'function') {
             cp.show(this.cancelDom);
             this.cancelDom.onclick = () => cancel(this.hide.bind(this));
         }
+
         //显示窗口
         cp.show(DOMAIN);
     }
 
+    text(text) {
+        cp.text(this.textDom, text);
+    }
+
     hide() {
         cp.hide(DOMAIN);
+        this.dispose();
+        return this
+    }
+
+    dispose() {
+        this.confirmDom.onclick = null;
+        this.cancelDom.onclick = null
     }
 }

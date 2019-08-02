@@ -9,7 +9,8 @@ function createWindow() {
         minWidth: 1024,
         minHeight: 576,
         //frame: false,//是否有菜单栏
-        autoHideMenuBar: true
+        autoHideMenuBar: true,
+        //fullscreen: true
     });
     mainWindow.loadURL(url + "/main");
     mainWindow.webContents.openDevTools();
