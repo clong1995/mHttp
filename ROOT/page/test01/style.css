@@ -1,0 +1,10 @@
+.table {
+    width: 600px;
+    height: 250px;
+    resize: both;
+    overflow: auto;
+}
+
+#table {
+    height: calc(100% - 10px);
+}

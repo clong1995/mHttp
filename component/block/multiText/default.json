@@ -10,7 +10,7 @@
   },
   "background": {
     "color": "",
-    "image": "xxxx.jpg"
+    "image": ""
   },
   "font": {
     "color": "#000000",
@@ -23,7 +23,7 @@
     "bottom": 0,
     "left": 0
   },
-  "data": [
+  "option": [
     {
       "type": "textarea",
       "key": "textarea",

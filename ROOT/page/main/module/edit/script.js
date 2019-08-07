@@ -222,14 +222,14 @@ class Module {
             //映射到数据文件
             let keyArr = key.split("/");
             if (keyArr.length === 2) {
-                componentData.data.some(v => {
+                componentData.option.some(v => {
                     if (v.key === keyArr[0]) {
                         v.value[keyArr[1]] = value;
                         return true
                     }
                 });
             } else {
-                componentData.data.some(v => {
+                componentData.option.some(v => {
                     if (v.key === key) {
                         v.value = value;
                         return true
@@ -368,7 +368,7 @@ class Module {
 
         //其他数据
         let editHtml = `<div class="hr">专有配置</div>`;
-        data.data.forEach(v => {
+        data.option.forEach(v => {
             switch (v.type) {
                 case "text"://文本输入
                     editHtml += `

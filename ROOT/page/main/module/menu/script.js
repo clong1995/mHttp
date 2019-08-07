@@ -235,7 +235,7 @@ class Module {
         }
         cp.componentEntity.set(defaultData.id, entity);
         //执行
-        defaultData.data.forEach(v => {
+        defaultData.option.forEach(v => {
             if (typeof v.value === "object") {
                 for (let vv in v.value) {
                     try {

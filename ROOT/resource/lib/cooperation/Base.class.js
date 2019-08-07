@@ -1087,8 +1087,8 @@ class Base {
         if (!this._eventMap.get(target).has(evt)) {
             //增加事件
             this._eventMap.get(target).add(evt);
-            //绑定原始事件
-            target.addEventListener(evt, e => this._excEvent(e, target), (evt === 'blur' || evt === 'focus'));
+            //绑定原始事件，修正blur,focus等事件，冒泡到绑定的父元素
+            target.addEventListener(evt, e => this._excEvent(e, target), (evt === 'blur' || evt === 'focus' || evt === "scroll"));
         }
 
         //增加事件元素
@@ -1116,7 +1116,6 @@ class Base {
      * @private
      */
     _onFunction(node, target, e) {
-
         let event = e.type;
         let realTarget = e.target;
 

@@ -1,6 +1,5 @@
 class Module {
     DOM() {
-        // this.addContentDom = coo.query('.addContent', DOMAIN);
     }
 
     EVENT() {
@@ -12,7 +11,7 @@ class Module {
         this.downloadUrl = "http://img.quickex.com.cn";
         this.status = null;
         //加载七牛sdk
-        cp.loadScript("https://unpkg.com/qiniu-js/dist/qiniu.min.js", () => {
+        cp.loadScript("/resource/lib/qiniu/qiniu.min.js", () => {
         })
     }
 

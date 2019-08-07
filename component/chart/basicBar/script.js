@@ -12,7 +12,7 @@ class Module {
         let myChart = echarts.init(this.echartsDom);
         let option = {
             title: {
-                text: '基础折线图'
+                text: '基础柱状图'
             },
             tooltip: {
 
@@ -26,7 +26,7 @@ class Module {
             yAxis: {},
             series: [{
                 name: '销量',
-                type: 'line',
+                type: 'bar',
                 data: [5, 20, 36, 10, 10, 20]
             }]
         };
