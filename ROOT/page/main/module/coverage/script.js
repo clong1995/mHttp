@@ -19,7 +19,6 @@ class Module {
     changeLayer(target1, target2) {
         let id = target1.id.split("_")[1];
         let componentData = this.APP.getComponentData(id);
-
         if (cp.hasClass(target2, "name")) {
             let value = target2.value;
             componentData["nickname"] = value;
@@ -32,7 +31,7 @@ class Module {
     addLayer(data) {
         //增加图层
         let layerHtml = `<div class="layer" id="layer_${data.id}">
-                            <div class="num">${data.index}</div>
+                            <div class="num">${data.index - 10}</div>
                             <div class="thumbnail"></div>
                             <input class="name" value="${data.nickname || data.title}"/>
                         </div>`;

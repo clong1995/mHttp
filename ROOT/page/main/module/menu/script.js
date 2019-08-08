@@ -26,6 +26,87 @@ class Module {
 
     //创建库
     library() {
+        //单品
+        let single = {
+            classify: [
+                {
+                    id: "intro",
+                    name: "简介",
+                    icon: "&#xe613;"
+                }, {
+                    id: "history",
+                    name: "历程",
+                    icon: "&#xe888;"
+                }, {
+                    id: "display",
+                    name: "展示",
+                    icon: "&#xe888;"
+                }
+            ],
+            content: {
+                intro: [
+                    {
+                        id: "single/intro01",
+                        name: "简介01"
+                    }, {
+                        id: "single/intro02",
+                        name: "简介02"
+                    }, {
+                        id: "single/intro03",
+                        name: "简介03"
+                    }
+                ],
+                history: [
+                    {
+                        id: "single/history01",
+                        name: "历程01"
+                    }, {
+                        id: "single/history02",
+                        name: "历程02"
+                    }, {
+                        id: "single/history03",
+                        name: "历程03"
+                    }
+                ],
+                display: [
+                    {
+                        id: "single/display01",
+                        name: "展示01"
+                    }, {
+                        id: "single/display2",
+                        name: "展示02"
+                    }, {
+                        id: "single/display03",
+                        name: "展示03"
+                    }
+                ]
+            }
+        };
+        let singleClassifyHtml = "", singleContentHtml = "";
+        single.classify.forEach((v, i) => {
+            singleClassifyHtml += `
+                <div class="sort ${!i && 'active'}" data-id="${v.id}">
+                    <span class="iconfont icon">${v.icon}</span>
+                    <span class="name">${v.name}</span>
+                </div>
+                `;
+            singleContentHtml += `<div class="ul ${!i && 'active'} ${v.id}">`;
+            single.content[v.id].forEach(vv => {
+                singleContentHtml += `
+                    <div class="li slice" data-id="${vv.id}">
+                        <div class="thumbnail">
+                            <span class="iconfont icon">&#xe611;</span>
+                            <span class="iconfont icon">&#xe647;</span>
+                        </div>
+                        <div class="title">${vv.name}</div>
+                    </div>
+                `;
+            });
+            singleContentHtml += `</div>`;
+        });
+        cp.html(cp.query(".single-classify", DOMAIN), singleClassifyHtml);
+        cp.html(cp.query(".single-content", DOMAIN), singleContentHtml);
+
         //控件库
         let block = {
             classify: [
@@ -103,16 +184,37 @@ class Module {
                     id: "pie",
                     name: "饼状图",
                     icon: "&#xe608;"
-                }
+                }, {
+                    id: "map",
+                    name: "地图",
+                    icon: "&#xe882;"
+                }/* {
+                    id: "scatter",
+                    name: "散点图",
+                    icon: "&#xe703;"
+                }, {
+                    id: "candlestick",
+                    name: "k线图",
+                    icon: "&#xe622;"
+                } {
+                    id: "radar",
+                    name: "雷达图",
+                    icon: "&#xe66b;"
+                }, {
+                    id: "graph",
+                    name: "关系图",
+                    icon: "&#xe608;"
+                }, {
+                    id: "gauge",
+                    name: "仪表盘",
+                    icon: "&#xe608;"
+                }*/
             ],
             content: {
                 line: [
                     {
                         id: "chart/basicLine",
                         name: "基础折线图"
-                    }, {
-                        id: "chart/basicArea",
-                        name: "基础区线图"
                     }
                 ],
                 bar: [
@@ -125,6 +227,42 @@ class Module {
                     {
                         id: "chart/basicPie",
                         name: "基础饼状图"
+                    }
+                ],
+                scatter: [
+                    {
+                        id: "chart/basicScatter",
+                        name: "基础散点图"
+                    }
+                ],
+                map: [
+                    {
+                        id: "chart/basicMap",
+                        name: "基础地图"
+                    }
+                ],
+                candlestick: [
+                    {
+                        id: "chart/basicCandlestick",
+                        name: "基础k线图"
+                    }
+                ],
+                radar: [
+                    {
+                        id: "chart/basicRadar",
+                        name: "基础雷达图"
+                    }
+                ],
+                graph: [
+                    {
+                        id: "chart/basicGraph",
+                        name: "基础关系图"
+                    }
+                ],
+                gauge: [
+                    {
+                        id: "chart/basicGauge",
+                        name: "基础仪表盘"
                     }
                 ]
             }
@@ -167,7 +305,6 @@ class Module {
     getComponent(name) {
         //查询是否包含了组件
         //this.APP.getComponent();
-
         if (this.componentCache.has(name)) {
             this.makeComponent(name, this.componentCache.get(name));
             return;
@@ -229,33 +366,38 @@ class Module {
         try {
             entity = new (cp.componentClassCache.get(defaultData.name))(document.querySelector("#slice_" + defaultData.id));
         } catch (e) {
-            cp.log("组件 " + defaultData.name + " 内部出错，错误组件的实体 " + defaultData.id, "error");
+            cp.log("创建组件 " + defaultData.name + " 时出错，错误组件的实体 " + defaultData.id, "error");
             console.error(e);
             return;
         }
+
+
         cp.componentEntity.set(defaultData.id, entity);
         //执行
-        defaultData.option.forEach(v => {
+        defaultData.option.some(v => {
             if (typeof v.value === "object") {
                 for (let vv in v.value) {
-                    try {
-                        entity.OPTION(v.key + "/" + vv, v.value[vv])
-                    } catch (e) {
-                        cp.log("组件 " + defaultData.name + " 内部出错，错误组件的实体 " + defaultData.id, "error");
-                        console.error(e);
-                        break;
-                    }
+                    if (!this.setComponentEntity(entity, v.key + "/" + vv, v.value[vv], defaultData.name, defaultData.id))
+                        return true
                 }
             } else {
-                try {
-                    entity.OPTION(v.key, v.value)
-                } catch (e) {
-                    cp.log("组件 " + defaultData.name + " 内部出错，错误组件的实体 " + defaultData.id, "error");
-                    console.error(e);
-                }
+                return !this.setComponentEntity(entity, v.key, v.value, defaultData.name, defaultData.id)
             }
-        })
+        });
+        this.setComponentEntity(entity, "data", defaultData.data, defaultData.name, defaultData.id)
     }
+
+    setComponentEntity(entity, key, value, name, id) {
+        try {
+            entity.OPTION(key, value);
+        } catch (e) {
+            cp.log("组件 " + name + " 内部出错，错误组件的实体 " + id, "error");
+            console.error(e);
+            return false
+        }
+        return true
+    }
+
 
     componentHtmlCompiler(htmlStr, defaultData) {
         //识别里面的库文件

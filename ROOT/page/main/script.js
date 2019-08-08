@@ -1,238 +1,115 @@
 class App {
     DOM() {
-
+        this.editDom = cp.query(".data-editor");
+        this.containerDom = cp.query(".container", this.editDom);
     }
 
     //初始化函数
     INIT() {
         let project_scene = cp.getLocTempData();//项目id
 
-        if (!project_scene) {
-            cp.link('/content')
-        } else {
-            /*let arr = project_scene.split("_");
-            //下面的请求同步
-            if (arr.length === 1) {
-                //获取当前项目下第一个
-                this.scene = {
-                    project: "xxx",
-                    page: {
-                        name: "xxxx",
-                        size: {
-                            width: 1920,
-                            height: 1080,
-                        },
-                        background: {
-                            color: "#cccccc",
-                            image: "xxxx",
-                        },
-                        fill: 1,
-                        flipOver: 1,
-                        cover: "xxx",
-                        comment: "xxx"
-                    },
-                    //场景列表，用于渲染切换场景的列表
-                    scenes: [
-                        {id: 1, name: "xxx", index: 1},
-                        {id: 2, name: "aaa", index: 2}
-                    ],
-                    //当前的场景的组件
-                    components: [
-                        {
-                            id: "xxxxxx",
-                            index: "1",
-                            "name": "幻灯片",
-                            "size": {
-                                "width": 640,
-                                "height": 360
-                            },
-                            position: {
-                                top: 700,
-                                left: 700
-                            },
-                            "background": {
-                                "color": "#000000",
-                                "image": "xxxx.jpg"
-                            },
-                            "data": [
-                                {
-                                    "type": "xxx",
-                                    "key": "xxx",
-                                    "name": "xxx",
-                                    "value": "xxxx"
-                                },
-                                {
-                                    "type": "xxx",
-                                    "key": "xxx",
-                                    "name": "xxx",
-                                    "value": "xxxx.png",
-                                    "constraint": "xxx"
-                                }
-                            ]
-                        }, {
-                            id: "dddddd",
-                            index: "2",
-                            "name": "静态图片",
-                            "size": {
-                                "width": 840,
-                                "height": 960
-                            },
-                            position: {
-                                top: 0,
-                                left: 0
-                            },
-                            "background": {
-                                "color": "#ff0000",
-                                "image": "xxxx.png"
-                            },
-                            "data": [
-                                {
-                                    "type": "xxx",
-                                    "key": "xxx",
-                                    "name": "xxx",
-                                    "value": "xxxx"
-                                },
-                                {
-                                    "type": "xxx",
-                                    "key": "xxx",
-                                    "name": "xxx",
-                                    "value": "xxxx.png",
-                                    "constraint": "xxx"
-                                }
-                            ]
-                        },
-                    ]
-                }
-            } else {
-                //获取指定的场景
-                this.scene = {
-                    //场景所属的项目
-                    project: "xxx",
-                    //场景的页面设置
-                    page: {
-                        name: "xxxx",
-                        size: {
-                            width: 1920,
-                            height: 1080,
-                        },
-                        background: {
-                            color: "#cccccc",
-                            image: "xxxx",
-                        },
-                        fill: 1,
-                        flipOver: 1,
-                        cover: "xxx",
-                        comment: "xxx"
-                    },
-                    //场景列表，用于渲染切换场景的列表
-                    scenes: [
-                        {id: 1, name: "xxx"},
-                        {id: 2, name: "aaa"}
-                    ],
-                    //当前的场景的组件
-                    components: [
-                        {
-                            id: "xxxxxxx",
-                            index: "1",
-                            "name": "幻灯片",
-                            "size": {
-                                "width": 640,
-                                "height": 360
-                            },
-                            position: {
-                                top: 700,
-                                left: 700
-                            },
-                            "background": {
-                                "color": "#000000",
-                                "image": "xxxx.jpg"
-                            },
-                            "data": [
-                                {
-                                    "type": "xxx",
-                                    "key": "xxx",
-                                    "name": "xxx",
-                                    "value": "xxxx"
-                                },
-                                {
-                                    "type": "xxx",
-                                    "key": "xxx",
-                                    "name": "xxx",
-                                    "value": "xxxx.png",
-                                    "constraint": "xxx"
-                                }
-                            ]
-                        }, {
-                            id: "dddddd",
-                            index: "2",
-                            "name": "静态图片",
-                            "size": {
-                                "width": 840,
-                                "height": 960
-                            },
-                            position: {
-                                top: 0,
-                                left: 0
-                            },
-                            "background": {
-                                "color": "#ff0000",
-                                "image": "xxxx.png"
-                            },
-                            "data": [
-                                {
-                                    "type": "xxx",
-                                    "key": "xxx",
-                                    "name": "xxx",
-                                    "value": "xxxx"
-                                },
-                                {
-                                    "type": "xxx",
-                                    "key": "xxx",
-                                    "name": "xxx",
-                                    "value": "xxxx.png",
-                                    "constraint": "xxx"
-                                }
-                            ]
-                        },
-                    ]
-                }
-            }*/
-            //根据项目获取场景
-            this.scene = {
-                project: "测试工程",
-                page: {
-                    name: "测试项目",
-                    size: {
-                        width: 1920,
-                        height: 1080,
-                    },
-                    background: {
-                        color: "",
-                        image: "",
-                        fill: 0,
-                    },
-                    //页面填充方式
-                    fill: 0,
-                    //TODO 翻页
-                    flipOver: 1,
-                    //TODO 封面
-                    cover: "xxx",
-                    //TODO 描述
-                    comment: "xxx"
-                },
-                //场景列表，用于渲染切换场景的列表
-                scenes: [],
-                //当前的场景的组件
-                components: []
-            }
-        }
+        //============= TODO 开发故意为之 =======\\
+        setTimeout(() => {
+            this.getModule("menu").getComponent("single/intro03")
+        }, 300);
+        //====================================//
+
+
+        //没有项目直接调走
+        //!project_scene && cp.link('/content')
+        //加载数据
+        this.loadData();
+        //加载数据编辑器
+        this.loadEditor();
     }
 
     //添加事件
     EVENT() {
+        cp.on('.drag-title', this.editDom, 'mousedown', t => this._dateEditTitleMousedown(t));
+        cp.on('.close', this.containerDom, 'click', t => this.dateEditClose(t));
+    }
+
+    loadData() {
+        //根据项目获取场景
+        this.scene = {
+            project: "测试工程",
+            page: {
+                name: "测试项目",
+                size: {
+                    width: 1920,
+                    height: 1080,
+                },
+                background: {
+                    color: "",
+                    image: "",
+                    fill: 0,
+                },
+                //页面填充方式
+                fill: 0,
+                //TODO 翻页
+                flipOver: 1,
+                //TODO 封面
+                cover: "xxx",
+                //TODO 描述
+                comment: "xxx"
+            },
+            //场景列表，用于渲染切换场景的列表
+            scenes: [],
+            //当前的场景的组件
+            components: []
+        }
+    }
+
+    loadEditor() {
 
     }
 
+    //关闭数据编辑器
+    dateEditClose() {
+        cp.hide(this.editDom)
+    }
+
+    //显示数据编辑器
+    dataEditShow() {
+        cp.show(this.editDom);
+        //位置
+        let {ww, wh} = cp.windowSize();
+        let {width, height} = cp.domSize(this.containerDom);
+        let left = (ww - width) / 2,
+            top = (wh - height) / 2;
+        cp.css(this.containerDom, {
+            top: top + "px",
+            left: left + "px"
+        })
+    }
+
+    _dateEditTitleMousedown() {
+        //获取鼠标位置
+        let x0 = window.event.screenX,
+            y0 = window.event.screenY;
+
+        let dLeft = parseInt(this.containerDom.style.left),
+            dTop = parseInt(this.containerDom.style.top);
+        //绑定移动事件
+        this.editDom.onmousemove = () => {
+            //获取鼠标位置
+            let x = window.event.screenX,
+                y = window.event.screenY;
+            //计算移动距离
+            let left = x - x0,
+                top = y - y0;
+            //移动
+            this.containerDom.style.left = dLeft + left + "px";
+            this.containerDom.style.top = dTop + top + "px";
+        };
+
+        this.editDom.onmouseup = () => {
+            this.editDom.onmousemove = null;
+            this.editDom.onmouseup = null
+        }
+    }
+
+    //页面数据
     getPageData() {
         return this.scene.page
     }

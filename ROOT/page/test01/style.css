@@ -4,7 +4,3 @@
     resize: both;
     overflow: auto;
 }
-
-#table {
-    height: calc(100% - 10px);
-}

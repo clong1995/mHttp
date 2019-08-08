@@ -30,6 +30,8 @@ class Module {
         cp.on('.value', this.pageDom, 'change', t => this.changePage(t));
         //改变组件参数
         cp.on('.value', this.componentDom, 'change', t => this.changeComponent(t));
+        //编辑器
+        cp.on('.dataEdit', this.componentDom, 'click', () => this.showDataEdit());
     }
 
     INIT() {
@@ -39,6 +41,17 @@ class Module {
             {name: "宋体", value: "宋体"},
         ];
         this.initPagePanel();
+    }
+
+    showDataEdit() {
+        let id = this.componentDom.id.split("_")[1];
+        let componentData = this.APP.getComponentData(id);
+        let data = componentData.data;
+        MODULE("table").init(data, data => {
+            componentData.data = data;
+            this.setComponentEntity(id, "data", data, this.componentDom.name);
+        });
+        this.APP.dataEditShow();
     }
 
     /**
@@ -238,12 +251,17 @@ class Module {
             }
 
             //通知到组件
-            try {
-                cp.componentEntity.get(id).OPTION(key, value);
-            } catch (e) {
-                cp.log("组件 " + this.componentDom.name + " 内部出错，错误组件的实体 " + id, "error");
-                console.error(e);
-            }
+            this.setComponentEntity(id, key, value, this.componentDom.name);
+        }
+    }
+
+    //设置组件
+    setComponentEntity(id, key, value, name) {
+        try {
+            cp.componentEntity.get(id).OPTION(key, value);
+        } catch (e) {
+            cp.log("组件 " + name + " 内部出错，错误组件的实体 " + id, "error");
+            console.error(e);
         }
     }
 
@@ -368,9 +386,21 @@ class Module {
 
         //其他数据
         let editHtml = `<div class="hr">专有配置</div>`;
+
+        //是否有data数据
+        if (data.data) {
+            editHtml += `
+                    <div class="row data">
+                        <div class="name">数据</div>
+                        <button class="value input dataEdit">数据编辑器</button>
+                    </div>
+                    `;
+        }
+
         data.option.forEach(v => {
             switch (v.type) {
-                case "text"://文本输入
+                //文本输入
+                case "text":
                     editHtml += `
                         <div class="row ${v.type}">
                             <div class="name">${v.name}</div>
@@ -378,7 +408,8 @@ class Module {
                         </div>
                     `;
                     break;
-                case "font"://字体选择
+                //字体选择
+                case "font":
                     editHtml += `
                         <div class="row ${v.type}">
                             <div class="name">字体</div>
@@ -397,7 +428,8 @@ class Module {
                         </div>
                     `;
                     break;
-                case "compose"://排版
+                //排版
+                case "compose":
                     editHtml += `
                         <div class="row ${v.type}">
                             <div class="name">字间距</div>
@@ -407,7 +439,8 @@ class Module {
                         </div>
                     `;
                     break;
-                case "number"://数字输入
+                //数字输入
+                case "number":
                     editHtml += `
                         <div class="row ${v.type}">
                             <div class="name">${v.name}</div>
@@ -415,7 +448,8 @@ class Module {
                         </div>
                     `;
                     break;
-                case "align"://对齐选择
+                //对齐选择
+                case "align":
                     let align = [
                         {name: "居左", value: "left"},
                         {name: "居右", value: "right"},
@@ -432,6 +466,7 @@ class Module {
                         </div>
                     `;
                     break;
+                //文本域名
                 case "textarea":
                     editHtml += `
                     <div class="row ${v.type}">
@@ -440,6 +475,7 @@ class Module {
                     </div>
                     `;
                     break;
+                //
             }
         });
         editHtml && cp.html(this.componentDom, editHtml, "beforeend");
@@ -459,6 +495,9 @@ class Module {
         let component = this.APP.getComponentData(id);
         this.compWidthDom.value = component.size.width;
         this.compHeightDom.value = component.size.height;
+        //通知到组件，有时候组件胡需要大小变化信息，比如echarts
+        this.setComponentEntity(id, "width", component.size.width, this.componentDom.name);
+        this.setComponentEntity(id, "height", component.size.height, this.componentDom.name);
     }
 
     /**
@@ -475,11 +514,13 @@ class Module {
                 cp.css(componentDom, {
                     width: componentData.size.width + "px"
                 });
+                this.setComponentEntity(id, "width", componentData.size.width, this.componentDom.name);
                 break;
             case "height":
                 cp.css(componentDom, {
                     height: componentData.size.height + "px"
                 });
+                this.setComponentEntity(id, "width", componentData.size.height, this.componentDom.name);
                 break;
             case "top":
                 cp.css(componentDom, {

@@ -1,0 +1,30 @@
+.wrap {
+    height: 100%;
+    width: 100%;
+    border-top: 1px solid #376462;
+    border-bottom: 1px solid #376462;
+    padding: 5px;
+}
+
+.wrap > .inner {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #4f8482;
+    background: #0A2C2E;
+}
+
+.wrap > .inner > .content {
+    width: calc(100% - 10px);
+    height: calc(100% - 10px - 50px);
+    margin: 5px;
+    background: var(--background);
+}
+
+.wrap > .inner > .title {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    border-top: 1px solid #376462;
+    color: #64BCBD;
+    text-align: center;
+}

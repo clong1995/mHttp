@@ -1,5 +1,5 @@
 {
-  "title": "基础折线图",
+  "title": "基础饼状图",
   "size": {
     "width": 640,
     "height": 360
@@ -23,13 +23,17 @@
     "bottom": 0,
     "left": 0
   },
+  "data": [
+    ["","直接访问", "邮件营销", "联盟广告", "视频广告","搜索引擎"],
+    ["",335, 310, 234, 135, 1548]
+  ],
   "option": [
     {
       "type": "echartsTitle",
       "key": "echartsTitle",
       "value": {
         "show": true,
-        "text": "基础折线图",
+        "text": "基础饼状图",
         "color": "",
         "size": "",
         "family": "",

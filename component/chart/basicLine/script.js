@@ -9,28 +9,21 @@ class Module {
 
     INIT() {
         cp.loadScriptAsync("/resource/lib/echarts/echarts.min.js");
-        let myChart = echarts.init(this.echartsDom);
-        let option = {
+        this.myChart = echarts.init(this.echartsDom);
+        this.option = {
             title: {
                 text: '基础折线图'
             },
-            tooltip: {
-
-            },
+            tooltip: {},
             legend: {
-                data: ['销量']
+                data: []
             },
             xAxis: {
-                data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+                data: []
             },
             yAxis: {},
-            series: [{
-                name: '销量',
-                type: 'line',
-                data: [5, 20, 36, 10, 10, 20]
-            }]
+            series: []
         };
-        myChart.setOption(option);
     }
 
     /**
@@ -40,7 +33,45 @@ class Module {
      * @constructor
      */
     OPTION(key, value) {
-        console.log(key, value);
-
+        console.log(key, "=>", value);
+        //相应大小变化
+        switch (key) {
+            //改变大小
+            case "width":
+            case "height":
+                this.myChart.resize();
+                break;
+            //改变数据
+            case "data":
+                this.option.xAxis.data = [];
+                this.option.legend.data = [];
+                this.option.series = [];
+                value.forEach((v, i) => {
+                    if (!i) {
+                        //表头
+                        v.forEach((vv, ii) => {
+                            if (ii) {
+                                this.option.xAxis.data.push(vv);
+                            }
+                        })
+                    } else {
+                        //数据
+                        v.forEach((vv, ii) => {
+                            if (!ii) {
+                                this.option.legend.data.push(vv);
+                                this.option.series.push({
+                                    name: vv,
+                                    type: 'line',
+                                    data: []
+                                });
+                            } else {
+                                this.option.series[i - 1].data.push(vv)
+                            }
+                        });
+                    }
+                });
+                this.myChart.setOption(this.option);
+                break
+        }
     }
 }

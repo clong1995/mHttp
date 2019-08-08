@@ -33,6 +33,7 @@ func main() {
 	root := flag.String("root", "./ROOT", "项目根目录")
 	cors := flag.Bool("cors", true, "跨域")
 	cache := flag.Bool("cache", true, "缓存")
+
 	//TODO 专用
 	component := flag.String("component", "./component", "组件目录")
 	flag.Parse()
@@ -41,6 +42,7 @@ func main() {
 	CONF.Root = *root
 	CONF.Cors = *cors
 	CONF.Cache = *cache
+
 	//TODO 专用
 	CONF.Component = *component
 
@@ -480,3 +482,19 @@ func moduleImgTagCompiler(scope, path, entry, appHtml string) string {
 	}
 	return appHtml
 }
+
+/**
+//======补丁：修复存在缩放造成鼠标偏移问题
+        (function findZoom(el) {
+            var zoom = window.getComputedStyle(el.parentNode).zoom;
+            if (zoom == 1) {
+                findZoom(el.parentNode)
+            } else {
+                //e.pageX = e.pageX/zoom;
+                //e.pageY = e.pageY/zoom;
+
+console.log(e);
+}
+})(el.parentNode)
+//======
+*/

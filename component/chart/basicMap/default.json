@@ -1,0 +1,118 @@
+{
+  "title": "基础地图",
+  "size": {
+    "width": 640,
+    "height": 360
+  },
+  "position": {
+    "top": 0,
+    "left": 0
+  },
+  "background": {
+    "color": "",
+    "image": ""
+  },
+  "font": {
+    "color": "#000000",
+    "size": 24,
+    "family": ""
+  },
+  "padding": {
+    "top": 0,
+    "right": 0,
+    "bottom": 0,
+    "left": 0
+  },
+  "data": [
+    ["","值"],
+    ["北京",10],
+    ["山东",20],
+    ["四川",30],
+    ["黑龙江",40],
+    ["山西",50],
+    ["台湾",60]
+  ],
+  "option": [
+    {
+      "type": "echartsTitle",
+      "key": "echartsTitle",
+      "value": {
+        "show": true,
+        "text": "基础地图",
+        "color": "",
+        "size": "",
+        "family": "",
+        "top": "",
+        "right": "",
+        "bottom": "",
+        "left": ""
+      }
+    },
+    {
+      "type": "echartsLegend",
+      "key": "echartsLegend",
+      "value": {
+        "show": true,
+        "color": "",
+        "size": "",
+        "family": "",
+        "top": "",
+        "right": "",
+        "bottom": "",
+        "left": "",
+        "type": "plain",
+        "orient": "horizontal"
+      }
+    },
+    {
+      "type": "echartsGrid",
+      "key": "echartsGrid",
+      "value": {
+        "show": true,
+        "color": ""
+      }
+    },
+    {
+      "type": "echartsAxis",
+      "key": "echartsAxis",
+      "value": {
+        "xAxisShow": true,
+        "yAxisShow": true,
+        "xAxisColor": "",
+        "xAxisSize": "",
+        "xAxisFamily": "",
+        "yAxisColor": "",
+        "yAxisSize": "",
+        "yAxisFamily": ""
+      }
+    },
+    {
+      "type": "echartsDataZoom",
+      "key": "echartsDataZoom",
+      "value": {
+        "xShow": true,
+        "yShow": true,
+        "color": "",
+        "backgroundColor": ""
+      }
+    },
+    {
+      "type": "echartsTooltip",
+      "key": "echartsTooltip",
+      "value": {
+        "show": true,
+        "size": "",
+        "family": "",
+        "color": "",
+        "backgroundColor": ""
+      }
+    },
+    {
+      "type": "echartsAxisPointer",
+      "key": "echartsAxisPointer",
+      "value": {
+        "show": true
+      }
+    }
+  ]
+}

@@ -11,6 +11,7 @@ class Module {
         this.riftBoxNumberDoms = cp.query('.number', this.riftBoxDom, true);
         this.axisLineDoms = cp.query('.axis-line', DOMAIN, true);
         this.containerDom = cp.query('.container', DOMAIN);
+        this.rightMenuDom = cp.query('.right-menu', DOMAIN);
     }
 
     INIT() {
@@ -35,6 +36,9 @@ class Module {
         cp.on('.slice', this.sceneDom, 'drag', t => this.dragSlice(t));
         cp.on('.slice', this.sceneDom, 'resize', t => this.resizeSlice(t));
         cp.on(".slice", this.sceneDom, 'mousedown', t => this.toggleActive(t));
+        //右键
+        cp.on(".slice", this.sceneDom, 'mousedown', (t, _, e) => this.showRightMenu(t, _, e));
+        cp.on(".right-menu", DOMAIN, 'blur', () => this.hideRightMenu());
 
         //移动标尺线
         cp.on('.line-X', DOMAIN, 'drag', t => {
@@ -58,6 +62,23 @@ class Module {
         document.onkeyup = e => this.keyupScale(e);
         cp.on('.container', DOMAIN, 'mousewheel', (_, __, e) => this.mousewheelScale(e));
 
+    }
+
+    showRightMenu(target, _, evt) {
+        if (evt.button === 2) {
+            let x = evt.clientX - 150,
+                y = evt.clientY - 30;
+            cp.css(this.rightMenuDom, {
+                top: y + "px",
+                left: x + "px"
+            });
+            cp.show(this.rightMenuDom);
+            setTimeout(() => this.rightMenuDom.focus(), 100)
+        }
+    }
+
+    hideRightMenu() {
+        cp.hide(this.rightMenuDom)
     }
 
     /**

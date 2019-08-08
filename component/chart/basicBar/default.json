@@ -23,16 +23,17 @@
     "bottom": 0,
     "left": 0
   },
-  "data": {
-
-  },
+  "data": [
+    ["","衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"],
+    ["销量",5, 20, 36, 10, 10, 20]
+  ],
   "option": [
     {
       "type": "echartsTitle",
       "key": "echartsTitle",
       "value": {
         "show": true,
-        "text": "基础折线图",
+        "text": "基础柱状图",
         "color": "",
         "size": "",
         "family": "",

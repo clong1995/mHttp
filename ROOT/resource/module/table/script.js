@@ -12,6 +12,15 @@ class Module {
         this.tempChange = null;
         this.onchange = null;
         this.tempActive = null;
+
+        this._sheetStyle()
+    }
+
+    //内置样式
+    _sheetStyle() {
+        cp.setSheet('#' + NAME, {
+            height: "100%"
+        });
     }
 
     EVENT() {
@@ -135,6 +144,11 @@ class Module {
     }
 
     setData(data) {
+        //清空数据
+        cp.empty(this.titleDom);
+        cp.empty(this.rowsDom);
+        cp.empty(this.leftDom);
+        //加载数据
         if (data == null) {
             data = [
                 ["", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],

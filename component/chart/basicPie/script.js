@@ -8,48 +8,22 @@ class Module {
     }
 
     INIT() {
-        cp.loadScriptAsync("/resource/lib/echarts/echarts.min.js");
-        let myChart = echarts.init(this.echartsDom);
-        let option = {
+        cp.loadScriptAsync("/resource/lib/echarts/echarts.js");
+        this.myChart = echarts.init(this.echartsDom);
+        this.option = {
             title: {
-                text: '某站点用户访问来源',
-                subtext: '纯属虚构',
-                x: 'center'
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                text: '基础饼状图'
             },
             legend: {
-                orient: 'vertical',
-                left: 'left',
-                data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+                data: []
             },
             series: [
                 {
-                    name: '访问来源',
                     type: 'pie',
-                    radius: '55%',
-                    center: ['50%', '60%'],
-                    data: [
-                        {value: 335, name: '直接访问'},
-                        {value: 310, name: '邮件营销'},
-                        {value: 234, name: '联盟广告'},
-                        {value: 135, name: '视频广告'},
-                        {value: 1548, name: '搜索引擎'}
-                    ],
-                    itemStyle: {
-                        emphasis: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
+                    data: []
                 }
             ]
         };
-
-        myChart.setOption(option);
     }
 
     /**
@@ -59,7 +33,38 @@ class Module {
      * @constructor
      */
     OPTION(key, value) {
-        console.log(key, value);
-
+        console.log(key, "=>", value);
+        //相应大小变化
+        switch (key) {
+            //改变大小
+            case "width":
+            case "height":
+                this.myChart.resize();
+                break;
+            //改变数据
+            case "data":
+                this.option.series[0].data = [];
+                this.option.legend.data = [];
+                value.forEach((v, i) => {
+                    if (!i) {
+                        //表头
+                        v.forEach((vv, ii) => {
+                            if (ii) {
+                                this.option.legend.data.push(vv);
+                                this.option.series[0].data.push({
+                                    name: vv
+                                })
+                            }
+                        })
+                    } else {
+                        //数据
+                        v.forEach((vv, ii) => {
+                            if (ii) this.option.series[0].data[--ii]["value"] = vv
+                        });
+                    }
+                });
+                this.myChart.setOption(this.option);
+                break
+        }
     }
 }
