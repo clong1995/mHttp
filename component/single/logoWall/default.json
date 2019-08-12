@@ -1,8 +1,8 @@
 {
-  "title": "简介01",
+  "title": "logo墙",
   "size": {
-    "width": 530,
-    "height": 390
+    "width": 842,
+    "height": 842
   },
   "position": {
     "top": 0,
@@ -24,17 +24,5 @@
     "left": 0
   },
   "option": [
-    {
-      "type": "text",
-      "key": "text",
-      "name": "文字",
-      "value": "妥协和迁就就是万恶之源。"
-    },
-    {
-      "type": "file",
-      "key": "file",
-      "name": "文件",
-      "value": ""
-    }
   ]
 }

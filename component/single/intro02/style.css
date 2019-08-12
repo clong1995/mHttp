@@ -18,6 +18,12 @@
     height: calc(100% - 10px - 105px - 155px);
     margin: 5px;
     background: var(--background);
+    pointer-events: none;
+}
+
+.wrap > .inner > .content > .media {
+    width: 100%;
+    height: 100%;
 }
 
 .wrap > .inner > .title {
@@ -34,7 +40,8 @@
     line-height: 50px;
 }
 
-.wrap > .inner > .title > .t2 {
+.wrap > .inner > .title > .t2,
+.wrap > .inner > .title > .t3 {
     width: 100%;
     height: 25px;
     line-height: 25px;

@@ -11,6 +11,7 @@ class Module {
         this.riftBoxNumberDoms = cp.query('.number', this.riftBoxDom, true);
         this.axisLineDoms = cp.query('.axis-line', DOMAIN, true);
         this.containerDom = cp.query('.container', DOMAIN);
+        //右键菜单
         this.rightMenuDom = cp.query('.right-menu', DOMAIN);
     }
 
@@ -29,13 +30,19 @@ class Module {
         this.loadGridDom();
         this.loadRift();
         this.loadRange();
+
+
     }
 
     EVENT() {
+
         //slice
         cp.on('.slice', this.sceneDom, 'drag', t => this.dragSlice(t));
+
         cp.on('.slice', this.sceneDom, 'resize', t => this.resizeSlice(t));
+
         cp.on(".slice", this.sceneDom, 'mousedown', t => this.toggleActive(t));
+
         //右键
         cp.on(".slice", this.sceneDom, 'mousedown', (t, _, e) => this.showRightMenu(t, _, e));
         cp.on(".right-menu", DOMAIN, 'blur', () => this.hideRightMenu());
@@ -62,6 +69,92 @@ class Module {
         document.onkeyup = e => this.keyupScale(e);
         cp.on('.container', DOMAIN, 'mousewheel', (_, __, e) => this.mousewheelScale(e));
 
+        //删除
+        cp.on('.delete', this.rightMenuDom, 'click', t => this.deleteSlice(t));
+        //上移
+        cp.on('.move-up', this.rightMenuDom, 'click', t => this.moveUpSlice(t));
+        //下移
+        cp.on('.move-down', this.rightMenuDom, 'click', t => this.moveDownSlice(t));
+    }
+
+    //上移一层
+    moveUpSlice(target) {
+        //当前层
+        let currData = this.APP.getComponentData(this.rightClickId);
+        let currIndex = currData.index;
+        let currDom = cp.query("#slice_" + this.rightClickId, this.sceneDom);
+
+        //找到上一层
+        let prevData = this.APP.prevComponentData(this.rightClickId);
+        let prevId = prevData.id;
+        let prevDom = cp.query("#slice_" + prevId, this.sceneDom);
+        let prevIndex = prevData.index;
+
+        //不最顶层
+        if (prevId !== this.rightClickId) {
+            //交换slice层
+            cp.css(currDom, {
+                zIndex: prevIndex
+            });
+            cp.css(prevDom, {
+                zIndex: currIndex
+            });
+
+            //交换数据
+            currData.index = prevIndex;
+            prevData.index = currIndex;
+            this.APP.changeComponentDataPosition(this.rightClickId, prevId);
+
+            //交换左边图层
+            MODULE("coverage").reloadList(this.rightClickId);
+        }
+        target.parentNode.blur();
+    }
+
+    moveDownSlice(target) {
+        //当前层
+        let currData = this.APP.getComponentData(this.rightClickId);
+        let currIndex = currData.index;
+        let currDom = cp.query("#slice_" + this.rightClickId, this.sceneDom);
+
+        //找到上一层
+        let nextData = this.APP.nextComponentData(this.rightClickId);
+        let nextId = nextData.id;
+        let nextDom = cp.query("#slice_" + nextId, this.sceneDom);
+        let nextIndex = nextData.index;
+
+        //不最底层
+        if (nextId !== this.rightClickId) {
+            //交换slice层
+            cp.css(currDom, {
+                zIndex: nextIndex
+            });
+            cp.css(nextDom, {
+                zIndex: currIndex
+            });
+
+            //交换数据
+            currData.index = nextIndex;
+            nextData.index = currIndex;
+            this.APP.changeComponentDataPosition(this.rightClickId, nextId);
+
+            //交换左边图层
+            MODULE("coverage").reloadList(this.rightClickId);
+        }
+        target.parentNode.blur();
+    }
+
+
+    deleteSlice(target) {
+        //删除Slice
+        cp.remove(cp.query("#slice_" + this.rightClickId, this.sceneDom));
+        //删除左侧图层
+        MODULE("coverage").delete(this.rightClickId);
+        //删除数据
+        this.APP.deleteComponentData(this.rightClickId);
+        //删除右侧编辑器
+        MODULE("edit").deleteComponentEdit();
+        target.parentNode.blur();
     }
 
     showRightMenu(target, _, evt) {
@@ -73,7 +166,8 @@ class Module {
                 left: x + "px"
             });
             cp.show(this.rightMenuDom);
-            setTimeout(() => this.rightMenuDom.focus(), 100)
+            setTimeout(() => this.rightMenuDom.focus(), 100);
+            this.rightClickId = target.id.split("_")[1];
         }
     }
 

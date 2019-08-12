@@ -10,10 +10,9 @@ class App {
 
         //============= TODO 开发故意为之 =======\\
         setTimeout(() => {
-            this.getModule("menu").getComponent("single/intro03")
-        }, 300);
+            this.getModule("menu").getComponent("single/logoWall");
+        }, 500);
         //====================================//
-
 
         //没有项目直接调走
         //!project_scene && cp.link('/content')
@@ -114,6 +113,10 @@ class App {
         return this.scene.page
     }
 
+    getComponentDataList() {
+        return this.scene.components;
+    }
+
     //获取配置数据
     getComponentData(id) {
         let compontent = null;
@@ -124,5 +127,74 @@ class App {
             }
         });
         return compontent
+    }
+
+    deleteComponentData(id) {
+        this.scene.components.some((v, i) => {
+            if (v.id === id) {
+                this.scene.components.splice(i, 1);
+                return true
+            }
+        });
+    }
+
+    prevComponentData(id) {
+        let compontent = null;
+        this.scene.components.some((v, i) => {
+            if (v.id === id) {
+                if (i === this.scene.components.length - 1) {
+                    compontent = v;
+                } else {
+                    compontent = this.scene.components[i + 1];
+                }
+                return true
+            }
+        });
+        return compontent
+    }
+
+
+    nextComponentData(id) {
+        let compontent = null;
+        this.scene.components.some((v, i) => {
+            if (v.id === id) {
+                if (i === 0) {
+                    compontent = v;
+                } else {
+                    compontent = this.scene.components[i - 1];
+                }
+                return true
+            }
+        });
+        return compontent
+    }
+
+    changeComponentDataPosition(curr, dist) {
+        let distItem = null;
+        let distIndex = null;
+        this.scene.components.some((v, i) => {
+            if (v.id === dist) {
+                distItem = v;
+                distIndex = i;
+                return true
+            }
+        });
+
+        let currItem = null;
+        let currIndex = null;
+        this.scene.components.some((v, i) => {
+            if (v.id === curr) {
+                currItem = v;
+                currIndex = i;
+                return true
+            }
+        });
+
+        if (distItem === null || distIndex === null || currItem === null || currIndex === null) {
+            return;
+        }
+
+        this.scene.components[distIndex] = currItem;
+        this.scene.components[currIndex] = distItem;
     }
 }

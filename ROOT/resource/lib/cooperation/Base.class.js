@@ -1099,12 +1099,15 @@ class Base {
         this._domEvent.get(target).get(selecter).get(evt).add(callback);
     }
 
+
     _excEvent(e, target) {
         //查找所有元素是否有事件
         let path = e.path || (e.composedPath && e.composedPath());
-        let domLen = path.length - 4 - 1;//排除body,html,document,window
+        //排除body,html,document,window
+        let domLen = path.length - 4 - 1;
         //冒泡
-        for (; domLen + 1; --domLen) this._onFunction(path[domLen], target, e);
+        for (; domLen + 1; --domLen)
+            this._onFunction(path[domLen], target, e);
     }
 
 
@@ -1123,16 +1126,20 @@ class Base {
         if (node.id) keyArr.push('#' + node.id);
         node.classList.forEach(v => keyArr.push('.' + v));
 
-        //遍历方法树
+        //根据绑定事件的元素查找事件
         let eventTarget = this._domEvent.get(target);
+        //冒泡找绑定事件的元素的子元素，看有没有事件
         keyArr.forEach(key => {
+            //找到元素上的事件
             if (eventTarget.get(key) && eventTarget.get(key).has(event)) {
+                //特殊事件的处理，比如拖拽和改变大小是由 mousedown mousemove mouseover 组合成的
                 if (event === 'mousedown') {
                     eventTarget.get(key).has('drag') && eventTarget.get(key).get('drag').forEach(v => this._drag(node, realTarget, v));
                 }
                 if (event === 'mouseover') {
                     eventTarget.get(key).has('resize') && eventTarget.get(key).get('resize').forEach(v => this._resize(node, realTarget, v));
                 }
+
                 eventTarget.get(key).get(event).forEach(v => typeof v === 'function' && v(node, realTarget, e))
             }
         });
@@ -1208,13 +1215,14 @@ class Base {
         //执行，只改变手势
         target.onmousemove = e => {
             if (isChangeSize) return;
-            if (e.layerX * offset < padding) { //左边
+
+            if (e.layerX * offset < padding * offset) { //左边
                 cursor = 'w-resize'
-            } else if (e.layerX * offset > tWidth - padding) {//右边
+            } else if (e.layerX * offset > tWidth - padding * offset) {//右边
                 cursor = 'e-resize';
-            } else if (e.layerY * offset < padding) {//上
+            } else if (e.layerY * offset < padding * offset) {//上
                 cursor = 'n-resize'
-            } else if (e.layerY * offset > tHeight - padding) {//下
+            } else if (e.layerY * offset > tHeight - padding * offset) {//下
                 cursor = 's-resize'
             } else {
                 cursor = 'default'
@@ -1222,11 +1230,12 @@ class Base {
             target.style.cursor = cursor;
         };
 
+
         target.onmousedown = () => {
             getPositionSize();
             let x0 = window.event.screenX * offset,
                 y0 = window.event.screenY * offset;
-
+            
             //绑定移动事件
             window.onmousemove = moveEvent => {
                 isChangeSize = true;

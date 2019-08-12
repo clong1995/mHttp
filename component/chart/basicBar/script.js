@@ -8,7 +8,10 @@ class Module {
     }
 
     INIT() {
+
         cp.loadScriptAsync("/resource/lib/echarts/echarts.min.js");
+
+
         this.myChart = echarts.init(this.echartsDom);
         this.option = {
             title: {

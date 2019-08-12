@@ -9,11 +9,21 @@ class Module {
     }
 
     INIT() {
-        this.initList();
+
     }
 
-    initList() {
-
+    reloadList(id) {
+        let layerHtml = "";
+        let list = this.APP.getComponentDataList();
+        for (let i = list.length - 1; i >= 0; i--) {
+            let v = list[i];
+            layerHtml += `<div class="layer ${v.id === id ? "active" : ""}" id="layer_${v.id}">
+                            <div class="num">${v.index - 10}</div>
+                            <div class="thumbnail"></div>
+                            <input class="name" value="${v.nickname || v.title}"/>
+                        </div>`;
+        }
+        cp.html(this.listDom, layerHtml)
     }
 
     changeLayer(target1, target2) {
@@ -44,6 +54,10 @@ class Module {
         cp.toggleActive(layerDom)
     }
 
+    getLayerDom() {
+        return cp.query("#layer_" + id, this.listDom);
+    }
+
     toggleActive(target) {
         let id = target.id.split("_")[1];
         cp.toggleActive(target);
@@ -61,5 +75,10 @@ class Module {
         let layerDom = cp.query("#layer_" + id, this.listDom);
 
         cp.html(cp.query(".name", layerDom), componentData.title)
+    }
+
+    delete(id) {
+        let layerDom = cp.query("#layer_" + id, this.listDom);
+        cp.remove(layerDom);
     }
 }

@@ -60,24 +60,12 @@ class Module {
                     {
                         id: "single/history01",
                         name: "历程01"
-                    }, {
-                        id: "single/history02",
-                        name: "历程02"
-                    }, {
-                        id: "single/history03",
-                        name: "历程03"
                     }
                 ],
                 display: [
                     {
-                        id: "single/display01",
-                        name: "展示01"
-                    }, {
-                        id: "single/display2",
-                        name: "展示02"
-                    }, {
-                        id: "single/display03",
-                        name: "展示03"
+                        id: "single/logoWall",
+                        name: "logo墙"
                     }
                 ]
             }
@@ -443,8 +431,8 @@ class Module {
     componentScriptCompiler(scriptStr, defaultData) {
         //兼容golang安全核心
         scriptStr = scriptStr.replace("class", "clazz");
-        scriptStr = scriptStr.replace("DOMAI", "DOMAI_");
-        scriptStr = scriptStr.replace("NAM", "NAM_");
+        scriptStr = scriptStr.replace(/DOMAI/g, "DOMAI_");
+        scriptStr = scriptStr.replace(/NAM/g, "NAM_");
         //简写
         scriptStr = scriptStr.replace(/DOMAI_N/g, "this.COMP");
         scriptStr = scriptStr.replace(/NAM_E/g, "this.COMPNAM");

@@ -4,12 +4,12 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 1024,
-        height: 576,
-        minWidth: 1024,
-        minHeight: 576,
+        width: 1100,
+        height: 618,
+        minWidth: 1100,
+        minHeight: 618,
         //frame: false,//是否有菜单栏
-        autoHideMenuBar: true,
+        autoHideMenuBar: true
         //fullscreen: true
     });
     mainWindow.loadURL(url + "/main");

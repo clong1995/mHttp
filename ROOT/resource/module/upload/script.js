@@ -75,6 +75,7 @@ class Module {
                     });
                 },
                 complete(res) {
+                    res.type = file.type;
                     res.name = file.name;
                     res.url = _this.downloadUrl + "/" + res.key;
                     res.size = size;

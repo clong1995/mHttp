@@ -1,6 +1,7 @@
 class Module {
     DOM() {
-        this.multiDom = cp.query(".multi", DOMAIN);
+        this.titleDom = cp.query(".title", DOMAIN);
+        this.contentDom = cp.query(".content", DOMAIN);
     }
 
     EVENT() {
@@ -19,45 +20,29 @@ class Module {
      */
     OPTION(key, value) {
         console.log(key, value);
-        return;
         switch (key) {
-            case "textarea":
-                value = value.replace(/\r\n/g, "<br>");
-                value = value.replace(/\n/g, "<br>");
-                cp.html(this.multiDom, value);
+            case "text":
+                cp.html(this.titleDom, value);
                 break;
-            case "textAlign":
-                if (value === "center") {//居中
-                    cp.addClass(this.multiDom, "center");
-                    cp.removeClass(this.multiDom, "left");
-                    cp.removeClass(this.multiDom, "right");
+            case "file":
+                if (value === "") {
+                    return
                 }
-                if (value === "left") {//左
-                    cp.removeClass(this.multiDom, "center");
-                    cp.addClass(this.multiDom, "left");
-                    cp.removeClass(this.multiDom, "right");
+                let arr = value.split("||");
+                if (arr.length !== 2) {
+                    return
                 }
-                if (value === "right") {//右
-                    cp.removeClass(this.multiDom, "center");
-                    cp.removeClass(this.multiDom, "left");
-                    cp.addClass(this.multiDom, "right");
+                let mediaDom = null;
+                if (arr[0].startsWith("image")) {
+                    mediaDom = new Image();
+                    mediaDom.src = arr[1];
+                } else {
+                    //TODO 视频
                 }
+                cp.empty(this.contentDom);
+                cp.addClass(mediaDom, "media");
+                cp.append(this.contentDom, mediaDom);
                 break;
-            /*case "font/size":
-                cp.css(this.multiDom, {
-                    fontSize: value + "px"
-                });
-                break;
-            case "font/family":
-                cp.css(this.multiDom, {
-                    fontFamily: value
-                });
-                break;
-            case "font/color":
-                cp.css(this.multiDom, {
-                    color: value
-                });
-                break;*/
             default:
         }
     }

@@ -232,6 +232,24 @@ class Module {
             let key = cp.getData(target, "id");
             let value = target.value;
 
+            //对文件的特殊处理
+            if (target.type === "file") {
+                //TODO 超大，则使用文件码
+                //调用上传组件
+                MODULE("upload").upload(target, res => {
+                    value = res.type + "||" + res.url;
+                    componentData.option.some(v => {
+                        if (v.key === key) {
+                            v.value = value;
+                            return true
+                        }
+                    });
+                    //通知到组件
+                    this.setComponentEntity(id, key, value, this.componentDom.name);
+                });
+                return;
+            }
+
             //映射到数据文件
             let keyArr = key.split("/");
             if (keyArr.length === 2) {
@@ -242,14 +260,14 @@ class Module {
                     }
                 });
             } else {
+                //保存配置
                 componentData.option.some(v => {
                     if (v.key === key) {
                         v.value = value;
                         return true
                     }
-                })
+                });
             }
-
             //通知到组件
             this.setComponentEntity(id, key, value, this.componentDom.name);
         }
@@ -283,6 +301,10 @@ class Module {
         let id = idstr.split("_")[1];
         MODULE("canvas").removeActiveById(id);
         MODULE("coverage").removeActiveById(id);
+    }
+
+    deleteComponentEdit() {
+        cp.html(this.componentDom, `<div class="info centerWrap">请选中一个组件</div>`);
     }
 
     activeComponentEdit(target) {
@@ -408,6 +430,7 @@ class Module {
                         </div>
                     `;
                     break;
+
                 //字体选择
                 case "font":
                     editHtml += `
@@ -428,6 +451,7 @@ class Module {
                         </div>
                     `;
                     break;
+
                 //排版
                 case "compose":
                     editHtml += `
@@ -439,6 +463,7 @@ class Module {
                         </div>
                     `;
                     break;
+
                 //数字输入
                 case "number":
                     editHtml += `
@@ -448,6 +473,7 @@ class Module {
                         </div>
                     `;
                     break;
+
                 //对齐选择
                 case "align":
                     let align = [
@@ -466,6 +492,7 @@ class Module {
                         </div>
                     `;
                     break;
+
                 //文本域名
                 case "textarea":
                     editHtml += `
@@ -475,7 +502,16 @@ class Module {
                     </div>
                     `;
                     break;
-                //
+
+                //文件
+                case "file":
+                    editHtml += `
+                    <div class="row ${v.type}">
+                        <div class="name">${v.name}</div>
+                        <input type="file" class="value input" data-id="${v.key}" data-value="${v.value}">
+                    </div>
+                    `;
+                    break
             }
         });
         editHtml && cp.html(this.componentDom, editHtml, "beforeend");
