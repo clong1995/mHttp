@@ -10,7 +10,7 @@ class App {
 
         //============= TODO 开发故意为之 =======\\
         setTimeout(() => {
-            this.getModule("menu").getComponent("single/logoWall");
+            this.getModule("menu").getComponent("single/history01");
         }, 500);
         //====================================//
 

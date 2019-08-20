@@ -653,7 +653,9 @@ class Base {
         this.trim(sheetStr, {
             char: '}',
             position: 'right'
-        }).split('}').forEach((value, i) => this._firstSheet.insertRule(value + '}', i));
+        }).split('}').forEach((value, i) => {
+            this._firstSheet.insertRule(value + '}', i)
+        });
     }
 
 
@@ -1161,12 +1163,7 @@ class Base {
 
 
         //修改大小时候不拖动
-        if (
-            target.style.cursor === 'n-resize' ||
-            target.style.cursor === 'e-resize' ||
-            target.style.cursor === 's-resize' ||
-            target.style.cursor === 'w-resize'
-        ) return;
+        if (target.style.cursor !== 'default') return;
 
         //执行
         window.onmousemove = e => {
@@ -1191,9 +1188,7 @@ class Base {
         //父元素有缩放，转化偏移量
         let offset = 1;
         let zoom = target.parentNode.style.zoom;
-        if (zoom) {
-            offset = 1 / parseFloat(zoom)
-        }
+        if (zoom) offset = 1 / parseFloat(zoom);
 
         let isChangeSize = false;
         let padding = 10;
@@ -1216,17 +1211,21 @@ class Base {
         target.onmousemove = e => {
             if (isChangeSize) return;
 
-            if (e.layerX * offset < padding * offset) { //左边
-                cursor = 'w-resize'
-            } else if (e.layerX * offset > tWidth - padding * offset) {//右边
-                cursor = 'e-resize';
-            } else if (e.layerY * offset < padding * offset) {//上
-                cursor = 'n-resize'
-            } else if (e.layerY * offset > tHeight - padding * offset) {//下
-                cursor = 's-resize'
-            } else {
-                cursor = 'default'
-            }
+            let top = e.layerY * offset < padding * offset,
+                bottom = e.layerY * offset > tHeight - padding * offset,
+                left = e.layerX * offset < padding * offset,
+                right = e.layerX * offset > tWidth - padding * offset;
+
+            if (left && !top && !bottom) cursor = 'w-resize';//左
+            else if (right && !top && !bottom) cursor = 'e-resize';//右
+            else if (top && !left && !right) cursor = 'n-resize';//上
+            else if (bottom && !left && !right) cursor = 's-resize';//下
+            else if (left && top) cursor = 'nw-resize';//左上
+            else if (left && bottom) cursor = 'sw-resize';//左下
+            else if (right && top) cursor = 'ne-resize';//右上
+            else if (right && bottom) cursor = 'se-resize';//右下
+            else cursor = 'default';//无动作
+
             target.style.cursor = cursor;
         };
 
@@ -1235,24 +1234,43 @@ class Base {
             getPositionSize();
             let x0 = window.event.screenX * offset,
                 y0 = window.event.screenY * offset;
-            
+
             //绑定移动事件
             window.onmousemove = moveEvent => {
                 isChangeSize = true;
+                //位移差
                 diffX = moveEvent.screenX * offset - x0;
                 diffY = moveEvent.screenY * offset - y0;
 
+                let
+                    top = () => {
+                        target.style.height = (tHeight - diffY) + 'px';
+                        target.style.top = (tTop + diffY) + 'px';
+                    },
+                    bottom = () => target.style.height = (tHeight + diffY) + 'px',
+                    left = () => {
+                        target.style.width = (tWidth - diffX) + 'px';
+                        target.style.left = (tLeft + diffX) + 'px';
+                    },
+                    right = () => target.style.width = (tWidth + diffX) + 'px';
+
                 //改变大小
-                if (cursor === 'e-resize') {//右边拉动
-                    target.style.width = (tWidth + diffX) + 'px';
-                } else if (cursor === 's-resize') {//下边拉动
-                    target.style.height = (tHeight + diffY) + 'px';
-                } else if (cursor === 'w-resize') {//左边拉动
-                    target.style.width = (tWidth - diffX) + 'px';
-                    target.style.left = (tLeft + diffX) + 'px';
-                } else if (cursor === 'n-resize') {//上边拉动
-                    target.style.height = (tHeight - diffY) + 'px';
-                    target.style.top = (tTop + diffY) + 'px';
+                if (cursor === 'e-resize') right(); //右边拉动
+                else if (cursor === 's-resize') bottom();//下边拉动
+                else if (cursor === 'w-resize') left(); //左边拉动
+                else if (cursor === 'n-resize') top();//上边拉动
+                else if (cursor === 'nw-resize') {//左上
+                    left();
+                    top();
+                } else if (cursor === 'ne-resize') {//右上
+                    right();
+                    top();
+                } else if (cursor === 'sw-resize') {//左下
+                    left();
+                    bottom();
+                } else if (cursor === 'se-resize') {//右下
+                    right();
+                    bottom();
                 }
             };
 
@@ -1464,7 +1482,6 @@ class Base {
         let rulesText = selector + '{';
         for (let k in rules)
             rulesText += this.underscored(k) + ':' + rules[k] + ';';
-
         this._lastSheet.insertRule(rulesText + '}', this._lastSheet.cssRules.length);
         return selector;
     }
@@ -1817,7 +1834,8 @@ class Base {
                 cb && cb(item, i, arr);
         }
         return arr;
-    };
+    }
+    ;
 
     /**
      * 判断dom元素的类型
@@ -1847,7 +1865,8 @@ class Base {
             }
         });
         return result;
-    };
+    }
+    ;
 
 
     /***
@@ -1945,7 +1964,8 @@ class Base {
         time.split(':').forEach((v, i) =>
             s += parseInt(v.value) * Math.pow(60, 2 - i));
         return s;
-    };
+    }
+    ;
 
     checkConn(timer, cb) {
         let url = window.location.href;
@@ -1960,7 +1980,8 @@ class Base {
                 cb(false)
             }
         }, timer);
-    };
+    }
+    ;
 
     addActive(dom) {
         this.addClass(dom, 'active');
@@ -1993,7 +2014,7 @@ class Base {
         this.attr(dom, attr)
     }
 
-    //TODO https://blog.csdn.net/wconvey/article/details/54171693
+//TODO https://blog.csdn.net/wconvey/article/details/54171693
 
     /**
      * 设置临时的数据

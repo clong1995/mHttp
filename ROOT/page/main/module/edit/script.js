@@ -434,6 +434,7 @@ class Module {
                 //字体选择
                 case "font":
                     editHtml += `
+                        ${v.title ? `<div class="small-title">${v.title}</div>` : ""}
                         <div class="row ${v.type}">
                             <div class="name">字体</div>
                             <input type="number" class="value input" data-id="${v.key}/size" value="${v.value.size}">
@@ -445,9 +446,9 @@ class Module {
                         </div>
                         <div class="br"></div>
                         <div class="row ${v.type}">
-                            <div class="name">${v.name}</div>
-                            <input type="color" class="value input" data-id="${v.key}" value="${v.value}"><input 
-                                    type="text" class="value input" data-id="${v.key}" value="${v.value}">
+                            <div class="name">字色</div>
+                            <input type="color" class="value input" data-id="${v.key}/color" value="${v.value.color}"><input 
+                                    type="text" class="value input" data-id="${v.key}/color" value="${v.value.color}">
                         </div>
                     `;
                     break;

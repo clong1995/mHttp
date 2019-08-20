@@ -420,7 +420,7 @@ class Module {
                 let brr = v.split("{");
                 let name = "";
                 let crr = brr[0].split(",");
-                crr.forEach(cv => name += scope + ">" + cv + ",");
+                crr.forEach(cv => name += scope + " > " + cv + ",");
                 name = cp.trim(name, {char: ",", position: "right"});
                 newStr += name + "{" + brr[1] + "}"
             }
@@ -432,16 +432,13 @@ class Module {
         //兼容golang安全核心
         scriptStr = scriptStr.replace("class", "clazz");
         scriptStr = scriptStr.replace(/DOMAI/g, "DOMAI_");
-        scriptStr = scriptStr.replace(/NAM/g, "NAM_");
         //简写
         scriptStr = scriptStr.replace(/DOMAI_N/g, "this.COMP");
-        scriptStr = scriptStr.replace(/NAM_E/g, "this.COMPNAM");
         //获得构造控制权
         scriptStr = scriptStr.replace(/clazz (\S*) {/, `
              clazz Module {
                  constructor(COMP) {
                      this.COMP = COMP;
-                     this.COMPNAM = "comp_${defaultData.id}";
                      this.DOM();
                      this.INIT();
                      this.EVENT();

@@ -7,6 +7,12 @@ class Module {
         this.rangeBoxRangeDom = cp.query('.range', this.rangeBoxDom);
         this.axisBoxDom = cp.query('.axis-box', this.tooBarDom);
         this.gridBoxDom = cp.query('.grid-box', this.tooBarDom);
+        //鹰眼
+        this.overviewBoxDom = cp.query('.overview-box', this.tooBarDom);
+        this.viewDom = cp.query('.view', this.overviewBoxDom);
+        this.viewInnerDom = cp.query('.inner', this.viewDom);
+        //this.viewGlassDom = cp.query('.glass', this.viewInnerDom);
+        //拼缝
         this.riftBoxDom = cp.query('.rift-box', this.tooBarDom);
         this.riftBoxNumberDoms = cp.query('.number', this.riftBoxDom, true);
         this.axisLineDoms = cp.query('.axis-line', DOMAIN, true);
@@ -30,8 +36,6 @@ class Module {
         this.loadGridDom();
         this.loadRift();
         this.loadRange();
-
-
     }
 
     EVENT() {
@@ -63,6 +67,10 @@ class Module {
         cp.on('.number', this.rangeBoxDom, 'change', t => this.changeRange(t));
         cp.on('.range', this.rangeBoxDom, 'change', t => this.changeRange(t));
         cp.on('.checkbox', this.rangeBoxDom, 'click', t => this.changeScale(t));
+        //鹰眼
+        cp.on('.checkbox', this.overviewBoxDom, 'click', t => this.changeOverview(t));
+        cp.on('.glass', this.viewInnerDom, 'drag', t => {
+        });
 
         //滚轮缩放
         document.onkeydown = e => this.keydownScale(e);
@@ -75,6 +83,31 @@ class Module {
         cp.on('.move-up', this.rightMenuDom, 'click', t => this.moveUpSlice(t));
         //下移
         cp.on('.move-down', this.rightMenuDom, 'click', t => this.moveDownSlice(t));
+    }
+
+    changeOverview(target) {
+        let checked = target.checked;
+        if (checked) {
+            let pageData = this.APP.getPageData();
+            let size = cp.autoSize({
+                w: 150,
+                h: 150
+            }, {
+                w: pageData.size.width,
+                h: pageData.size.height
+            }, 5);
+            cp.css(this.viewInnerDom, {
+                width: size.w + "px",
+                height: size.h + "px",
+                top: size.t + "px",
+                left: size.l + "px"
+            });
+            cp.show(this.viewDom);
+
+        } else {
+            cp.hide(this.viewDom);
+
+        }
     }
 
     //上移一层
