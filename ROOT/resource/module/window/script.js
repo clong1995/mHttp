@@ -25,6 +25,7 @@ class Module {
         cp.html(closeDom,"&#xe6f4;");
         let titleDom = cp.query(".window-title", dom);
         cp.append(titleDom, closeDom);
+        cp.show(dom);
     }
 
     //内置样式
@@ -47,10 +48,9 @@ class Module {
                 width: calc(100% + 2px);
                 height: 23px;
                 line-height: 23px;
-                top: -23px;
-                left:-1px;
+                margin:-23px 0 0 -1px;
+                 position: relative;
                 text-align: center;
-                position:relative;
                 border: var(--border);
                 background: var(--background);
             }

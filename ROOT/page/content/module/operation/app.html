@@ -1,12 +1,12 @@
-<div class="display">
+<div class="display disable">
     <i class="iconfont icon alt pic">&#xe62c;</i>
     <i class="iconfont icon alt list">&#xe644;</i>
 </div>
-<div class="search">
+<div class="search disable">
     <i class="iconfont icon">&#xe610;</i>
     <input type="text" class="value input" placeholder="搜索">
 </div>
-<div class="sort">
+<div class="sort disable">
     <i class="iconfont icon">&#xe637;</i>
     <select class="value input">
         <optgroup label="时间">
@@ -30,6 +30,19 @@
     </select>
 </div>
 <div class="built">
-    <button class="button project"><i class="iconfont icon">&#xe64f;</i> 新建项目</button>
-    <button class="button folder"><i class="iconfont icon">&#xe612;</i> 新建文件夹</button>
+    <button class="button project"><i class="iconfont icon">&#xe64f;</i> 新建工程</button>
+    <button class="button folder disable"><i class="iconfont icon">&#xe612;</i> 新建文件夹</button>
+</div>
+
+<!-- 新建工程弹窗 -->
+<div class="add-project hide">
+    <div class="window-container">
+        <div class="window-title">
+            新建工程
+        </div>
+        <div class="body">
+            名称: <input class="name" type="text">
+            <button class="confirm">确定</button>
+        </div>
+    </div>
 </div>

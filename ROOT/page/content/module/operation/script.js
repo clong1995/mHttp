@@ -1,13 +1,40 @@
 class Module {
     DOM() {
-        // this.addContentDom = coo.query('.addContent', DOMAIN);
+        this.addProjectDom = cp.query('.add-project', DOMAIN);
+        this.projectNameDom = cp.query('.name', DOMAIN);
     }
 
     EVENT() {
-        // coo.on('.addBtn', this.domain, 'click', t => this.showStory());
-        // coo.on('.close', this.domain, 'click', t => this.hideStory());
+        cp.on('.project', DOMAIN, 'click', t => this.showAddProject());
+        cp.on('.confirm', this.addProjectDom, 'click', t => this.addProject());
     }
 
     INIT() {
     }
+
+    showAddProject() {
+        MODULE("window").show(this.addProjectDom);
+    }
+
+    addProject() {
+        let name = this.projectNameDom.value;
+        if (name !== "") {
+            cp.ajax(CONF.IxDAddr + "/project/add", {
+                headers: HEAD(),
+                data: {
+                    name: name
+                },
+                success: res => {
+                    if (res.code === 0) {
+                        MODULE("list").loadItem();
+                        cp.hide(this.addProjectDom);
+                    } else {
+                        alert(res.msg);
+                    }
+                }
+            });
+        }
+    }
+
+
 }

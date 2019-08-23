@@ -40,7 +40,8 @@ class Module {
             {name: "雅黑", value: "雅黑"},
             {name: "宋体", value: "宋体"},
         ];
-        this.initPagePanel();
+        //TODO 根据数据加载右侧页面配置
+        //this.initPagePanel();
     }
 
     showDataEdit() {
@@ -314,6 +315,9 @@ class Module {
     }
 
     activeComponentEditById(id) {
+
+        console.log("--------->加载左侧编辑器，不要重复");
+
         let component = this.APP.getComponentData(id);
         this.initComponentPanel(component);
         this.componentDom.id = "component_" + id;

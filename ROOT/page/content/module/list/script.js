@@ -24,36 +24,31 @@ class Module {
     }
 
     loadItem() {
-        //假设获取到的项目
-        let item = [
-            {id: "1", name: "测试"},
-            {id: "2", name: "测试"},
-            {id: "3", name: "测试"},
-            {id: "4", name: "测试"},
-            {id: "5", name: "测试"},
-            {id: "6", name: "测试"},
-            {id: "6", name: "测试"},
-            {id: "6", name: "测试"},
-            {id: "6", name: "测试"},
-            {id: "6", name: "测试"},
-            {id: "6", name: "测试"},
-            {id: "6", name: "测试"},
-            {id: "6", name: "测试"},
-            {id: "6", name: "测试"},
-        ];
-
-        let html = '';
-        item.forEach(v => {
-            html += `<div class="item">
-                <div class="inner"data-id=${v.id}></div>
-            </div>`;
+        cp.ajax(CONF.IxDAddr + "/project/list", {
+            headers: HEAD(),
+            success: res => {
+                if (res.code === 0) {
+                    let html = '';
+                    res.data.forEach(v => {
+                        html += `<div class="item">
+                            <div class="inner"data-id=${v.id}>
+                                <div class="img"></div>
+                                <div class="name">${v.name}</div>
+                            </div>
+                        </div>`;
+                    });
+                    cp.html(DOMAIN, html);
+                } else {
+                    alert(res.msg);
+                }
+            }
         });
-        cp.html(DOMAIN, html);
     }
 
     edit(target) {
-        let id = cp.getData(target, "id");
-        cp.setLocTempData(id);
+        let pid = cp.getData(target, "id");
+        //cp.setLocTempData(id);
+        localStorage.setItem("pid", pid);
         cp.link('/main');
     }
 

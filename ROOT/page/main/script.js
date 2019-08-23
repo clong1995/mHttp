@@ -6,20 +6,23 @@ class App {
 
     //初始化函数
     INIT() {
-        let project_scene = cp.getLocTempData();//项目id
+        this.sceneId = null;
+        //let project_scene = cp.getLocTempData();//项目id
+        //保存项目id
+        let pid = localStorage.getItem("pid");
+
 
         //============= TODO 开发故意为之 =======\\
-        setTimeout(() => {
+        /*setTimeout(() => {
             this.getModule("menu").getComponent("single/history01");
-        }, 500);
+        }, 500);*/
         //====================================//
 
         //没有项目直接调走
-        //!project_scene && cp.link('/content')
-        //加载数据
-        this.loadData();
-        //加载数据编辑器
-        this.loadEditor();
+        if (!pid) {
+            cp.link('/content');
+            return
+        }
     }
 
     //添加事件
@@ -28,39 +31,51 @@ class App {
         cp.on('.close', this.containerDom, 'click', t => this.dateEditClose(t));
     }
 
-    loadData() {
-        //根据项目获取场景
-        this.scene = {
-            project: "测试工程",
-            page: {
-                name: "测试项目",
-                size: {
-                    width: 1920,
-                    height: 1080,
-                },
-                background: {
-                    color: "",
-                    image: "",
+    loadData(sceneId = null, data = null) {
+        if (!data) {
+            let name = "新建页";
+            this.scene = {
+                page: {
+                    name: name,
+                    size: {
+                        width: 1920,
+                        height: 1080
+                    },
+                    background: {
+                        color: "",
+                        image: "",
+                        fill: 0
+                    },
+                    //页面填充方式
                     fill: 0,
+                    //TODO 翻页
+                    flipOver: 1,
+                    //TODO 封面
+                    cover: "xxx",
+                    //TODO 描述
+                    comment: "xxx"
                 },
-                //页面填充方式
-                fill: 0,
-                //TODO 翻页
-                flipOver: 1,
-                //TODO 封面
-                cover: "xxx",
-                //TODO 描述
-                comment: "xxx"
-            },
-            //场景列表，用于渲染切换场景的列表
-            scenes: [],
-            //当前的场景的组件
-            components: []
+                //当前的场景的组件
+                components: []
+            };
+            //执行新建操作
+            this.getModule("back").save();
+        } else {
+            this.scene = data;
+            this.sceneId = sceneId;
         }
+
+        //加载场景
+        this.getModule("canvas").loadScene();
+        this.getModule("edit").initPagePanel();
     }
 
-    loadEditor() {
+    getSceneId() {
+        return this.sceneId;
+    }
 
+    setSceneId(sceneId) {
+        this.sceneId = sceneId;
     }
 
     //关闭数据编辑器
@@ -153,7 +168,6 @@ class App {
         return compontent
     }
 
-
     nextComponentData(id) {
         let compontent = null;
         this.scene.components.some((v, i) => {
@@ -196,5 +210,22 @@ class App {
 
         this.scene.components[distIndex] = currItem;
         this.scene.components[currIndex] = distItem;
+    }
+
+    getSceneById(sid) {
+        cp.ajax(CONF.IxDAddr + "/scene/getById", {
+            headers: HEAD(),
+            data: {
+                id: sid
+            },
+            success: res => {
+                if (res.code === 0) {
+                    //加载场景，赋值给了主页面
+                    this.loadData(sid, JSON.parse(res.data.data));
+                } else {
+                    alert(res.msg);
+                }
+            }
+        })
     }
 }

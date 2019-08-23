@@ -12,7 +12,7 @@ function createWindow() {
         autoHideMenuBar: true
         //fullscreen: true
     });
-    mainWindow.loadURL(url + "/main");
+    mainWindow.loadURL(url + "/login");
     mainWindow.webContents.openDevTools();
     mainWindow.on('closed', () => mainWindow = null)
 }

@@ -1,43 +1,52 @@
 class App {
     DOM() {
-
+        this.signinDom = cp.query(".signin");
+        this.idDom = cp.query(".id > input", this.signinDom);
+        this.pwdDom = cp.query(".pwd > input", this.signinDom);
     }
 
     //初始化函数
     INIT() {
-        this.qrcode = null;
-        this.loadQrcode("http://www.chenglonggege.com?t=123");
-        setTimeout(() => this.reloadQrcode("http://www.chenglonggege.com?t=456"), 1000)
+        //检查token
+        let token = localStorage.getItem("Authorization");
+        if (token) {
+            //跳转
+            cp.link("/content")
+        }
     }
 
     //添加事件
     EVENT() {
-        cp.on('.guest', 'click', () => this.guestLogin());
-
+        cp.on('.submit', this.signinDom, 'click', () => this.submit());
     }
 
-    guestLogin() {
-        let c = confirm("访客模式下仅为试用，数据将不定期清除！！");
-        if (c === true) {
-            cp.link('/main');
-        } else {
-            return;
+    //提交
+    submit() {
+        let id = this.idDom.value,
+            pwd = this.pwdDom.value;
+
+        if (id === "" || pwd === "") {
+            this.getModule("dialog").show({
+                type: "warn",
+                text: "请填写完整账号密码"
+            });
         }
-    }
-
-    loadQrcode(content) {
-        this.qrcode = new QRCode('qrcode', {
-            text: content,
-            width: 180,
-            height: 180,
-            //colorDark: '#000000',
-            //colorLight: '#ffffff',
-            //correctLevel: QRCode.CorrectLevel.H
-        });
-    }
-
-    reloadQrcode(content) {
-        this.qrcode.clear();
-        this.qrcode.makeCode(content);
+        cp.ajax(CONF.IxDAddr + "/auth/signinAndSignup", {
+            data: {
+                email: id,
+                password: pwd
+            },
+            success: res => {
+                if (res.code === 0) {
+                    localStorage.setItem("Authorization", res.data);
+                    cp.link("/content")
+                } else {
+                    this.getModule("dialog").show({
+                        type: "warn",
+                        text: "账号密码错误！"
+                    });
+                }
+            }
+        })
     }
 }

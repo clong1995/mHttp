@@ -32,25 +32,12 @@ class Module {
         this.gridDom = null;
         this.ctrlMousewheel = false;
 
-        this.loadScene();
-        this.loadGridDom();
-        this.loadRift();
-        this.loadRange();
+        //获取数据，加载场景
+        this.getSceneList();
     }
 
     EVENT() {
-
-        //slice
-        cp.on('.slice', this.sceneDom, 'drag', t => this.dragSlice(t));
-
-        cp.on('.slice', this.sceneDom, 'resize', t => this.resizeSlice(t));
-
-        cp.on(".slice", this.sceneDom, 'mousedown', t => this.toggleActive(t));
-
-        //右键
-        cp.on(".slice", this.sceneDom, 'mousedown', (t, _, e) => this.showRightMenu(t, _, e));
         cp.on(".right-menu", DOMAIN, 'blur', () => this.hideRightMenu());
-
         //移动标尺线
         cp.on('.line-X', DOMAIN, 'drag', t => {
         });
@@ -83,6 +70,15 @@ class Module {
         cp.on('.move-up', this.rightMenuDom, 'click', t => this.moveUpSlice(t));
         //下移
         cp.on('.move-down', this.rightMenuDom, 'click', t => this.moveDownSlice(t));
+    }
+
+    dependDomEvent() {
+        //slice
+        cp.on('.slice', this.sceneDom, 'drag', t => this.dragSlice(t));
+        cp.on('.slice', this.sceneDom, 'resize', t => this.resizeSlice(t));
+        cp.on(".slice", this.sceneDom, 'mousedown', t => this.toggleActive(t));
+        //右键
+        cp.on(".slice", this.sceneDom, 'mousedown', (t, _, e) => this.showRightMenu(t, _, e));
     }
 
     changeOverview(target) {
@@ -394,12 +390,28 @@ class Module {
             height: pageData.size.height + 'px',
         });
         this.sceneSize(this.autoScale ? null : this.scale);
-
         cp.append(this.containerDom, this.sceneDom);
-        //加载组件
-        //this.loadComponent(this.APP.scene.components);
+
         //重新计算大小
         window.onresize = () => this.sceneSize(this.autoScale ? null : this.scale);
+        //事件
+        this.dependDomEvent();
+        //加载其他组件
+        this.loadGridDom();
+        this.loadRift();
+        this.loadRange();
+
+        //加载组件
+        this.loadComponent(this.APP.scene.components);
+    }
+
+    //加载来的现成的数据
+    loadComponent(loadedComponentsData) {
+        loadedComponentsData.forEach(v => {
+            //TODO 这里产生了循环内的请求
+            //加载组件，但是不用默认数据，用这个替换
+            MODULE("menu").getComponent(v.name.replace("-", "/"), v);
+        })
     }
 
     /**
@@ -681,4 +693,37 @@ class Module {
         let sliceDom = cp.query("#slice_" + id, this.sceneDom);
         cp.removeActive(sliceDom)
     }
+
+    /**
+     * 获取场景列表，用于切换场景
+     */
+    getSceneList() {
+        cp.ajax(CONF.IxDAddr + "/scene/getListByProject", {
+            headers: HEAD(),
+            data: {
+                projectId: localStorage.getItem("pid")
+            },
+            success: res => {
+                if (res.code === 0) {
+                    if (res.data.length === 0) {
+                        //新的或者空的场景
+                        //TODO 场景切换组件
+
+                        //设置默认数据，赋值给了主页面
+                        this.APP.loadData();
+                    } else {
+                        //已经有的场景
+                        //TODO 场景切换组件
+
+                        //获取第一个数据
+                        this.APP.getSceneById(res.data[0].id);
+                    }
+                } else {
+                    alert(res.msg);
+                }
+            }
+        })
+    }
+
+
 }

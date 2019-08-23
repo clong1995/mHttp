@@ -5,18 +5,20 @@
     <title>IxD</title>
     <link rel="stylesheet" href="/resource/style/public.css">
     <script src="/resource/lib/cooperation/Base.class.js"></script>
-    <script src="/resource/lib/qrcodejs/qrcode.min.js"></script>
+    <script src="/resource/script/public.js"></script>
 </head>
-<body>
-<div class="title">
-    <span class="big">IxD</span>
-</div>
-<div class="qrcode" id="qrcode"></div>
-<div class="text">
-    微信扫码登陆
-</div>
-<div class="guest">
-    访客试用模式
+<body class="centerWrap">
+<module entry="dialog" scope="global"/>
+<div class="login-box">
+    <div class="title">IxD</div>
+    <div class="signin">
+        <div class="id">账号<input type="text"></div>
+        <div class="pwd">密码<input type="password"></div>
+        <div class="submit">确定</div>
+    </div>
+    <div class="txt">
+        未注册用户输入账号密码，可自动完成注册！
+    </div>
 </div>
 </body>
 </html>

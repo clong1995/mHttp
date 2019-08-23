@@ -13,14 +13,33 @@ class Module {
     }
 
     back() {
+        localStorage.removeItem("pid");
         cp.link('/content')
     }
 
+    /**
+     * 更新和保存
+     */
     save() {
-        console.log(this.APP.scene);
-    }
+        let name = this.APP.scene.page.name;
+        let data = JSON.stringify(this.APP.scene);
 
-    showStory() {
-        cp.show(this.addContentDom);
+        cp.ajax(CONF.IxDAddr + "/scene/add", {
+            headers: HEAD(),
+            data: {
+                sceneId: this.APP.getSceneId() || "",
+                projectId: localStorage.getItem("pid"),
+                name: name,
+                data: data
+            },
+            success: res => {
+                if (res.code === 0) {
+                    this.APP.setSceneId(res.data);
+                } else {
+                    alert(res.msg);
+                }
+
+            }
+        })
     }
 }
