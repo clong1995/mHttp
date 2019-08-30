@@ -28,6 +28,8 @@ class Module {
         cp.on('.componentTab', DOMAIN, 'click', t => this.activeComponentEdit(t));
         //改变页面参数
         cp.on('.value', this.pageDom, 'change', t => this.changePage(t));
+        //另存为模板
+        cp.on('.saveTemplate-btn', this.pageDom, 'click', t => this.saveTemplate());
         //改变组件参数
         cp.on('.value', this.componentDom, 'change', t => this.changeComponent(t));
         //编辑器
@@ -42,6 +44,23 @@ class Module {
         ];
         //TODO 根据数据加载右侧页面配置
         //this.initPagePanel();
+    }
+
+    //保存为模板
+    saveTemplate() {
+        let name = this.APP.scene.page.name;
+        let data = JSON.stringify(this.APP.scene);
+
+        cp.ajax(CONF.IxDAddr + "/template/add", {
+            data: {
+                name: name,
+                data: data
+            },
+            success: res => {
+
+
+            }
+        })
     }
 
     showDataEdit() {

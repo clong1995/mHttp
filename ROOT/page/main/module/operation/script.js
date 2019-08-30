@@ -1,11 +1,11 @@
 class Module {
     DOM() {
-        // this.addContentDom = coo.query('.addContent', this.domain);
+        // sthis.addContentDom = coo.query('.addContent', this.domain);
     }
 
     EVENT() {
-        // coo.on('.addBtn', this.domain, 'click', t => this.showStory());
-        // coo.on('.close', this.domain, 'click', t => this.hideStory());
+        //预览
+        cp.on('.preview', DOMAIN, 'click', t => this.preview());
     }
 
     INIT() {
@@ -16,7 +16,19 @@ class Module {
 
     }
 
-    showStory() {
-        //coo.show(this.addContentDom);
+    preview() {
+        let id = this.APP.getSceneId();
+
+        //浏览器内
+        if (!this.APP.ipc) {
+            window.open("/preview?id=" + id);
+            return
+        }
+
+        //electron发送到后端
+        this.APP.ipc.send('message', JSON.stringify({
+            "key": "preview",
+            "value": id
+        }));
     }
 }

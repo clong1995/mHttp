@@ -46,6 +46,6 @@
     width: calc(100% + 1px);
     background: var(--background);
     font-weight: bold;
-    border: 1px solid #cccccc;
+    border: var(--border);
     border-right: none;
 }

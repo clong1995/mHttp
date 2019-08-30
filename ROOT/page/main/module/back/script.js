@@ -20,12 +20,11 @@ class Module {
     /**
      * 更新和保存
      */
-    save() {
+    save(cb) {
         let name = this.APP.scene.page.name;
         let data = JSON.stringify(this.APP.scene);
 
         cp.ajax(CONF.IxDAddr + "/scene/add", {
-            headers: HEAD(),
             data: {
                 sceneId: this.APP.getSceneId() || "",
                 projectId: localStorage.getItem("pid"),
@@ -33,12 +32,8 @@ class Module {
                 data: data
             },
             success: res => {
-                if (res.code === 0) {
-                    this.APP.setSceneId(res.data);
-                } else {
-                    alert(res.msg);
-                }
-
+                this.APP.setSceneId(res.data);
+                typeof cb === "function" && cb()
             }
         })
     }

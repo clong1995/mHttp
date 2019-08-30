@@ -81,4 +81,8 @@ class Module {
         let layerDom = cp.query("#layer_" + id, this.listDom);
         cp.remove(layerDom);
     }
+
+    empty() {
+        cp.empty(this.listDom)
+    }
 }

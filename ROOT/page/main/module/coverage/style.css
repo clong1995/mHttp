@@ -33,7 +33,6 @@
     position: absolute;
     top: 3px;
     left: 3px;
-    background: white;
     text-align: center;
 }
 
@@ -58,9 +57,9 @@
 
 
 .list > .layer.active > .thumbnail {
-    border-color: #cccccc;
+    border-color: var(--background5);
 }
 
 .list > .layer.active > .name {
-    background: #cccccc;
+    background: var(--background5);
 }

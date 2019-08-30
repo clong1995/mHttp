@@ -25,9 +25,8 @@ class Module {
 
     loadItem() {
         cp.ajax(CONF.IxDAddr + "/project/list", {
-            headers: HEAD(),
             success: res => {
-                if (res.code === 0) {
+
                     let html = '';
                     res.data.forEach(v => {
                         html += `<div class="item">
@@ -38,9 +37,7 @@ class Module {
                         </div>`;
                     });
                     cp.html(DOMAIN, html);
-                } else {
-                    alert(res.msg);
-                }
+
             }
         });
     }

@@ -1,6 +1,6 @@
 class Module {
     DOM() {
-        this.innerDom = cp.query(".inner", DOMAIN);
+        this.wrapDom = cp.query(".wrap", DOMAIN);
     }
 
     EVENT() {
@@ -8,7 +8,7 @@ class Module {
     }
 
     INIT() {
-
+        this.id = DOMAIN.id.split("_")[1];
     }
 
     /**
@@ -20,10 +20,28 @@ class Module {
     OPTION(key, value) {
         console.log(key, value);
         switch (key) {
-            case "textarea":
-                value = value.replace(/\r\n/g, "<br>");
-                value = value.replace(/\n/g, "<br>");
-                cp.html(this.innerDom, value);
+            case "data":
+                let html = "";
+                value.forEach(v => {
+                    html += `<div class="item">
+                            <div class="content activee">
+                                
+                            </div>
+                        </div>`
+                });
+                cp.html(this.wrapDom, html);
+                break;
+            case "number":
+                console.log("#slice_" + this.id + " > .wrap > .item");
+                let margin = value / 40;
+                if (margin < 1) {
+                    margin = 1;
+                }
+                cp.setSheet("#slice_" + this.id + " > .wrap > .item", {
+                    width: value + 'px',
+                    height: value + 'px',
+                    margin: margin + "px"
+                });
                 break;
             default:
         }

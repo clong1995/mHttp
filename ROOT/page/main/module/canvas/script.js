@@ -11,7 +11,7 @@ class Module {
         this.overviewBoxDom = cp.query('.overview-box', this.tooBarDom);
         this.viewDom = cp.query('.view', this.overviewBoxDom);
         this.viewInnerDom = cp.query('.inner', this.viewDom);
-        //this.viewGlassDom = cp.query('.glass', this.viewInnerDom);
+        this.viewGlassDom = cp.query('.glass', this.viewDom);
         //拼缝
         this.riftBoxDom = cp.query('.rift-box', this.tooBarDom);
         this.riftBoxNumberDoms = cp.query('.number', this.riftBoxDom, true);
@@ -19,18 +19,23 @@ class Module {
         this.containerDom = cp.query('.container', DOMAIN);
         //右键菜单
         this.rightMenuDom = cp.query('.right-menu', DOMAIN);
+        //sheet
+        this.sheetDom = cp.query('.sheet', DOMAIN);
+        this.sheetInnerDom = cp.query('.inner', this.sheetDom);
     }
 
     INIT() {
         this.sliceIndex = 10;
 
         this.sceneDom = null;
-        this.scale = 0;
+        this.scale = 1;
         this.autoScale = true;
         this.riftDomArr = [];
         this.sceneMargin = 10;
         this.gridDom = null;
         this.ctrlMousewheel = false;
+
+        this.overviewOriginalScale = null;
 
         //获取数据，加载场景
         this.getSceneList();
@@ -55,14 +60,16 @@ class Module {
         cp.on('.range', this.rangeBoxDom, 'change', t => this.changeRange(t));
         cp.on('.checkbox', this.rangeBoxDom, 'click', t => this.changeScale(t));
         //鹰眼
-        cp.on('.checkbox', this.overviewBoxDom, 'click', t => this.changeOverview(t));
-        cp.on('.glass', this.viewInnerDom, 'drag', t => {
-        });
+        cp.on('.checkbox', this.overviewBoxDom, 'click', () => this.changeOverview());
+        cp.on('.glass', this.overviewBoxDom, 'drag', (_, __, t, l) => this.moveOverview(t, l));
 
         //滚轮缩放
         document.onkeydown = e => this.keydownScale(e);
         document.onkeyup = e => this.keyupScale(e);
+        //滚轮
         cp.on('.container', DOMAIN, 'mousewheel', (_, __, e) => this.mousewheelScale(e));
+        //滚动条反馈鹰眼
+        cp.on('.container', DOMAIN, 'scroll', () => this.changeOverview());
 
         //删除
         cp.on('.delete', this.rightMenuDom, 'click', t => this.deleteSlice(t));
@@ -70,6 +77,15 @@ class Module {
         cp.on('.move-up', this.rightMenuDom, 'click', t => this.moveUpSlice(t));
         //下移
         cp.on('.move-down', this.rightMenuDom, 'click', t => this.moveDownSlice(t));
+
+        //新建sheet
+        cp.on('.add-sheet', this.sheetDom, 'click', t => this.addNewSheet(t));
+        cp.on('.item', this.sheetInnerDom, 'click', t => this.loadSheet(t));
+    }
+
+    moveOverview(top, left) {
+        //TODO 这里是移动鹰眼的时候的要反馈给画布
+        console.log(top, left);
     }
 
     dependDomEvent() {
@@ -81,29 +97,47 @@ class Module {
         cp.on(".slice", this.sceneDom, 'mousedown', (t, _, e) => this.showRightMenu(t, _, e));
     }
 
-    changeOverview(target) {
-        let checked = target.checked;
-        if (checked) {
-            let pageData = this.APP.getPageData();
-            let size = cp.autoSize({
-                w: 150,
-                h: 150
-            }, {
-                w: pageData.size.width,
-                h: pageData.size.height
-            }, 5);
-            cp.css(this.viewInnerDom, {
-                width: size.w + "px",
-                height: size.h + "px",
-                top: size.t + "px",
-                left: size.l + "px"
-            });
-            cp.show(this.viewDom);
-
-        } else {
+    changeOverview() {
+        if (!cp.query('.checkbox', this.overviewBoxDom).checked) {
             cp.hide(this.viewDom);
-
+            return;
         }
+        //设置大小，等比居中
+        let pageData = this.APP.getPageData();
+        let size = cp.autoSize({
+            w: 150,
+            h: 150
+        }, {
+            w: pageData.size.width,
+            h: pageData.size.height
+        }, 5);
+        cp.css(this.viewInnerDom, {
+            width: size.w + "px",
+            height: size.h + "px",
+            top: size.t + "px",
+            left: size.l + "px"
+        });
+
+        if (this.overviewOriginalScale < this.scale) {
+            //设置眼睛
+            let cSize = cp.domSize(this.containerDom);
+            let top = this.containerDom.scrollTop,
+                left = this.containerDom.scrollLeft;
+
+            let wScale = size.w / pageData.size.width / this.scale,
+                hScale = size.h / pageData.size.height / this.scale;
+
+            cp.css(this.viewGlassDom, {
+                width: cSize.width * wScale + "px",
+                height: cSize.height * hScale + "px",
+                top: size.t + top * hScale + "px",
+                left: size.l + left * wScale + "px"
+            });
+            cp.show(this.viewGlassDom);
+        } else {
+            cp.hide(this.viewGlassDom);
+        }
+        cp.show(this.viewDom);
     }
 
     //上移一层
@@ -301,6 +335,9 @@ class Module {
 
         //改变缩放
         this.sceneSize(value / 100);
+
+        //改变鹰眼
+        this.changeOverview();
     }
 
     /**
@@ -381,6 +418,15 @@ class Module {
      * 加载场景
      */
     loadScene() {
+        //删除现有的场景
+        cp.remove(cp.query(".scene", this.containerDom));
+        //删除现有的图层
+        MODULE("coverage").empty();
+        this.sliceIndex = 10;
+        this.scale = 1;
+        this.autoScale = true;
+        this.riftDomArr = [];
+
         //加载场景
         this.sceneDom = cp.createDom();
         cp.addClass(this.sceneDom, 'scene');
@@ -530,7 +576,8 @@ class Module {
         }
 
         this.scale = size.scale;
-
+        if (!this.overviewOriginalScale)
+            this.overviewOriginalScale = size.scale;
 
         //适应分割线的宽度
         this.riftDomArr.forEach(v => v.style.width
@@ -699,31 +746,58 @@ class Module {
      */
     getSceneList() {
         cp.ajax(CONF.IxDAddr + "/scene/getListByProject", {
-            headers: HEAD(),
             data: {
                 projectId: localStorage.getItem("pid")
             },
             success: res => {
-                if (res.code === 0) {
-                    if (res.data.length === 0) {
-                        //新的或者空的场景
-                        //TODO 场景切换组件
 
-                        //设置默认数据，赋值给了主页面
-                        this.APP.loadData();
-                    } else {
-                        //已经有的场景
-                        //TODO 场景切换组件
-
-                        //获取第一个数据
-                        this.APP.getSceneById(res.data[0].id);
-                    }
+                if (res.data.length === 0) {
+                    //设置默认数据，赋值给了主页面
+                    this.APP.loadData();
                 } else {
-                    alert(res.msg);
+                    //已经有的场景
+                    //TODO 场景切换组件
+                    let html = '';
+                    res.data.forEach((v, i) => {
+                        html += `
+                                 <div class="item ellipsis ${!i ? "active" : ""}" data-id="${v.id}">
+                                    ${v.name}
+                                </div>
+                            `;
+                    });
+                    cp.html(this.sheetInnerDom, html);
+                    //获取第一个数据
+                    this.APP.getSceneById(res.data[0].id);
                 }
+
             }
         })
     }
 
+    /**
+     * 新建工程后自动新建的场景
+     * @param name
+     */
+    autoAddNewSheet() {
+        cp.removeActive(cp.query(".active", this.sheetInnerDom));
+        //新的或者空的场景
+        cp.html(this.sheetInnerDom,
+            `<div class="item ellipsis active" data-id="${this.APP.getSceneId()}">${this.APP.scene.page.name}</div>`, "afterbegin");
+    }
 
+    /**
+     * 手动点击新建
+     */
+    addNewSheet() {
+        this.APP.loadData();
+    }
+
+    loadSheet(target) {
+        if (cp.hasActive(target)) {
+            return
+        }
+        let id = cp.getData(target);
+        cp.toggleActive(target);
+        this.APP.getSceneById(id);
+    }
 }

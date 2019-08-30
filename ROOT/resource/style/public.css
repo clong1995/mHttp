@@ -1,23 +1,46 @@
+/*默认色*/
+/*苹果灰*/
 :root {
     --border: 1px solid #cecece;
     --background: #ececec;
     --background2: #fafafa;
     --background3: #408BFA;
-    --background4: rgba(255, 255, 255, .3);
+    --background4: #cecece;
     --background5: #cecece;
     --background6: lime;
+    --background7: none;
+    --color: #000000;
+    --color1: #000000;
 }
+
+
+/*科技绿*/
+/*
+:root {
+    --border: 1px solid #66BCBD;
+    --background: #182627;
+    --background2: #1f3d42;
+    --background3: #EE9F3A;
+    --background4: rgb(16, 27, 32);
+    --background5: #001718;
+    --background6: lime;
+    --background7: #cccccc;
+    --color: #66BCBD;
+    --color1: #ffffff;
+}
+*/
 
 body {
     user-select: none;
     font-size: 13px;
     background: var(--background);
+    color: var(--color);
 }
 
 @font-face {
     font-family: 'iconfont';
     /*src: url('../icon/iconfont.ttf');*/
-    src: url('//at.alicdn.com/t/font_722315_uhya1m53c5p.woff2');
+    src: url('//at.alicdn.com/t/font_722315_bx9g8ngnngl.woff2');
 }
 
 
@@ -26,6 +49,10 @@ body {
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+input, select {
+    color: var(--color)
 }
 
 .input {

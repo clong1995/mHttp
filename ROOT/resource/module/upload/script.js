@@ -31,7 +31,7 @@ class Module {
         let size = file.size / Math.pow(1024, 2);
         if (size > 10) {
             MODULE("dialog").show({
-                text: "文件超大，请使用上传器上传"
+                text: "文件超大，请下载编辑器客户端"
             });
             return;
         }
@@ -88,7 +88,6 @@ class Module {
                     }, 500)
                 }
             })
-
         };
         xhr.open("GET", this.authUrl, false);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

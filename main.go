@@ -102,6 +102,7 @@ func componentHandle(w http.ResponseWriter, r *http.Request) {
 
 func pageHandle(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
+
 	if path == "/favicon.ico" {
 		http.Redirect(w, r, "/resource/image/favicon.ico", http.StatusFound)
 		return

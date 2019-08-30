@@ -20,17 +20,12 @@ class Module {
         let name = this.projectNameDom.value;
         if (name !== "") {
             cp.ajax(CONF.IxDAddr + "/project/add", {
-                headers: HEAD(),
                 data: {
                     name: name
                 },
                 success: res => {
-                    if (res.code === 0) {
-                        MODULE("list").loadItem();
-                        cp.hide(this.addProjectDom);
-                    } else {
-                        alert(res.msg);
-                    }
+                    MODULE("list").loadItem();
+                    cp.hide(this.addProjectDom);
                 }
             });
         }

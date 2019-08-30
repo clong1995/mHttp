@@ -60,6 +60,7 @@
     overflow-x: hidden;
 }
 
+/*
 .chip > .item > .wrap > .classify::-webkit-scrollbar {
     display: unset !important;
     width: 5px;
@@ -70,6 +71,7 @@
 .chip > .item > .wrap > .classify::-webkit-scrollbar-thumb {
     background: #666;
 }
+*/
 
 .chip > .item > .wrap > .classify > .sort {
     width: 100px;

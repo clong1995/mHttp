@@ -6,6 +6,21 @@ class App {
 
     //初始化函数
     INIT() {
+        //ipc
+        try {
+            this.ipc = require('electron').ipcRenderer;
+        } catch (e) {
+            console.log("不是客户端环境");
+            this.ipc = null
+        }
+
+        /*try {
+            this.BrowserWindow = require('electron').remote.BrowserWindow
+        } catch (e) {
+            console.log("不是客户端环境");
+        }*/
+
+
         this.sceneId = null;
         //let project_scene = cp.getLocTempData();//项目id
         //保存项目id
@@ -32,7 +47,8 @@ class App {
     }
 
     loadData(sceneId = null, data = null) {
-        if (!data) {
+        if (!sceneId) {
+            this.sceneId = null;
             let name = "新建页";
             this.scene = {
                 page: {
@@ -59,7 +75,10 @@ class App {
                 components: []
             };
             //执行新建操作
-            this.getModule("back").save();
+            this.getModule("back").save(() => {
+                //自动增加
+                this.getModule("canvas").autoAddNewSheet();
+            });
         } else {
             this.scene = data;
             this.sceneId = sceneId;
@@ -214,17 +233,13 @@ class App {
 
     getSceneById(sid) {
         cp.ajax(CONF.IxDAddr + "/scene/getById", {
-            headers: HEAD(),
             data: {
                 id: sid
             },
             success: res => {
-                if (res.code === 0) {
                     //加载场景，赋值给了主页面
                     this.loadData(sid, JSON.parse(res.data.data));
-                } else {
-                    alert(res.msg);
-                }
+
             }
         })
     }

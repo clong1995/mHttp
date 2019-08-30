@@ -8,19 +8,31 @@
         右键菜单：3
 
 -->
+<!-- 坐标轴 -->
 <div class="axis-O"></div>
 <div class="axis-X"></div>
 <div class="axis-Y"></div>
+
+<!-- 标尺 -->
 <div class="line-X axis-line hide"></div>
 <div class="line-Y axis-line hide"></div>
+
+<!-- sheet -->
+<div class="sheet">
+    <div class="add-sheet">✚</div>
+    <div class="left">&lt;</div>
+    <div class="inner"></div>
+    <div class="right">&gt;</div>
+</div>
+
+<!-- 底部工具条 -->
 <div class="tool-bar">
     <div class="overview-box tool-box">
         <input class="checkbox input" type="checkbox">
         <span class="title">鹰眼</span>
         <div class="view hide">
-            <div class="inner">
-                <div class="glass" style="width: 30px;height: 30px;top:20px;left: 20px;"></div>
-            </div>
+            <div class="inner"></div>
+            <div class="glass hide" style="width: 30px;height: 30px;top:20px;left: 20px;"></div>
         </div>
     </div>
     <div class="range-box tool-box">
@@ -55,7 +67,10 @@
         </select>
     </div>
 </div>
+
+<!-- 画布 -->
 <div class="container"></div>
+<!-- 右键菜单 -->
 <div class="right-menu hide" tabindex="-1">
     <div class="li move-up">上移一层</div>
     <div class="li move-down">下移一层</div>

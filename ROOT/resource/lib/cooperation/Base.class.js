@@ -111,6 +111,9 @@ class Base {
 
         this.formatStyle();
         this._animation = new Map();
+
+        this.ajaxHeadersInterceptor = null;
+        this.ajaxResponseInterceptor = null;
     }
 
 
@@ -149,21 +152,34 @@ class Base {
      */
     ajax(url, {
         method = 'POST',
-        headers = {
-            //TODO 需要完善 可以参考jQuery的ajax请求头
-            "Content-type": "application/x-www-form-urlencoded"
-        },
+        headers = null,
         mode = 'cors',
         cache = 'no-cache',
         credentials = 'include',
         data = {},
-        interceptor = null,
         success = null,
         status = null,
         text = null,
         error = null,
         type = 'json',
     } = {}) {
+        if (headers === null) {
+            headers = {
+                //TODO 需要完善 可以参考jQuery的ajax请求头
+                "Content-type": "application/x-www-form-urlencoded"
+            }
+        }
+
+        //头拦截器
+        if (ajaxHeadersInterceptor !== null) {
+            if (typeof ajaxHeadersInterceptor === "function") {
+                headers = ajaxHeadersInterceptor(url);
+            } else {
+                headers = ajaxHeadersInterceptor;
+            }
+        }
+
+
         let req = {
             method: method,
             headers: headers,
@@ -198,8 +214,11 @@ class Base {
                 return response.json()
             })
             .then(json => {
-                //拦截器
-                if (typeof interceptor === 'function') json = interceptor(json);
+                //消息拦截器拦截器
+                if (typeof ajaxResponseInterceptor === "function") {
+                    json = ajaxResponseInterceptor(json);
+                }
+
                 if (typeof success === 'function') success(json)
             })
             .catch(err => {
@@ -643,7 +662,7 @@ class Base {
             
             .disable {
                 filter: grayscale(100%);
-                opacity: .5;
+                opacity: .1;
                 pointer-events:none;
             }`);
     }
@@ -706,18 +725,6 @@ class Base {
             })
         );
         return cssRule;
-    }
-
-    /**
-     * GUID
-     * @returns {string}
-     */
-    guid() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-            let r = Math.random() * 16 | 0,
-                v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
     }
 
     /**
@@ -1160,20 +1167,20 @@ class Base {
             y0 = window.event.screenY * offset,
             tTop = parseInt(target.style.top),
             tLeft = parseInt(target.style.left);
-
-
         //修改大小时候不拖动
-        if (target.style.cursor !== 'default') return;
-
+        if (target.style.cursor && target.style.cursor !== 'default') return;
         //执行
+        let top, left;
         window.onmousemove = e => {
-            target.style.top = (tTop - y0 + e.screenY * offset) + 'px';
-            target.style.left = (tLeft - x0 + e.screenX * offset) + 'px';
+            top = tTop - y0 + e.screenY * offset;
+            left = tLeft - x0 + e.screenX * offset;
+            target.style.top = top + 'px';
+            target.style.left = left + 'px';
         };
         //卸载
         window.onmouseup = () => {
             this._disposeWindowOn();
-            cb && cb(target, realTarget);
+            cb && cb(target, realTarget, top, left);
         }
     }
 
@@ -1382,9 +1389,9 @@ class Base {
      * @param dom
      */
     remove(dom) {
-        dom && dom.length !== undefined
+        dom && (dom.length !== undefined
             ? dom.forEach(v => v.parentNode.removeChild(v))
-            : dom.parentNode.removeChild(dom);
+            : dom.parentNode.removeChild(dom));
     }
 
     /**
@@ -1612,7 +1619,7 @@ class Base {
     }
 
     /**
-     * 修改css
+     * TODO 修改css
      * @param selector
      * @param rules
      */
@@ -1981,10 +1988,13 @@ class Base {
             }
         }, timer);
     }
-    ;
 
     addActive(dom) {
         this.addClass(dom, 'active');
+    }
+
+    hasActive(dom) {
+        return this.hasClass(dom, "active")
     }
 
     removeActive(dom) {

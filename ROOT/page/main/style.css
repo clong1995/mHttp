@@ -30,7 +30,7 @@
     float: left;
     width: 150px;
     height: calc(100% - 30px - 20px);
-    background: #ffffff;
+    background: var(--background2);
     border-right: var(--border);
 }
 

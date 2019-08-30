@@ -1,6 +1,6 @@
 class Module {
     DOM() {
-        // this.addContentDom = coo.query('.addContent', this.domain);
+
     }
 
     INIT() {
@@ -8,6 +8,7 @@ class Module {
         cp["componentClassCache"] = new Map();
         cp["componentEntity"] = new Map();
         this.library();
+        this.myTemplate();
     }
 
     EVENT() {
@@ -15,6 +16,42 @@ class Module {
         cp.on('.slice', DOMAIN, 'click', t => this.addSlice(t));
         //激活组件
         cp.on('.sort', DOMAIN, 'click', t => this.activeSort(t));
+        //根据模板创建
+        cp.on('.tmp', DOMAIN, 'click', t => this.createByTemplate(t));
+    }
+
+    createByTemplate(target) {
+        //判断当前对是否有内容
+        let id = cp.getData(target);
+        if (this.APP.getComponentDataList().length) {
+            //提示将覆盖当前已有的文档
+            MODULE("dialog").show({
+                type: "warn",
+                text: "使用模板后，当前场景将被覆盖！",
+                cancel: hide => {
+                    hide();
+                },
+                confirm: hide => {
+                    this.getTemplateSceneById(id);
+                    hide();
+                }
+            });
+        } else {
+            this.getTemplateSceneById(id)
+        }
+    }
+
+    getTemplateSceneById(templateId) {
+        cp.ajax(CONF.IxDAddr + "/template/getById", {
+            data: {
+                id: templateId
+            },
+            success: res => {
+                //加载场景，赋值给了主页面
+                this.APP.loadData(this.APP.getSceneId(), JSON.parse(res.data.data));
+
+            }
+        });
     }
 
     activeSort(target) {
@@ -73,12 +110,12 @@ class Module {
         let singleClassifyHtml = "", singleContentHtml = "";
         single.classify.forEach((v, i) => {
             singleClassifyHtml += `
-                <div class="sort ${!i && 'active'}" data-id="${v.id}">
+                <div class="sort ${!i ? 'active' : ''}" data-id="${v.id}">
                     <span class="iconfont icon">${v.icon}</span>
                     <span class="name">${v.name}</span>
                 </div>
                 `;
-            singleContentHtml += `<div class="ul ${!i && 'active'} ${v.id}">`;
+            singleContentHtml += `<div class="ul ${!i ? 'active' : ""} ${v.id}">`;
             single.content[v.id].forEach(vv => {
                 singleContentHtml += `
                     <div class="li slice" data-id="${vv.id}">
@@ -106,6 +143,14 @@ class Module {
                     id: "picture",
                     name: "图片",
                     icon: "&#xe888;"
+                }, {
+                    id: "dateTime",
+                    name: "日期时间",
+                    icon: "&#xe888;"
+                }, {
+                    id: "weather",
+                    name: "天气",
+                    icon: "&#xe6a4;"
                 }
             ],
             content: {
@@ -129,18 +174,38 @@ class Module {
                         id: "block/banner02",
                         name: "轮播02"
                     }
-                ]
+                ],
+                dateTime: [
+                    {
+                        id: "block/dateTime",
+                        name: "日期和时间"
+                    },
+                    {
+                        id: "block/date",
+                        name: "日期"
+                    },
+                    {
+                        id: "block/time",
+                        name: "时间"
+                    }
+                ],
+                weather: [
+                    {
+                        id: "block/weather01",
+                        name: "天气01"
+                    }
+                ],
             }
         };
         let blockClassifyHtml = "", blockContentHtml = "";
         block.classify.forEach((v, i) => {
             blockClassifyHtml += `
-                <div class="sort ${!i && 'active'}" data-id="${v.id}">
+                <div class="sort ${!i ? 'active' : ''}" data-id="${v.id}">
                     <span class="iconfont icon">${v.icon}</span>
                     <span class="name">${v.name}</span>
                 </div>
                 `;
-            blockContentHtml += `<div class="ul ${!i && 'active'} ${v.id}">`;
+            blockContentHtml += `<div class="ul ${!i ? 'active' : ""} ${v.id}">`;
             block.content[v.id].forEach(vv => {
                 blockContentHtml += `
                     <div class="li slice" data-id="${vv.id}">
@@ -258,12 +323,12 @@ class Module {
         let chartClassifyHtml = "", chartContentHtml = "";
         chart.classify.forEach((v, i) => {
             chartClassifyHtml += `
-                <div class="sort ${!i && 'active'}" data-id="${v.id}">
+                <div class="sort ${!i ? 'active' : ''}" data-id="${v.id}">
                     <span class="iconfont icon">${v.icon}</span>
                     <span class="name">${v.name}</span>
                 </div>
                 `;
-            chartContentHtml += `<div class="ul ${!i && 'active'} ${v.id}">`;
+            chartContentHtml += `<div class="ul ${!i ? 'active' : ""} ${v.id}">`;
             chart.content[v.id].forEach(vv => {
                 chartContentHtml += `
                     <div class="li slice" data-id="${vv.id}">
@@ -279,7 +344,136 @@ class Module {
         });
         cp.html(cp.query(".chart-classify", DOMAIN), chartClassifyHtml);
         cp.html(cp.query(".chart-content", DOMAIN), chartContentHtml);
+
+        //模板库
+        let template = {
+            classify: [
+                {
+                    id: "myTemplate",
+                    name: "我的模板",
+                    icon: "&#xe6c2;"
+                }, {
+                    id: "visual",
+                    name: "数据可视化",
+                    icon: "&#xe888;"
+                }, {
+                    id: "weChart",
+                    name: "微信",
+                    icon: "&#xe642;"
+                }, {
+                    id: "ppt",
+                    name: "演示文稿",
+                    icon: "&#xe6c2;"
+                }, {
+                    id: "ad",
+                    name: "广告海报",
+                    icon: "&#xe606;"
+                }, {
+                    id: "website",
+                    name: "网站",
+                    icon: "&#xe60b;"
+                }, {
+                    id: "mobile",
+                    name: "移动端",
+                    icon: "&#xe61f;"
+                }, {
+                    id: "client",
+                    name: "客户端",
+                    icon: "&#xe631;"
+                }
+            ],
+            content: {
+                myTemplate: [],
+                visual: [
+                    {
+                        id: "chart/basicBar",
+                        name: "数据可视化"
+                    }
+                ],
+                weChart: [
+                    {
+                        id: "chart/basicPie",
+                        name: "微信"
+                    }
+                ],
+                ppt: [
+                    {
+                        id: "chart/basicScatter",
+                        name: "ppt"
+                    }
+                ],
+                ad: [
+                    {
+                        id: "chart/basicMap",
+                        name: "广告"
+                    }
+                ],
+                website: [
+                    {
+                        id: "chart/basicCandlestick",
+                        name: "网站"
+                    }
+                ],
+                mobile: [
+                    {
+                        id: "chart/basicRadar",
+                        name: "移动端"
+                    }
+                ],
+                client: [
+                    {
+                        id: "chart/basicGraph",
+                        name: "客户端"
+                    }
+                ]
+            }
+        };
+        //动态获取我的模板库
+        let templateClassifyHtml = "", templateContentHtml = "";
+        template.classify.forEach((v, i) => {
+            templateClassifyHtml += `
+                <div class="sort ${!i ? 'active' : ''}" data-id="${v.id}">
+                    <span class="iconfont icon">${v.icon}</span>
+                    <span class="name">${v.name}</span>
+                </div>`;
+            templateContentHtml += `<div class="ul ${!i ? 'active' : ""} ${v.id}">`;
+            template.content[v.id].forEach(vv => {
+                templateContentHtml += `
+                    <div class="li tmp" data-id="${vv.id}">
+                        <div class="thumbnail">
+                            <span class="iconfont icon">&#xe611;</span>
+                            <span class="iconfont icon">&#xe647;</span>
+                        </div>
+                        <div class="title">${vv.name}</div>
+                    </div>
+                `;
+            });
+            templateContentHtml += `</div>`;
+        });
+        cp.html(cp.query(".template-classify", DOMAIN), templateClassifyHtml);
+        cp.html(cp.query(".template-content", DOMAIN), templateContentHtml);
     }
+
+    myTemplate() {
+        cp.ajax(CONF.IxDAddr + "/template/getListByUser", {
+            success: res => {
+
+                let html = '';
+                res.data.forEach(v => {
+                    html += `<div class="li tmp" data-id="${v.id}">
+                                    <div class="thumbnail">
+                                        <span class="iconfont icon"></span>
+                                        <span class="iconfont icon"></span>
+                                    </div>
+                                    <div class="title">${v.name}</div>
+                                 </div>`;
+                });
+                cp.html(cp.query('.myTemplate', DOMAIN), html)
+
+            }
+        });
+    }
+
 
     addSlice(target) {
         //组件类型
@@ -375,8 +569,13 @@ class Module {
         cp.componentEntity.set(entityId, entity);
 
         //执行
-        let optionData = data ? data.option : defaultData.option;
-        optionData.some(v => {
+        data = data || defaultData;
+
+        //追加设置大小
+        this.setComponentEntity(entity, "width", data.size.width, defaultData.name, entityId);
+        this.setComponentEntity(entity, "height", data.size.height, defaultData.name, entityId);
+
+        data.option.some(v => {
             if (typeof v.value === "object") {
                 for (let vv in v.value) {
                     if (!this.setComponentEntity(entity, v.key + "/" + vv, v.value[vv], defaultData.name, entityId))
