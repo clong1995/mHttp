@@ -241,6 +241,10 @@ class Module {
                     id: "map",
                     name: "地图",
                     icon: "&#xe882;"
+                }, {
+                    id: "wordCloud",
+                    name: "词云",
+                    icon: "&#xe62e;"
                 }/* {
                     id: "scatter",
                     name: "散点图",
@@ -282,19 +286,25 @@ class Module {
                         name: "基础饼状图"
                     }
                 ],
-                scatter: [
+                /*scatter: [
                     {
                         id: "chart/basicScatter",
                         name: "基础散点图"
                     }
-                ],
+                ],*/
                 map: [
                     {
                         id: "chart/basicMap",
                         name: "基础地图"
                     }
                 ],
-                candlestick: [
+                wordCloud: [
+                    {
+                        id: "chart/basicWordCloud",
+                        name: "基础词云"
+                    }
+                ],
+                /*candlestick: [
                     {
                         id: "chart/basicCandlestick",
                         name: "基础k线图"
@@ -317,7 +327,7 @@ class Module {
                         id: "chart/basicGauge",
                         name: "基础仪表盘"
                     }
-                ]
+                ]*/
             }
         };
         let chartClassifyHtml = "", chartContentHtml = "";

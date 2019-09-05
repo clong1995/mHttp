@@ -61,7 +61,7 @@ class Module {
         cp.on('.checkbox', this.rangeBoxDom, 'click', t => this.changeScale(t));
         //鹰眼
         cp.on('.checkbox', this.overviewBoxDom, 'click', () => this.changeOverview());
-        cp.on('.glass', this.overviewBoxDom, 'drag', (_, __, t, l) => this.moveOverview(t, l));
+        cp.on('.glass', this.overviewBoxDom, 'drag', (_, __, top, left) => this.moveOverview(top, left));
 
         //滚轮缩放
         document.onkeydown = e => this.keydownScale(e);
@@ -84,8 +84,17 @@ class Module {
     }
 
     moveOverview(top, left) {
-        //TODO 这里是移动鹰眼的时候的要反馈给画布
-        console.log(top, left);
+        //容器位置
+        let iTop = parseInt(this.viewInnerDom.style.top),
+            iLeft = parseInt(this.viewInnerDom.style.left);
+        let x = left - iLeft,
+            y = top - iTop;
+        let pageData = this.APP.getPageData();
+        let size = cp.domSize(this.viewInnerDom);
+        let wScale = size.width / pageData.size.width / this.scale,
+            hScale = size.height / pageData.size.height / this.scale;
+        this.containerDom.scrollTop = y / hScale;
+        this.containerDom.scrollLeft = x / wScale;
     }
 
     dependDomEvent() {
@@ -556,7 +565,7 @@ class Module {
                 w: width, h: height
             }, {
                 w: parseInt(pageData.size.width) + 2, h: parseInt(pageData.size.height) + 2
-            }, this.sceneMargin)
+            }, this.sceneMargin);
         } else {
             //指定缩放大小
             size.scale = scale;
@@ -575,9 +584,12 @@ class Module {
             }
         }
 
-        this.scale = size.scale;
-        if (!this.overviewOriginalScale)
+        if (scale === null) {
             this.overviewOriginalScale = size.scale;
+        }
+
+
+        this.scale = size.scale;
 
         //适应分割线的宽度
         this.riftDomArr.forEach(v => v.style.width

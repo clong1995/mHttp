@@ -11,7 +11,9 @@
     --background7: none;
     --color: #000000;
     --color1: #000000;
+    --color2: #666;
 }
+
 
 
 /*科技绿*/
@@ -28,7 +30,8 @@
     --color: #66BCBD;
     --color1: #ffffff;
 }
-*/
+ */
+
 
 body {
     user-select: none;
@@ -40,7 +43,7 @@ body {
 @font-face {
     font-family: 'iconfont';
     /*src: url('../icon/iconfont.ttf');*/
-    src: url('//at.alicdn.com/t/font_722315_bx9g8ngnngl.woff2');
+    src: url('//at.alicdn.com/t/font_722315_uwyepumnxl.woff2');
 }
 
 

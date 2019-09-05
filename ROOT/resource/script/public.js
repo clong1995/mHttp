@@ -1,5 +1,6 @@
 const CONF = {
     //IxD的地址
+    //IxDAddr: "http://192.168.10.252:19959"
     IxDAddr: "http://127.0.0.1:19959"
 };
 
@@ -36,6 +37,7 @@ const ajaxResponseInterceptor = res => {
             cp.link("/login");
         } else {
             alert(res.msg);
+            return false;
         }
     }
     return res;

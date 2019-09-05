@@ -7,7 +7,7 @@ class Module {
     }
 
     INIT() {
-        this.authUrl = "http://quickex.com.cn:10104/auth/qiniu";
+        this.authUrl = "http://127.0.0.1:19959/auth/qiniu";
         this.downloadUrl = "http://img.quickex.com.cn";
         this.status = null;
         //加载七牛sdk

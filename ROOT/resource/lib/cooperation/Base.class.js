@@ -217,8 +217,8 @@ class Base {
                 //消息拦截器拦截器
                 if (typeof ajaxResponseInterceptor === "function") {
                     json = ajaxResponseInterceptor(json);
+                    if (!json) return;
                 }
-
                 if (typeof success === 'function') success(json)
             })
             .catch(err => {
@@ -2044,6 +2044,14 @@ class Base {
         let data = localStorage.getItem(key);
         localStorage.removeItem(key);
         return data
+    }
+
+    randomColor() {
+        return 'rgb(' + [
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160),
+                    Math.round(Math.random() * 160)
+                ].join(',') + ')';
     }
 }
 

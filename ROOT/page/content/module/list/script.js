@@ -4,8 +4,8 @@ class Module {
     }
 
     EVENT() {
-        cp.on('.inner', DOMAIN, 'click', t => this.edit(t));
-        // coo.on('.close', this.domain, 'click', t => this.hideStory());
+        cp.on('.enter', DOMAIN, 'click', t => this.enter(t));
+        cp.on('.delete', DOMAIN, 'click', t => this.delete(t));
     }
 
     INIT() {
@@ -23,28 +23,48 @@ class Module {
 
     }
 
+    delete(target) {
+        let p = cp.parent(target, "item");
+        let pid = cp.getData(p);
+        cp.ajax(CONF.IxDAddr + "/project/delete", {
+            data: {
+                project: pid
+            },
+            success: () => {
+                //删除dom
+                cp.remove(p);
+                //删除localStorage
+                localStorage.removeItem("pid");
+            }
+        })
+    }
+
     loadItem() {
         cp.ajax(CONF.IxDAddr + "/project/list", {
             success: res => {
-
-                    let html = '';
-                    res.data.forEach(v => {
-                        html += `<div class="item">
-                            <div class="inner"data-id=${v.id}>
-                                <div class="img"></div>
+                let html = '';
+                res.data.forEach(v => {
+                    html += `<div class="item" data-id=${v.id}>
+                            <div class="inner">
+                                <div class="img enter"></div>
+                                <div class="option">
+                                    <i class="preview iconfont icon alt">&#xe611;</i>
+                                    <i class="copy iconfont icon alt">&#xe6e5;</i>
+                                    <i class="delete iconfont icon alt">&#xe624;</i>
+                                </div>
                                 <div class="name">${v.name}</div>
                             </div>
                         </div>`;
-                    });
-                    cp.html(DOMAIN, html);
+                });
+                cp.html(DOMAIN, html);
 
             }
         });
     }
 
-    edit(target) {
-        let pid = cp.getData(target, "id");
-        //cp.setLocTempData(id);
+    enter(target) {
+        let p = cp.parent(target, "item");
+        let pid = cp.getData(p);
         localStorage.setItem("pid", pid);
         cp.link('/main');
     }
