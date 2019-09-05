@@ -660,6 +660,12 @@ class Base {
                 display: block;
             }
             
+            .centerBg{
+                background-repeat: no-repeat;
+                background-position: 50% 50%;
+                background-size: contain;
+            }
+            
             .disable {
                 filter: grayscale(100%);
                 opacity: .1;
@@ -770,7 +776,7 @@ class Base {
      * @param dom
      * @param str
      * @param plus
-     * @returns {string}
+     * @returns {Text|string}
      */
     text(dom, str = null, plus = false) {
         if (str !== null) {
@@ -778,7 +784,8 @@ class Base {
             if (!plus) {
                 dom.innerText = ''
             }
-            this.append(dom, textNode)
+            this.append(dom, textNode);
+            return dom
         } else {
             return dom.innerText;
         }
@@ -1087,6 +1094,7 @@ class Base {
         //自定义事件
         evt === 'drag' && this.on(selecter, target, 'mousedown', null);
         evt === 'resize' && this.on(selecter, target, 'mouseover', null);
+        evt === 'rightClick' && this.on(selecter, target, 'mousedown', null);
 
         //增加父元素列表
         if (!this._domEvent.has(target)) this._domEvent.set(target, new Map());
@@ -1143,15 +1151,33 @@ class Base {
             if (eventTarget.get(key) && eventTarget.get(key).has(event)) {
                 //特殊事件的处理，比如拖拽和改变大小是由 mousedown mousemove mouseover 组合成的
                 if (event === 'mousedown') {
+                    //拖拽
                     eventTarget.get(key).has('drag') && eventTarget.get(key).get('drag').forEach(v => this._drag(node, realTarget, v));
+                    //右键
+                    eventTarget.get(key).has('rightClick') && eventTarget.get(key).get('rightClick').forEach(v => this._rightClick(node, realTarget, v, e));
+                    //中键
+                    eventTarget.get(key).has('centerClick') && eventTarget.get(key).get('centerClick').forEach(v => this._centerClick(node, realTarget, v, e));
                 }
                 if (event === 'mouseover') {
                     eventTarget.get(key).has('resize') && eventTarget.get(key).get('resize').forEach(v => this._resize(node, realTarget, v));
                 }
-
                 eventTarget.get(key).get(event).forEach(v => typeof v === 'function' && v(node, realTarget, e))
             }
         });
+    }
+
+    //右键
+    _rightClick(target, realTarget, cb, ev) {
+        if (ev.buttons === 2) {
+            cb(target, realTarget);
+        }
+    }
+
+    //中键
+    _centerClick(target, realTarget, cb, ev) {
+        if (ev.buttons === 3) {
+            cb(target, realTarget);
+        }
     }
 
     //拖拽
@@ -1873,7 +1899,6 @@ class Base {
         });
         return result;
     }
-    ;
 
 
     /***
@@ -2048,10 +2073,17 @@ class Base {
 
     randomColor() {
         return 'rgb(' + [
-                    Math.round(Math.random() * 160),
-                    Math.round(Math.random() * 160),
-                    Math.round(Math.random() * 160)
-                ].join(',') + ')';
+            Math.round(Math.random() * 160),
+            Math.round(Math.random() * 160),
+            Math.round(Math.random() * 160)
+        ].join(',') + ')';
+    }
+
+    position(dom) {
+        return {
+            top: dom.offsetTop,
+            left: dom.offsetLeft
+        }
     }
 }
 

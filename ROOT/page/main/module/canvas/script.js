@@ -451,6 +451,7 @@ class Module {
         window.onresize = () => this.sceneSize(this.autoScale ? null : this.scale);
         //事件
         this.dependDomEvent();
+
         //加载其他组件
         this.loadGridDom();
         this.loadRift();
@@ -458,7 +459,11 @@ class Module {
 
         //加载组件
         this.loadComponent(this.APP.scene.components);
+        //
+        this.setBackgroundImage();
+        this.setBackgroundFill();
     }
+
 
     //加载来的现成的数据
     loadComponent(loadedComponentsData) {

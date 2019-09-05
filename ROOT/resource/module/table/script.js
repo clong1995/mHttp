@@ -6,13 +6,15 @@ class Module {
         this.leftDom = cp.query(".left", this.tbodyDom);
         this.titleDom = cp.query(".title", this.tbodyDom);
         this.rowsDom = cp.query(".rows", this.tbodyDom);
+
+        this.tmenuDom = cp.query(".tmenu", DOMAIN);
     }
 
     INIT() {
         this.tempChange = null;
+        this.tempRightClickCell = null;
         this.onchange = null;
         this.tempActive = null;
-
         this._sheetStyle()
     }
 
@@ -41,6 +43,56 @@ class Module {
         cp.on('.addColumn', this.optionDom, 'click', () => this.addColumn());
         //删除选中
         cp.on('.delete', this.optionDom, 'click', () => this.deleteCell());
+        //右键
+        cp.on('.cell', this.rowsDom, 'rightClick', t => this.rightClick(t));
+        cp.on('.tbody', DOMAIN, 'click', t => this.menuHide());
+        //cp.on('.tmenu', DOMAIN, 'blur', t => this.menuHide(t));
+
+        //颜色
+        cp.on('.color', this.tmenuDom, 'change', t => this.getColor(t));
+        cp.on('.file', this.tmenuDom, 'change', t => this.getFile(t));
+    }
+
+    menuHide() {
+        cp.hide(this.tmenuDom)
+    }
+
+    getColor(target) {
+        let color = target.value;
+        cp.text(this.tempRightClickCell, color);
+        cp.css(this.tempRightClickCell, {
+            color: color
+        });
+        this.tempRightClickCell = null;
+        this.changeData();
+        this.menuHide();
+    }
+
+    getFile(target) {
+        MODULE("upload").upload(target, res => {
+            let value = res.type + "||" + res.url;
+            cp.text(this.tempRightClickCell, value);
+            this.tempRightClickCell = null;
+            this.changeData();
+            this.menuHide();
+        });
+    }
+
+    changeData() {
+        let data = this.getData();
+        this.onchange && typeof this.onchange === "function" && this.onchange(data);
+    }
+
+    rightClick(target) {
+        //显示表格右键菜单
+        let {top, left} = cp.position(target);
+        let {width, height} = cp.domSize(target);
+        cp.css(this.tmenuDom, {
+            top: top + height / 2 + "px",
+            left: left + width / 2 + "px"
+        });
+        cp.show(this.tmenuDom);
+        this.tempRightClickCell = target
     }
 
     deleteCell() {
@@ -53,6 +105,7 @@ class Module {
             }
         });
         this.tempActive = null;
+        this.changeData();
     }
 
     addRow() {
@@ -124,8 +177,7 @@ class Module {
         });
         let text = target.innerText;
         if (this.tempChange !== null && text !== this.tempChange) {
-            let data = this.getData();
-            this.onchange && typeof this.onchange === "function" && this.onchange(data);
+            this.changeData();
         }
         this.tempChange = null;
         //预备删除

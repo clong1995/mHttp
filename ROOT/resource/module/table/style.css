@@ -88,7 +88,7 @@
 .tbody > .title > .cell,
 .tbody > .rows > .row > .cell {
     display: inline-block;
-    width: 60px;
+    width: 90px;
     height: 25px;
     line-height: 26px;
     padding: 0 5px;
@@ -130,4 +130,39 @@
     width: 100%;
     height: 25px;
     background: #ececec;
+}
+
+.tmenu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9;
+    width: 70px;
+    background: var(--background);
+    border: var(--border);
+}
+
+.tmenu > .item {
+    padding: 0 5px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 11px;
+    border-bottom: var(--border);
+    position: relative;
+    overflow: hidden;
+}
+
+.tmenu > .item > INPUT {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.tmenu > .item:last-child {
+    border-bottom: none;
 }

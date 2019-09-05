@@ -17,6 +17,11 @@ class Module {
         //背景图
         this.pageImageCheckDom = cp.query('.background-image-check-value', this.pageDom);
         this.pageImageDom = cp.query('.background-image-value', this.pageDom);
+        //背景填充方式
+        this.pageImageFillDom = cp.query('.background-image-fill-value', this.pageDom);
+        this.pageImageFillOptionDoms = cp.query("option", this.pageImageFillDom, true);
+
+        //翻页效果
         this.pageFlipOverDom = cp.query('.flip-over-value', this.pageDom);
 
         this.pageCover = cp.query('.cover-value', this.pageDom);
@@ -350,6 +355,7 @@ class Module {
         this.pageHeight.value = pageData.size.height;
         //this.pageFill = pageData.fill;
 
+        //背景色
         if (pageData.background.color) {
             cp.attr(this.pageColorCheckDom, {
                 checked: true
@@ -360,6 +366,14 @@ class Module {
             this.pageColorDom.value = "#ffffff";
             this.pageColorTextDom.value = "";
         }
+
+        //背景图
+        if (pageData.background.image) {
+            cp.attr(this.pageImageCheckDom, {
+                checked: true
+            });
+        }
+        this.pageImageFillOptionDoms[parseInt(pageData.background.fill)].selected = true;
 
         //this.pageFlipOver = pageData.flipOver;
         this.pageCover.src = pageData.cover;
@@ -400,8 +414,7 @@ class Module {
             <div class="row image">
                 <div class="name">背景图</div>
                 <input type="checkbox" class="value input background-image-check-value">
-                <select 
-                        class="value input background-image-fill-value">
+                <select class="value input background-image-fill-value">
                     <option selected>原尺寸</option>
                     <option>等比拉伸</option>
                     <option>完全填充</option>

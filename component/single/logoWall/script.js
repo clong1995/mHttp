@@ -23,9 +23,17 @@ class Module {
             case "data":
                 let html = "";
                 value.forEach(v => {
+                    let image = v[2].split("||");
+                    if (image.length === 2) {
+                        image = image[1]
+                    } else {
+                        image = PATH + "/img/default.png"
+                    }
+                    console.log(cp.domSize(image));
                     html += `<div class="item">
                             <div class="content activee">
-                                
+                                <div class="image" style='background-image: url("${image}")'></div>
+                                <div class="name centerWrap">${v[1]}</div>
                             </div>
                         </div>`
                 });

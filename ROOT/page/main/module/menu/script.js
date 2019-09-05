@@ -654,12 +654,12 @@ class Module {
     }
 
     componentScriptCompiler(scriptStr, name) {
-
         //兼容golang安全核心
         scriptStr = scriptStr.replace("class", "clazz");
         scriptStr = scriptStr.replace(/DOMAI/g, "DOMAI_");
         //简写
         scriptStr = scriptStr.replace(/DOMAI_N/g, "this.COMP");
+        scriptStr = scriptStr.replace(/PATH/g, "this.PATH");
         //获得构造控制权
         scriptStr = scriptStr.replace(/clazz (\S*) {/, `
              clazz Module {
@@ -668,14 +668,12 @@ class Module {
                      this.DOM();
                      this.INIT();
                      this.EVENT();
+                     this.PATH = "/component/"+"${name.replace("-", "/")}";
                  }
          `);
         //兼容golang安全核心
         scriptStr = scriptStr.replace("clazz", "class");
-
         //加载js
         cp.loadScriptStr(name, `;(() =>cp.componentClassCache.set("${name}",${scriptStr}))();`);
-
-
     }
 }
