@@ -67,7 +67,7 @@ class App {
                     //TODO 翻页
                     flipOver: 1,
                     //TODO 封面
-                    cover: "xxx",
+                    cover: "",
                     //TODO 描述
                     comment: "xxx"
                 },
@@ -237,8 +237,8 @@ class App {
                 id: sid
             },
             success: res => {
-                    //加载场景，赋值给了主页面
-                    this.loadData(sid, JSON.parse(res.data.data));
+                //加载场景，赋值给了主页面
+                this.loadData(sid, JSON.parse(res.data.data));
 
             }
         })

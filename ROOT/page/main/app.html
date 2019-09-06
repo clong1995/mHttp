@@ -5,6 +5,14 @@
     <title>IxD-工作区</title>
     <link rel="stylesheet" href="/resource/style/public.css">
     <script src="/resource/script/public.js"></script>
+    <script>
+        if (typeof module === 'object') {
+            window.module = module;
+            module = undefined;
+        }
+    </script>
+    <script src="/resource/lib/dom-to-image/dom-to-image.min.js"></script>
+    <script>if (window.module) module = window.module;</script>
     <script src="/resource/lib/cooperation/Base.class.js"></script>
 </head>
 <body>

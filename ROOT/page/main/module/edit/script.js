@@ -10,6 +10,9 @@ class Module {
         this.pageWidth = cp.query('.width-value', this.pageDom);
         this.pageHeight = cp.query('.height-value', this.pageDom);
         this.pageFill = cp.query('.fill-value', this.pageDom);
+        this.pageCover = cp.query('.cover-value', this.pageDom);
+        this.pageComment = cp.query('.comment-value', this.pageDom);
+
         //背景色
         this.pageColorCheckDom = cp.query('.background-color-check-value', this.pageDom);
         this.pageColorDom = cp.query('.background-color-value', this.pageDom);
@@ -24,8 +27,7 @@ class Module {
         //翻页效果
         this.pageFlipOverDom = cp.query('.flip-over-value', this.pageDom);
 
-        this.pageCover = cp.query('.cover-value', this.pageDom);
-        this.pageComment = cp.query('.comment-value', this.pageDom);
+
     }
 
     EVENT() {
@@ -33,6 +35,8 @@ class Module {
         cp.on('.componentTab', DOMAIN, 'click', t => this.activeComponentEdit(t));
         //改变页面参数
         cp.on('.value', this.pageDom, 'change', t => this.changePage(t));
+        //截图
+        cp.on('.cover-value', this.pageDom, 'click', t => this.getCover(t));
         //另存为模板
         cp.on('.saveTemplate-btn', this.pageDom, 'click', t => this.saveTemplate());
         //改变组件参数
@@ -49,6 +53,33 @@ class Module {
         ];
         //TODO 根据数据加载右侧页面配置
         //this.initPagePanel();
+    }
+
+    getCover(target) {
+        let sceneDom = MODULE("canvas").sceneDom;
+        let pageData = this.APP.getPageData();
+        let zoom = sceneDom.style.zoom;
+        sceneDom.style.zoom = 1;
+        sceneDom.style.position = "unset";
+        domtoimage.toPng(sceneDom).then(function (dataUrl) {
+            cp.css(target, {
+                backgroundImage: `url("${dataUrl}")`
+            });
+            sceneDom.style.zoom = zoom;
+            sceneDom.style.position = "absolute";
+            //保存到数据库
+            cp.ajax(CONF.IxDAddr + "/base64/add", {
+                data: {
+                    id: pageData.cover,
+                    value: dataUrl
+                },
+                success: res => {
+                    pageData.cover = res.data;
+                }
+            })
+        }).catch(function (error) {
+            console.error('oops, something went wrong!', error);
+        });
     }
 
     //保存为模板
@@ -376,7 +407,18 @@ class Module {
         this.pageImageFillOptionDoms[parseInt(pageData.background.fill)].selected = true;
 
         //this.pageFlipOver = pageData.flipOver;
-        this.pageCover.src = pageData.cover;
+
+        //封面
+        pageData.cover && cp.ajax(CONF.IxDAddr + "/base64/get", {
+            data: {
+                id: pageData.cover
+            },
+            success: res => {
+                cp.css(this.pageCover, {
+                    backgroundImage: `url("${res.data.value}")`
+                });
+            }
+        });
         this.pageComment.value = pageData.comment;
     }
 

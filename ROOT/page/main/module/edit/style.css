@@ -202,9 +202,16 @@
 /*封面*/
 .content > .item > .row.cover > .image {
     height: 148px;
-    background: var(--background);
+    background-color: var(--background);
     border: var(--border);
     float: left;
+    font-size: 46px;
+    color: rgba(0, 0, 0, .2);
+    cursor: pointer;
+}
+
+.content > .item > .row.cover > .image:hover {
+    color: #000;
 }
 
 /*备注*/
@@ -215,6 +222,6 @@
     resize: none;
 }
 
-.content > .item > .row.delete >.delete-btn {
-    color:red;
+.content > .item > .row.delete > .delete-btn {
+    color: red;
 }
