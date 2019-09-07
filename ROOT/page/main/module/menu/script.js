@@ -69,15 +69,15 @@ class Module {
                 {
                     id: "intro",
                     name: "简介",
-                    icon: "&#xe613;"
+                    icon: "&#xe632;"
                 }, {
                     id: "history",
                     name: "历程",
-                    icon: "&#xe888;"
+                    icon: "&#xe638;"
                 }, {
                     id: "display",
                     name: "展示",
-                    icon: "&#xe888;"
+                    icon: "&#xe645;"
                 }
             ],
             content: {
@@ -138,15 +138,15 @@ class Module {
                 {
                     id: "text",
                     name: "文本",
-                    icon: "&#xe613;"
+                    icon: "&#xe63e;"
                 }, {
                     id: "picture",
                     name: "图片",
-                    icon: "&#xe888;"
+                    icon: "&#xe643;"
                 }, {
                     id: "dateTime",
                     name: "日期时间",
-                    icon: "&#xe888;"
+                    icon: "&#xe630;"
                 }, {
                     id: "weather",
                     name: "天气",
@@ -161,6 +161,9 @@ class Module {
                     }, {
                         id: "block/multiText",
                         name: "多行文本"
+                    }, {
+                        id: "block/wordCloud",
+                        name: "词云"
                     }
                 ],
                 picture: [
@@ -241,10 +244,6 @@ class Module {
                     id: "map",
                     name: "地图",
                     icon: "&#xe882;"
-                }, {
-                    id: "wordCloud",
-                    name: "词云",
-                    icon: "&#xe62e;"
                 }/* {
                     id: "scatter",
                     name: "散点图",
@@ -297,13 +296,7 @@ class Module {
                         id: "chart/basicMap",
                         name: "基础地图"
                     }
-                ],
-                wordCloud: [
-                    {
-                        id: "chart/basicWordCloud",
-                        name: "基础词云"
-                    }
-                ],
+                ]
                 /*candlestick: [
                     {
                         id: "chart/basicCandlestick",
