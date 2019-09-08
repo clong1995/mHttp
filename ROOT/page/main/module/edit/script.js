@@ -51,8 +51,6 @@ class Module {
             {name: "雅黑", value: "雅黑"},
             {name: "宋体", value: "宋体"},
         ];
-        //TODO 根据数据加载右侧页面配置
-        //this.initPagePanel();
     }
 
     getCover(target) {
@@ -278,10 +276,25 @@ class Module {
             componentData.background.color = target.value;
             this.setComponent("backgroundColor")
         }
-        //TODO 修改背景图
-        else if (cp.hasClass(target, "image-value")) {
-            componentData.background.image = target.value;
-            this.setComponent("backgroundImage")
+        //背景开关
+        else if (cp.hasClass(target, "background-image-check-value")) {
+            if (!target.checked) {
+                componentData.background.image = "";
+                this.setComponent("backgroundImage")
+            }
+        }
+        //修改背景图
+        else if (cp.hasClass(target, "background-image-value")) {
+            MODULE("upload").upload(target, res => {
+                componentData.background.image = res.type + "||" + res.url;
+                target.previousSibling.previousSibling.checked = true;
+                this.setComponent("backgroundImage")
+            });
+        }
+        //背景填充
+        else if (cp.hasClass(target, "background-image-fill-value")) {
+            componentData.background.fill = target.value;
+            this.setComponent("backgroundFill")
         }
         //专有配置
         else {
@@ -305,6 +318,29 @@ class Module {
                 });
                 return;
             }
+            //颜色的特殊处理
+            else if (cp.hasClass(target.parentNode, "color")) {
+                switch (target.type) {
+                    case "checkbox"://后一个输出值
+                        target.nextSibling.value = "#ffffff";
+                        target.nextSibling.nextSibling.value = "";
+                        break;
+                    case "color":
+                        //前一个打钩
+                        target.previousSibling.checked = true;
+                        //后一个输出值
+                        target.nextSibling.value = target.value;
+                        break;
+                    case "text":
+                        //前前一个打钩
+                        target.previousSibling.previousSibling.checked = true;
+                        //前一个改变颜色
+                        target.previousSibling.value = target.value;
+                        break;
+                }
+
+            }
+
 
             //映射到数据文件
             let keyArr = key.split("/");
@@ -455,13 +491,12 @@ class Module {
             </div>
             <div class="row image">
                 <div class="name">背景图</div>
-                <input type="checkbox" class="value input background-image-check-value">
-                <select class="value input background-image-fill-value">
-                    <option selected>原尺寸</option>
-                    <option>等比拉伸</option>
-                    <option>完全填充</option>
-                </select>
-                <input type="file" class="value input background-image-value" value="${data.background.image}">
+                <input type="checkbox"  ${data.background.image ? "checked" : ""} class="value input background-image-check-value"><select 
+                class="value input background-image-fill-value">
+                    <option ${data.background.fill === "0" ? "selected" : ""} value="0">完全填充</option>
+                    <option  ${data.background.fill === "1" ? "selected" : ""} value="1">等比拉伸</option>
+                </select><input 
+                    type="file" class="value input background-image-value" value="${data.background.image}">
             </div>
         `;
         cp.html(this.componentDom, backgroundHtml, "beforeend");
@@ -590,6 +625,17 @@ class Module {
                         <input type="file" class="value input" data-id="${v.key}" data-value="${v.value}">
                     </div>
                     `;
+                    break;
+                //颜色
+                case "color":
+                    editHtml += `
+                    <div class="row ${v.type}">
+                        <div class="name">${v.name}</div>
+                        <input type="checkbox" class="value input" ${v.value ? " checked" : ""}  data-id="${v.key}" value=""><input 
+                            type="color" class="value input" data-id="${v.key}" value="${v.value || "#ffffff"}"><input 
+                            type="text" class="value input"  data-id="${v.key}" value="${v.value}">
+                    </div>
+                    `;
                     break
             }
         });
@@ -670,6 +716,20 @@ class Module {
                 });
                 break;
             case "backgroundImage":
+                componentData.background.image ? cp.css(componentDom, {
+                    backgroundImage: "url('" + componentData.background.image.split("||")[1] + "')"
+                }) : cp.css(componentDom, {
+                    backgroundImage: null
+                });
+                break;
+            case "backgroundFill":
+                if (componentData.background.fill === "0") {
+                    cp.removeClass(componentDom, "centerBg");
+                    cp.addClass(componentDom, "fillBg")
+                } else {
+                    cp.removeClass(componentDom, "fillBg");
+                    cp.addClass(componentDom, "centerBg");
+                }
                 break;
             default:
                 cp.log("无效配置", "warn");

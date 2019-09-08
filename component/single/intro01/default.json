@@ -10,7 +10,8 @@
   },
   "background": {
     "color": "",
-    "image": ""
+    "image": "",
+    "fill": 0
   },
   "font": {
     "color": "#64BCBD",
@@ -24,6 +25,18 @@
     "left": 0
   },
   "option": [
+    {
+      "type": "color",
+      "key": "color",
+      "name": "底色",
+      "value": "#2F4554"
+    },
+    {
+      "type": "color",
+      "key": "border",
+      "name": "边线",
+      "value": "#376462"
+    },
     {
       "type": "text",
       "key": "text",

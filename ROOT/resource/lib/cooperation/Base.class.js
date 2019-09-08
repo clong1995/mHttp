@@ -666,6 +666,11 @@ class Base {
                 background-size: contain;
             }
             
+            .fillBg{
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+            }
+            
             .disable {
                 filter: grayscale(100%);
                 opacity: .1;

@@ -1,7 +1,9 @@
 class Module {
     DOM() {
-        this.titleDom = cp.query(".title", DOMAIN);
-        this.contentDom = cp.query(".content", DOMAIN);
+        this.wrapDom = cp.query(".wrap", DOMAIN);
+        this.innerDom = cp.query(".inner", this.wrapDom);
+        this.titleDom = cp.query(".title", this.innerDom);
+        this.contentDom = cp.query(".content", this.innerDom);
     }
 
     EVENT() {
@@ -23,6 +25,25 @@ class Module {
         switch (key) {
             case "text":
                 cp.html(this.titleDom, value);
+                break;
+            case "color":
+                cp.css(this.innerDom, {
+                    backgroundColor: value ? value : null
+                });
+                break;
+            case "border":
+                cp.css(this.wrapDom, {
+                    borderTopColor: value ? value : null
+                });
+                cp.css(this.wrapDom, {
+                    borderBottomColor: value ? value : null
+                });
+                cp.css(this.innerDom, {
+                    borderColor: value ? value : null
+                });
+                cp.css(this.titleDom, {
+                    borderTopColor: value ? value : null
+                });
                 break;
             case "file":
                 if (value === "") {

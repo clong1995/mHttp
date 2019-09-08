@@ -628,11 +628,11 @@ class Module {
         //增加一片
         let sliceDom = cp.createDom("div", {
             id: "slice_" + data.id,
-            class: "slice slice-" + data.name
+            class: "slice slice-" + data.name + `${data.background.fill === "0" ? " fillBg" : " centerBg"}`
         });
         data.index = this.sliceIndex;
-        //设置外壳配置
-        cp.css(sliceDom, {
+
+        let style = {
             top: data.position.top + "px",
             left: data.position.left + "px",
             width: data.size.width + "px",
@@ -642,7 +642,15 @@ class Module {
             fontSize: data.font.size + "px",
             fontFamily: data.font.family,
             color: data.font.color
-        });
+        };
+
+        if (data.background.image) {
+            style["backgroundImage"] = "url('" + data.background.image.split("||")[1] + "')"
+        }
+
+
+        //设置外壳配置
+        cp.css(sliceDom, style);
 
         //把html放到容器里
         cp.html(sliceDom, html);

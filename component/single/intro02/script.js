@@ -1,10 +1,13 @@
 class Module {
     DOM() {
-        this.contentDom = cp.query(".content", DOMAIN);
-        this.t1Dom = cp.query(".t1", DOMAIN);
-        this.t2Dom = cp.query(".t2", DOMAIN);
-        this.t3Dom = cp.query(".t3", DOMAIN);
-        this.textDom = cp.query(".text", DOMAIN);
+        this.wrapDom = cp.query(".wrap", DOMAIN);
+        this.innerDom = cp.query(".inner", this.wrapDom);
+        this.contentDom = cp.query(".content", this.innerDom);
+        this.titleDom = cp.query(".title", this.innerDom);
+        this.t1Dom = cp.query(".t1", this.titleDom);
+        this.t2Dom = cp.query(".t2", this.titleDom);
+        this.t3Dom = cp.query(".t3", this.titleDom);
+        this.textDom = cp.query(".text", this.innerDom);
     }
 
     EVENT() {
@@ -24,6 +27,25 @@ class Module {
     OPTION(key, value) {
         console.log(key, value);
         switch (key) {
+            case "color":
+                cp.css(this.innerDom, {
+                    backgroundColor: value ? value : null
+                });
+                break;
+            case "border":
+                cp.css(this.wrapDom, {
+                    borderTopColor: value ? value : null
+                });
+                cp.css(this.wrapDom, {
+                    borderBottomColor: value ? value : null
+                });
+                cp.css(this.innerDom, {
+                    borderColor: value ? value : null
+                });
+                cp.css(this.titleDom, {
+                    borderBottomColor: value ? value : null
+                });
+                break;
             case "text1":
                 cp.html(this.t1Dom, value);
                 break;

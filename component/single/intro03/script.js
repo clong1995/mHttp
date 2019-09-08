@@ -1,6 +1,7 @@
 class Module {
     DOM() {
-        this.innerDom = cp.query(".inner", DOMAIN);
+        this.wrapDom = cp.query(".wrap", DOMAIN);
+        this.innerDom = cp.query(".inner", this.wrapDom);
     }
 
     EVENT() {
@@ -20,6 +21,22 @@ class Module {
     OPTION(key, value) {
         console.log(key, value);
         switch (key) {
+            case "color":
+                cp.css(this.innerDom, {
+                    backgroundColor: value ? value : null
+                });
+                break;
+            case "border":
+                cp.css(this.wrapDom, {
+                    borderTopColor: value ? value : null
+                });
+                cp.css(this.wrapDom, {
+                    borderBottomColor: value ? value : null
+                });
+                cp.css(this.innerDom, {
+                    borderColor: value ? value : null
+                });
+                break;
             case "textarea":
                 value = value.replace(/\r\n/g, "<br>");
                 value = value.replace(/\n/g, "<br>");

@@ -10,7 +10,8 @@
   },
   "background": {
     "color": "",
-    "image": ""
+    "image": "",
+    "fill": 0
   },
   "font": {
     "color": "#000000",

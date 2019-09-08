@@ -48,8 +48,8 @@ class Module {
                             <div class="inner">
                                 <div class="img enter"></div>
                                 <div class="option">
-                                    <i class="preview iconfont icon alt">&#xe611;</i>
-                                    <i class="copy iconfont icon alt">&#xe6e5;</i>
+                                    <i class="preview iconfont icon alt disable">&#xe611;</i>
+                                    <i class="copy iconfont icon alt disable">&#xe6e5;</i>
                                     <i class="delete iconfont icon alt">&#xe624;</i>
                                 </div>
                                 <div class="name">${v.name}</div>

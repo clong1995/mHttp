@@ -170,13 +170,10 @@ class Module {
                     {
                         id: "block/image",
                         name: "图片"
-                    }, {
+                    }/*, {
                         id: "block/banner01",
                         name: "轮播01"
-                    }, {
-                        id: "block/banner02",
-                        name: "轮播02"
-                    }
+                    }*/
                 ],
                 dateTime: [
                     {
@@ -388,46 +385,46 @@ class Module {
             content: {
                 myTemplate: [],
                 visual: [
-                    {
+                    /*{
                         id: "chart/basicBar",
                         name: "数据可视化"
-                    }
+                    }*/
                 ],
                 weChart: [
-                    {
+                    /*{
                         id: "chart/basicPie",
                         name: "微信"
-                    }
+                    }*/
                 ],
                 ppt: [
-                    {
+                    /*{
                         id: "chart/basicScatter",
                         name: "ppt"
-                    }
+                    }*/
                 ],
                 ad: [
-                    {
+                    /*{
                         id: "chart/basicMap",
                         name: "广告"
-                    }
+                    }*/
                 ],
                 website: [
-                    {
+                    /*{
                         id: "chart/basicCandlestick",
                         name: "网站"
-                    }
+                    }*/
                 ],
                 mobile: [
-                    {
+                    /*{
                         id: "chart/basicRadar",
                         name: "移动端"
-                    }
+                    }*/
                 ],
                 client: [
-                    {
-                        id: "chart/basicGraph",
-                        name: "客户端"
-                    }
+                    /*{
+                         id: "chart/basicGraph",
+                         name: "客户端"
+                     }*/
                 ]
             }
         };

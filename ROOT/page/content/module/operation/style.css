@@ -95,6 +95,9 @@
     color: #ffffff;
 }
 
+.add-project{
+    background: var(--background8);
+}
 .add-project > .window-container {
     width: 300px;
     height: 100px;

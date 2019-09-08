@@ -158,6 +158,16 @@
     padding: 0;
 }
 
+/*颜色*/
+.content > .item > .row.color > input[type=text] {
+    width: 85px;
+}
+
+.content > .item > .row.color > input[type=color] {
+    width: 40px;
+    margin-right: 10px;
+    padding: 0;
+}
 
 /*位置样式*/
 .content > .item > .row.position > .value {
