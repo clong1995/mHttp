@@ -9,6 +9,7 @@
     cursor: pointer;
     position: relative;
     outline: none;
+    width: 65px;
 }
 
 .chip > .item:after {
@@ -51,13 +52,13 @@
 }
 
 .chip > .item > .wrap > .classify {
-    width: 100px;
+    width: 105px;
     height: 100%;
     float: left;
     background: var(--background);
     border-right: var(--border);
-    overflow-y: auto;
-    overflow-x: hidden;
+    /*overflow-y: auto;
+    overflow-x: hidden;*/
 }
 
 /*
@@ -74,7 +75,7 @@
 */
 
 .chip > .item > .wrap > .classify > .sort {
-    width: 100px;
+    width: 105px;
     height: 35px;
     line-height: 35px;
     padding: 0 10px;
@@ -83,7 +84,7 @@
 
 .chip > .item > .wrap > .classify > .sort.active {
     background: #dfdfdf;
-    width: 111px;
+    width: 106px;
     font-weight: bold;
 }
 

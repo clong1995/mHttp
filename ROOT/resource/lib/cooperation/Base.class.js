@@ -114,6 +114,12 @@ class Base {
 
         this.ajaxHeadersInterceptor = null;
         this.ajaxResponseInterceptor = null;
+
+        window.oncontextmenu = function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        };
     }
 
 
@@ -544,6 +550,7 @@ class Base {
         this.setStrSheet(`
             *{
                 box-sizing: border-box;
+                -webkit-text-size-adjust: none;
             }
             ${scrollbar}
             blockquote, body, button, dd, dl, dt, fieldset, form, h1, h2, h3, h4, h5, h6, hr, input, legend, li, ol, p, pre, td, textarea, th, ul {
@@ -1110,7 +1117,9 @@ class Base {
             //增加事件
             this._eventMap.get(target).add(evt);
             //绑定原始事件，修正blur,focus等事件，冒泡到绑定的父元素
-            target.addEventListener(evt, e => this._excEvent(e, target), (evt === 'blur' || evt === 'focus' || evt === "scroll"));
+            target.addEventListener(evt, e => {
+                this._excEvent(e, target);
+            }, (evt === 'blur' || evt === 'focus' || evt === "scroll"));
         }
 
         //增加事件元素

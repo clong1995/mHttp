@@ -483,19 +483,3 @@ func moduleImgTagCompiler(scope, path, entry, appHtml string) string {
 	}
 	return appHtml
 }
-
-/**
-//======补丁：修复存在缩放造成鼠标偏移问题
-        (function findZoom(el) {
-            var zoom = window.getComputedStyle(el.parentNode).zoom;
-            if (zoom == 1) {
-                findZoom(el.parentNode)
-            } else {
-                //e.pageX = e.pageX/zoom;
-                //e.pageY = e.pageY/zoom;
-
-console.log(e);
-}
-})(el.parentNode)
-//======
-*/

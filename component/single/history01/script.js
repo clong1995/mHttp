@@ -9,7 +9,6 @@ class Module {
     INIT() {
         this.readOnlyData = null;
         this.id = DOMAIN.id.split("_")[1];
-        console.log(this.id);
     }
 
     /**
@@ -97,6 +96,9 @@ class Module {
     }
 
     createDot() {
+        if (!this.readOnlyData) {
+            return
+        }
         let len = this.readOnlyData.length - 1;
         let {width, height} = cp.domSize(DOMAIN);
         let x = parseInt(width / len);
