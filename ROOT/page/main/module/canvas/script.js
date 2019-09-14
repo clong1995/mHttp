@@ -149,7 +149,10 @@ class Module {
         cp.show(this.viewDom);
     }
 
-    //上移一层
+    /**
+     * 上移一层
+     * @param target
+     */
     moveUpSlice(target) {
         //当前层
         let currData = this.APP.getComponentData(this.rightClickId);
@@ -183,6 +186,10 @@ class Module {
         target.parentNode.blur();
     }
 
+    /**
+     * 下移一层
+     * @param target
+     */
     moveDownSlice(target) {
         //当前层
         let currData = this.APP.getComponentData(this.rightClickId);
@@ -417,12 +424,6 @@ class Module {
         }
     }
 
-    getProjectData() {
-
-        //请求当前project的信息
-
-    }
-
     /**
      * 加载场景
      */
@@ -607,9 +608,8 @@ class Module {
 
         //返回大小
         cp.css(this.sceneDom, {
-            zoom: this.scale,
-            top: size.t / this.scale + 'px',
-            left: size.l / this.scale + 'px',
+            transform: `scale(${this.scale}) translate(${size.l / this.scale}px,${size.t / this.scale}px)`,
+            transformOrigin: "top left",
             //适应背景大小
             backgroundSize: (20 / this.scale) + 'px ' + (20 / this.scale) + 'px'
         });
@@ -714,7 +714,9 @@ class Module {
         cp.append(this.sceneDom, bgDom);
     }
 
-    //背景填充
+    /**
+     * 背景填充
+     */
     setBackgroundFill() {
         let bgDom = cp.query(".sceneBg", this.sceneDom);
         if (!bgDom) {
@@ -801,7 +803,6 @@ class Module {
 
     /**
      * 新建工程后自动新建的场景
-     * @param name
      */
     autoAddNewSheet() {
         cp.removeActive(cp.query(".active", this.sheetInnerDom));
@@ -817,6 +818,10 @@ class Module {
         this.APP.loadData();
     }
 
+    /**
+     *
+     * @param target
+     */
     loadSheet(target) {
         if (cp.hasActive(target)) {
             return

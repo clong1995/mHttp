@@ -4,8 +4,7 @@ class Module {
     }
 
     EVENT() {
-        // coo.on('.addBtn', this.domain, 'click', t => this.showStory());
-        // coo.on('.close', this.domain, 'click', t => this.hideStory());
+        //cp.on('.close', this.domain, 'click', t => this.hideStory());
     }
 
     INIT() {
@@ -22,10 +21,16 @@ class Module {
         let closeDom = cp.createDom("div", {
             class: "window-close iconfont"
         });
-        cp.html(closeDom,"&#xe6f4;");
+        cp.html(closeDom, "&#xe6f4;");
         let titleDom = cp.query(".window-title", dom);
         cp.append(titleDom, closeDom);
+        //绑定关闭事件
+        closeDom.onclick = () => this.hide(dom);
         cp.show(dom);
+    }
+
+    hide(dom) {
+        cp.hide(dom);
     }
 
     //内置样式
