@@ -345,6 +345,38 @@ class Module {
         cp.html(cp.query(".chart-classify", DOMAIN), chartClassifyHtml);
         cp.html(cp.query(".chart-content", DOMAIN), chartContentHtml);
 
+        //装饰库
+        let decorate = {
+            content: [
+                {
+                    id: "decorate/0001",
+                    name: "0001"
+                },
+                {
+                    id: "decorate/0002",
+                    name: "0002"
+                }
+            ]
+        };
+
+        let decorateContentHtml = "";
+        decorateContentHtml += `<div class="ul">`;
+        decorate.content.forEach(vv => {
+            decorateContentHtml += `
+                    <div class="li slice" data-id="${vv.id}">
+                        <div class="thumbnail">
+                            <span class="iconfont icon">&#xe611;</span>
+                            <span class="iconfont icon">&#xe647;</span>
+                        </div>
+                        <div class="title">${vv.name}</div>
+                    </div>
+                `;
+        });
+        decorateContentHtml += `</div>`;
+
+        cp.html(cp.query(".decorate-content", DOMAIN), decorateContentHtml);
+
+
         //模板库
         let template = {
             classify: [

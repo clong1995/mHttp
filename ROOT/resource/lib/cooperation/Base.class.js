@@ -25,6 +25,7 @@
  */
 'use strict';
 
+//浏览器检测
 class Base {
     constructor() {
         /**

@@ -6,6 +6,8 @@ class Module {
     EVENT() {
         //预览
         cp.on('.preview', DOMAIN, 'click', t => this.preview());
+        //分享
+        cp.on('.share', DOMAIN, 'click', t => this.share());
     }
 
     INIT() {
@@ -13,6 +15,10 @@ class Module {
     }
 
     initList() {
+
+    }
+
+    share() {
 
     }
 

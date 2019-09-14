@@ -9,7 +9,7 @@
     cursor: pointer;
     position: relative;
     outline: none;
-    width: 65px;
+    width: 80px;
 }
 
 .chip > .item:after {
@@ -52,7 +52,7 @@
 }
 
 .chip > .item > .wrap > .classify {
-    width: 105px;
+    width: 120px;
     height: 100%;
     float: left;
     background: var(--background);
@@ -75,7 +75,7 @@
 */
 
 .chip > .item > .wrap > .classify > .sort {
-    width: 105px;
+    width: 120px;
     height: 35px;
     line-height: 35px;
     padding: 0 10px;
@@ -84,7 +84,7 @@
 
 .chip > .item > .wrap > .classify > .sort.active {
     background: #dfdfdf;
-    width: 106px;
+    width: 121px;
     font-weight: bold;
 }
 
@@ -100,7 +100,7 @@
 }
 
 .chip > .item > .wrap > .content {
-    width: calc(100% - 110px);
+    width: calc(100% - 120px);
     height: calc(100% - 20px);
     float: left;
     overflow-y: auto;
@@ -156,4 +156,44 @@
     line-height: 25px;
     text-align: center;
     font-size: 11px;
+}
+
+.chip > .item.decorate > .wrap > .search {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+}
+
+.chip > .item.decorate > .wrap > .result {
+    width: 100%;
+    height: calc(100% - 80px);
+    margin-top: 0;
+}
+
+.chip > .item.decorate > .wrap > .result > .ul {
+    display: block;
+}
+
+.chip > .item.decorate > .wrap > .result > .item {
+
+}
+
+.chip > .item.decorate > .wrap > .pages {
+    width: 100%;
+    height: 30px;
+    text-align: center;
+}
+
+.chip > .item.decorate > .wrap > .pages > .page {
+    padding: 0 2px;
+    margin: 0 2px;
+    border-bottom: var(--border);
+    cursor: pointer;
+}
+
+.chip > .item.decorate > .wrap > .pages > .page.active {
+    background: var(--background5);
+    color: var(--color2);
+    cursor: default;
 }

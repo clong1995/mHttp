@@ -27,7 +27,6 @@ const ajaxHeadersInterceptor = url => {
         "Authorization": token
     }
 };
-
 //消息体处理
 const ajaxResponseInterceptor = res => {
     //是否正确
