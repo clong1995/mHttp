@@ -56,15 +56,21 @@ class Module {
     getCover(target) {
         let sceneDom = MODULE("canvas").sceneDom;
         let pageData = this.APP.getPageData();
-        let zoom = sceneDom.style.zoom;
-        sceneDom.style.zoom = 1;
-        sceneDom.style.position = "unset";
+        //old
+        let transform = sceneDom.style.transform;
+        let backgroundImage = sceneDom.style.backgroundImage;
+        //unset
+        sceneDom.style.transform = "unset";
+        sceneDom.style.backgroundImage = "unset";
+        sceneDom.style.border = "none";
+
         domtoimage.toPng(sceneDom).then(function (dataUrl) {
             cp.css(target, {
                 backgroundImage: `url("${dataUrl}")`
             });
-            sceneDom.style.zoom = zoom;
-            sceneDom.style.position = "absolute";
+            sceneDom.style.transform = transform;
+            sceneDom.style.backgroundImage = backgroundImage;
+            sceneDom.style.border = "var(--border)";
             //保存到数据库
             cp.ajax(CONF.IxDAddr + "/base64/add", {
                 data: {

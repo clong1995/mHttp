@@ -676,6 +676,7 @@ class Module {
      */
     setBackgroundImage() {
         let pageData = this.APP.getPageData();
+
         //是否有背景图
         let bgDom = cp.query(".sceneBg", this.sceneDom);
 
@@ -730,6 +731,7 @@ class Module {
             })
         } else {//填充
             cp.css(image, {
+                display: "block",
                 width: "100%",
                 height: "100%"
             })
