@@ -115,7 +115,7 @@ class Base {
         this.ajaxHeadersInterceptor = null;
         this.ajaxResponseInterceptor = null;
 
-        window.oncontextmenu = function(event) {
+        window.oncontextmenu = function (event) {
             event.preventDefault();
             event.stopPropagation();
             return false;
@@ -1234,8 +1234,21 @@ class Base {
     _resize(target, realTarget, cb) {
         //父元素有缩放，转化偏移量
         let offset = 1;
-        let zoom = target.parentNode.style.zoom;
-        if (zoom) offset = 1 / parseFloat(zoom);
+
+        let scaleMatch = target.parentNode.style.transform.match(/scale\((.*?)\)/);
+        let translateMatch = target.parentNode.style.transform.match(/translate\((.*?)\)/);
+
+        //zoom
+        let scale = scaleMatch ? scaleMatch[1] : 1;
+        let translateX = 0, translateY = 0;
+
+        if (scale) {
+            offset = 1 / parseFloat(scale);
+            let translate = translateMatch ? translateMatch[1] : "0,0";
+            let arr = translate.split(",");
+            translateX = parseFloat(arr[0]);
+            translateY = parseFloat(arr[1]);
+        }
 
         let isChangeSize = false;
         let padding = 10;
@@ -1252,16 +1265,20 @@ class Base {
             tLeft = position.left;
         };
 
-        getPositionSize();
 
         //执行，只改变手势
         target.onmousemove = e => {
             if (isChangeSize) return;
+            getPositionSize();
 
-            let top = e.layerY * offset < padding * offset,
-                bottom = e.layerY * offset > tHeight - padding * offset,
-                left = e.layerX * offset < padding * offset,
-                right = e.layerX * offset > tWidth - padding * offset;
+            let ly = e.layerY + (1 - scale) * tTop - translateY * scale,
+                lx = e.layerX + (1 - scale) * tLeft - translateX * scale,
+                p = padding * offset;
+
+            let top = ly < p,
+                bottom = ly > tHeight * scale - p,
+                left = lx < p,
+                right = lx > tWidth * scale - p;
 
             if (left && !top && !bottom) cursor = 'w-resize';//左
             else if (right && !top && !bottom) cursor = 'e-resize';//右
@@ -1275,8 +1292,6 @@ class Base {
 
             target.style.cursor = cursor;
         };
-
-
         target.onmousedown = () => {
             getPositionSize();
             let x0 = window.event.screenX * offset,
@@ -1723,7 +1738,7 @@ class Base {
      * TODO 目前只支持class，后期完善id和标签
      * @param dom
      * @param upper
-     * @returns {(() => Node) | ActiveX.IXMLDOMNode | Node | SVGElementInstance}
+     * @returns {(() => (Node | null)) | ActiveX.IXMLDOMNode | (Node & ParentNode) | module:echarts/data/Tree~TreeNode}
      */
     parent(dom, upper = null) {
 
@@ -1882,7 +1897,6 @@ class Base {
         }
         return arr;
     }
-    ;
 
     /**
      * 判断dom元素的类型
@@ -1978,7 +1992,6 @@ class Base {
      * @ param {object} ele(nodeList)类型 当前的dom元素
      * @ clazz {string} [clazz] ".id"|".class"|"tag"
      */
-
     find(ele, clazz) {
 
         if (this.typeOf(ele) === "element") {
@@ -2011,7 +2024,6 @@ class Base {
             s += parseInt(v.value) * Math.pow(60, 2 - i));
         return s;
     }
-    ;
 
     checkConn(timer, cb) {
         let url = window.location.href;
@@ -2063,7 +2075,7 @@ class Base {
         this.attr(dom, attr)
     }
 
-//TODO https://blog.csdn.net/wconvey/article/details/54171693
+    //TODO https://blog.csdn.net/wconvey/article/details/54171693
 
     /**
      * 设置临时的数据

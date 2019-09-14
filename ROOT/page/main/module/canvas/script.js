@@ -557,7 +557,6 @@ class Module {
      * @param scale
      */
     sceneSize(scale = null) {
-
         //获取容器大小
         let {width, height} = cp.domSize(this.containerDom);
 
