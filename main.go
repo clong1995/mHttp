@@ -4,12 +4,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -28,11 +29,22 @@ type config struct {
 
 var CONF *config
 
+//自建缓存，目的和功效：降低至磁盘IO（包含任何文本图片等静态资源）为1次；js,css,html的链接，编译，为1次；
+//用空间换时间
+//数据结构：
+type cacheItem struct {
+	Type   string
+	Length string
+	Body   []byte
+}
+
+var cacheServer = make(map[string]cacheItem)
+
 func main() {
 	addr := flag.String("addr", ":8800", "服务器端口")
 	root := flag.String("root", "./ROOT", "项目根目录")
 	cors := flag.Bool("cors", true, "跨域")
-	cache := flag.Bool("cache", true, "缓存")
+	cache := flag.Bool("cache", false, "缓存")
 
 	//TODO 专用
 	component := flag.String("component", "./component", "组件目录")
@@ -61,38 +73,65 @@ func main() {
 //TODO 专用
 func componentHandle(w http.ResponseWriter, r *http.Request) {
 	urlPath := r.URL.Path
+
+	//判断缓存
+	if value, ok := cacheServer[urlPath]; ok {
+		httpWrite(w, &value)
+		return
+	}
+
 	comp := strings.Split(urlPath, "/")
+
 	if len(comp) == 4 { //加载主模块
-		path := CONF.Component + "/" + comp[2] + "/" + comp[3]
+		cPath := CONF.Component + "/" + comp[2] + "/" + comp[3]
 		//检查三个基本文件是否存在
 		files := [4]string{"/default.json", "/app.html", "/script.js", "/style.css"}
 		for _, v := range files {
-			if !existsAndWrite(path+v, w) {
+			if !existsAndWrite(cPath+v, w) {
 				return
 			}
 		}
 		//读取三个文件
 		//读取default
-		defaultStr, _ := ioutil.ReadFile(path + files[0])
+		defaultStr, _ := ioutil.ReadFile(cPath + files[0])
 
-		appStr, _ := ioutil.ReadFile(path + files[1])
+		appStr, _ := ioutil.ReadFile(cPath + files[1])
 
-		scriptStr, _ := ioutil.ReadFile(path + files[2])
+		scriptStr, _ := ioutil.ReadFile(cPath + files[2])
 
-		styleStr, _ := ioutil.ReadFile(path + files[3])
+		styleStr, _ := ioutil.ReadFile(cPath + files[3])
 
 		splitStr := "--- IxD component ---"
 		str := string(defaultStr) + splitStr + string(appStr) + splitStr + string(scriptStr) + splitStr + string(styleStr)
-		_, _ = io.WriteString(w, str)
+		//_, _ = io.WriteString(w, str)
+
+		//TODO 加入缓存
+		data := []byte(str)
+		httpWriteAndCache(w, urlPath, "text/html", data)
 	} else if len(comp) > 4 { //加载内部链接的文件
-		path := CONF.Component + "/"
+		cFilePath := CONF.Component + "/"
 		for i := 2; i < len(comp); i++ {
-			path += comp[i] + "/"
+			cFilePath += comp[i] + "/"
 		}
-		path = strings.TrimRight(path, "/")
-		if existsAndWrite(path, w) {
-			str, _ := ioutil.ReadFile(path)
-			_, _ = io.WriteString(w, string(str))
+		cFilePath = strings.TrimRight(cFilePath, "/")
+		if existsAndWrite(cFilePath, w) {
+			data, _ := ioutil.ReadFile(cFilePath)
+
+			//这里根据扩展名设置type
+			ext := path.Ext(urlPath)
+			typee := "text/html"
+			if ext == ".png" {
+				typee = "image/png"
+			} else if ext == ".jpg" || ext == ".jpeg" {
+				typee = "image/jpeg"
+			} else if ext == ".gif" {
+				typee = "image/gif"
+			} else if ext == ".bmp" {
+				typee = "application/x-bmp"
+			}
+
+			//TODO 加入缓存
+			httpWriteAndCache(w, urlPath, typee, data)
 		}
 	} else {
 		w.WriteHeader(http.StatusNotFound)
@@ -101,51 +140,59 @@ func componentHandle(w http.ResponseWriter, r *http.Request) {
 }
 
 func pageHandle(w http.ResponseWriter, r *http.Request) {
-	path := r.URL.Path
+	urlPath := r.URL.Path
 
-	if path == "/favicon.ico" {
+	//判断缓存
+	if value, ok := cacheServer[urlPath]; ok {
+		httpWrite(w, &value)
+		return
+	}
+
+	//转发到resource处理器
+	if urlPath == "/favicon.ico" {
 		http.Redirect(w, r, "/resource/image/favicon.ico", http.StatusFound)
 		return
 	}
 
-	if path == "/" {
-		path = "/index"
+	if urlPath == "/" {
+		urlPath = "/index"
 	}
 	//page
-	//page := CONF.Root + "/page" + path
-	if !existsAndWrite(CONF.Root+"/page"+path, w) {
+	//page := CONF.Root + "/page" + urlPath
+	if !existsAndWrite(CONF.Root+"/page"+urlPath, w) {
 		return
 	}
 
 	//resource
 	resource := CONF.Root + "/resource"
+	log.Println(resource)
 	if !existsAndWrite(resource, w) {
 		return
 	}
-
-	makeFile(path, resource, w)
+	makeFile(urlPath, resource, w)
 }
 
-func existsAndWrite(path string, w http.ResponseWriter) bool {
-	_, err := os.Stat(path)
+func existsAndWrite(ckPath string, w http.ResponseWriter) bool {
+	_, err := os.Stat(ckPath)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		log.Printf("not found : %s", path)
+		log.Printf("not found : %s", ckPath)
 		return os.IsExist(err)
 	}
 	return true
 }
 
-func exists(path string) bool {
-	_, err := os.Stat(path)
+func exists(ckPath string) bool {
+	_, err := os.Stat(ckPath)
 	if err != nil {
 		return os.IsExist(err)
 	}
 	return true
 }
 
-func makeFile(path, resource string, w http.ResponseWriter) {
-	page := CONF.Root + "/page" + path
+//组装文件，带缓存
+func makeFile(pPath, resource string, w http.ResponseWriter) {
+	page := CONF.Root + "/page" + pPath
 	//查找主要文件
 	appPath := page + "/app.html"
 	if !existsAndWrite(appPath, w) {
@@ -157,9 +204,8 @@ func makeFile(path, resource string, w http.ResponseWriter) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
 	appHtml := string(appMain)
-
+	//=== 解析 ===
 	//解析 entry属性
 	entryReg := regexp.MustCompile(`entry=['"]?([^'"]*)['"]?`)
 	//解析 id属性
@@ -169,13 +215,13 @@ func makeFile(path, resource string, w http.ResponseWriter) {
 	//解析 scope属性
 	scopeReg := regexp.MustCompile(`scope=['"]?([^'"]*)['"]?`)
 
+	//=== 编译 ===
 	//编译主style
-	appHtml = moduleStyleCompiler("", path, "", appHtml)
+	appHtml = moduleStyleCompiler("", pPath, "", appHtml)
 	//编译主script
 	appHtml = moduleScriptCompiler(page, "", appHtml)
 	//编译图片
-	appHtml = moduleImgTagCompiler("", path, "", appHtml)
-
+	appHtml = moduleImgTagCompiler("", pPath, "", appHtml)
 	//模块html
 	for _, param := range regexp.MustCompile(`<module.*?(?:>|/>)`).FindAllStringSubmatch(appHtml, -1) {
 		//模块
@@ -234,46 +280,73 @@ func makeFile(path, resource string, w http.ResponseWriter) {
 		appHtml = moduleHtmlCompiler(entryPath, entry, moduleTag, class, appHtml)
 
 		//编译style
-		appHtml = moduleStyleCompiler(scope, path, entry, appHtml)
+		appHtml = moduleStyleCompiler(scope, pPath, entry, appHtml)
 
 		//编译script
 		appHtml = moduleScriptCompiler(entryPath, entry, appHtml)
 
 		//编译图片
-		appHtml = moduleImgTagCompiler(scope, path, entry, appHtml)
+		appHtml = moduleImgTagCompiler(scope, pPath, entry, appHtml)
 	}
 
-	_, _ = io.WriteString(w, appHtml)
+	//TODO 加入缓存
+	data := []byte(appHtml)
+	httpWriteAndCache(w, pPath, "text/html", data)
+}
+
+//输出并缓存
+func httpWriteAndCache(w http.ResponseWriter, urlPath, contentType string, body []byte) {
+	//缓存
+	cache := cacheItem{
+		contentType,
+		strconv.Itoa(len(body)),
+		body,
+	}
+	if CONF.Cache {
+		cacheServer[urlPath] = cache
+	}
+	//输出
+	httpWrite(w, &cache)
+}
+
+//输出
+func httpWrite(w http.ResponseWriter, cache *cacheItem) {
+	w.Header().Set("Content-Type", cache.Type)
+	w.Header().Set("Content-Length", cache.Length)
+	_, err := w.Write(cache.Body)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 //html
 func moduleHtmlCompiler(entryPath, entry, moduleTag, class, appHtml string) string {
-	path := entryPath + "/app.html"
-	if exists(path) {
-		data, err := ioutil.ReadFile(path)
+	htmlPath := entryPath + "/app.html"
+	if exists(htmlPath) {
+		data, err := ioutil.ReadFile(htmlPath)
 		if err != nil {
-			log.Printf("%s read fail, %s", path, err)
+			log.Printf("%s read fail, %s", htmlPath, err)
 			return appHtml
 		} else {
 			appHtml = strings.ReplaceAll(appHtml, moduleTag, fmt.Sprintf(`<div id="%s"%s>%s</div>`, entry, class, string(data)))
 			return appHtml
 		}
 	} else {
-		log.Printf("%s not found", path)
+		log.Printf("%s not found", htmlPath)
 		return appHtml
 	}
 }
 
 //style
-func moduleStyleCompiler(scope, path, entry, appHtml string) string {
+func moduleStyleCompiler(scope, pagePath, entry, appHtml string) string {
 	var stylePath string
 	if scope != "" {
 		stylePath = CONF.Root + "/resource/module/" + entry + "/style.css"
 	} else {
 		if entry != "" {
-			stylePath = CONF.Root + "/page" + path + "/module/" + entry + "/style.css"
+			stylePath = CONF.Root + "/page" + pagePath + "/module/" + entry + "/style.css"
 		} else {
-			stylePath = CONF.Root + "/page" + path + "/style.css"
+			stylePath = CONF.Root + "/page" + pagePath + "/style.css"
 		}
 	}
 
@@ -305,13 +378,13 @@ func moduleStyleCompiler(scope, path, entry, appHtml string) string {
 							continue
 						}
 						if strings.HasPrefix(url, "/image/") {
-							str = strings.ReplaceAll(str, bgItem, strings.Replace(bgItem, url, "/page"+path+url, 1))
+							str = strings.ReplaceAll(str, bgItem, strings.Replace(bgItem, url, "/page"+pagePath+url, 1))
 						} else if strings.HasPrefix(url, "image/") {
 							var realUrl string
 							if scope != "" {
 								realUrl = "/resource/module/" + entry + "/" + url
 							} else {
-								realUrl = "/page" + path + "/module/" + entry + "/" + url
+								realUrl = "/page" + pagePath + "/module/" + entry + "/" + url
 							}
 							str = strings.ReplaceAll(str, bgItem, strings.Replace(bgItem, url, realUrl, 1))
 						}
@@ -448,7 +521,7 @@ func moduleScriptCompiler(entryPath, entry, appHtml string) string {
 }
 
 //image
-func moduleImgTagCompiler(scope, path, entry, appHtml string) string {
+func moduleImgTagCompiler(scope, pagePath, entry, appHtml string) string {
 	//img
 	imgReg := regexp.MustCompile(`<img.*?(?:>|/>)`)
 	//解析 src 属性
@@ -468,13 +541,13 @@ func moduleImgTagCompiler(scope, path, entry, appHtml string) string {
 				}
 
 				if strings.HasPrefix(src, "/image/") {
-					appHtml = strings.ReplaceAll(appHtml, imgTag, strings.Replace(imgTag, src, "/page"+path+src, 1))
+					appHtml = strings.ReplaceAll(appHtml, imgTag, strings.Replace(imgTag, src, "/page"+pagePath+src, 1))
 				} else if entry != "" && strings.HasPrefix(src, "image/") {
 					var realSrc string
 					if scope != "" {
 						realSrc = "/resource/module/" + entry + "/" + src
 					} else {
-						realSrc = "/page" + path + "/module/" + entry + "/" + src
+						realSrc = "/page" + pagePath + "/module/" + entry + "/" + src
 					}
 					appHtml = strings.ReplaceAll(appHtml, imgTag, strings.Replace(imgTag, src, realSrc, 1))
 				}
