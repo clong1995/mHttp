@@ -24,19 +24,28 @@ class Module {
     }
 
     delete(target) {
-        let p = cp.parent(target, "item");
-        let pid = cp.getData(p);
-        cp.ajax(CONF.IxDAddr + "/project/delete", {
-            data: {
-                project: pid
+        //确认
+        MODULE("dialog").show({
+            type: "warn",
+            text: "确定要删除?",
+            confirm: close => {
+                let p = cp.parent(target, "item");
+                let pid = cp.getData(p);
+                cp.ajax(CONF.IxDAddr + "/project/delete", {
+                    data: {
+                        project: pid
+                    },
+                    success: () => {
+                        //删除dom
+                        cp.remove(p);
+                        //删除localStorage
+                        localStorage.removeItem("pid");
+                        close();
+                    }
+                })
             },
-            success: () => {
-                //删除dom
-                cp.remove(p);
-                //删除localStorage
-                localStorage.removeItem("pid");
-            }
-        })
+            cancel: close => close()
+        });
     }
 
     loadItem() {

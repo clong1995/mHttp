@@ -681,7 +681,7 @@ class Base {
             
             .disable {
                 filter: grayscale(100%);
-                opacity: .1;
+                opacity: .3;
                 pointer-events:none;
             }`);
     }

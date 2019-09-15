@@ -13,5 +13,8 @@ class App {
         //cp.on('.guest', 'click', () => this.guestLogin());
     }
 
-
+    //ready
+    READY() {
+        this.getModule("category").selectItem("storage");
+    }
 }

@@ -1,4 +1,4 @@
-#catalog {
+#category {
     width: 150px;
     height: calc(100% - 20px);
     background: var(--background2);
@@ -12,14 +12,10 @@
     float: left;
 }
 
-.leftBox {
+#list {
     width: calc(100% - 150px);
     height: calc(100% - 45px - 20px);
     float: left;
     overflow-x: hidden;
     overflow-y: auto;
-}
-
-#list {
-
 }

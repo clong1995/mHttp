@@ -481,36 +481,37 @@ func moduleScriptCompiler(entryPath, entry, appHtml string) string {
 				str = classReg.ReplaceAllString(str, `
 				document.addEventListener("DOMContentLoaded", () => {
 					const app = new class{
-        			constructor() {
-        			    this.moduleMap = new Map();
-        			    this.DOM();
-        			    this.INIT();
-        			    this.EVENT();
-        			}
-        			getModule(moduleName) {
-        			    return this.moduleMap.get(moduleName);
-        			}
-        			setModule(moduleName, module) {
-        			    this.moduleMap.set(moduleName, module);
-        			}
-        			destroyModule(moduleName) {
-        			    let module = this.getModule(moduleName);
-        			    module.destroy();
-        			    this.moduleMap.delete(moduleName);
-        			}
-        			reloadModule(name = null) {
-        			    name ? this.getModule(name).init()
-        			        : this.moduleMap.forEach(v => v.init && v.init());
-        			}`)
+						constructor() {
+							this.moduleMap = new Map();
+							this.DOM();
+							this.INIT();
+							this.EVENT();
+						}
+						getModule(moduleName) {
+							return this.moduleMap.get(moduleName);
+						}
+						setModule(moduleName, module) {
+							this.moduleMap.set(moduleName, module);
+						}
+						destroyModule(moduleName) {
+							let module = this.getModule(moduleName);
+							module.destroy();
+							this.moduleMap.delete(moduleName);
+						}
+						reloadModule(name = null) {
+							name ? this.getModule(name).init()
+								: this.moduleMap.forEach(v => v.init && v.init());
+						}`)
 				str += "()"
 			}
+			endStr := ";app.READY && app.READY();})</script>"
 			//
 			if strings.LastIndex(appHtml, "</script></head>") == -1 {
 				//没有</script>,替换</head>
-				appHtml = strings.Replace(appHtml, "</head>", "<script>"+str+"})</script></head>", 1)
+				appHtml = strings.Replace(appHtml, "</head>", "<script>"+str+endStr+"</head>", 1)
 			} else {
 				//替换最后一个</script>
-				appHtml = strings.Replace(appHtml, "})</script>", str+"})</script>", 1)
+				appHtml = strings.Replace(appHtml, endStr, str+endStr, 1)
 			}
 			return appHtml
 		}

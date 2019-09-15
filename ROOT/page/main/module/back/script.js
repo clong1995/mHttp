@@ -14,7 +14,7 @@ class Module {
 
     back() {
         localStorage.removeItem("pid");
-        cp.link('/content')
+        cp.link('/project')
     }
 
     /**

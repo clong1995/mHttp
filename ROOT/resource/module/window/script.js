@@ -43,7 +43,7 @@ class Module {
                 left: 0;
                 z-index: 99;
                 position: absolute;
-                background: var(--background4);
+                background: var(--background8);
             }
             .window-wrap > .window-container{
                 background: var(--background2);

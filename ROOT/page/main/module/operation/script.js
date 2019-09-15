@@ -1,6 +1,7 @@
 class Module {
     DOM() {
-        this.selectShareDom = cp.query(".select-share", DOMAIN)
+        this.selectShareDom = cp.query(".select-share", DOMAIN);
+        this.selectPackageDom = cp.query(".select-package", DOMAIN);
     }
 
     EVENT() {
@@ -8,11 +9,20 @@ class Module {
         cp.on('.preview', DOMAIN, 'click', t => this.preview());
         //分享
         cp.on('.share', DOMAIN, 'click', t => this.share());
+        //打包
+        cp.on('.package', DOMAIN, 'click', t => this.package());
         //保存图片
         cp.on('.btn', this.selectShareDom, 'click', t => this.saveImage());
     }
 
     INIT() {
+        setTimeout(() => {
+
+        }, 1000)
+    }
+
+    package() {
+        MODULE("window").show(this.selectPackageDom);
     }
 
     saveImage() {

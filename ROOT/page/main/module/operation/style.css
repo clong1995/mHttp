@@ -43,11 +43,7 @@
     width: 25px;
 }
 
-
-.select-share {
-    background: var(--background8);
-}
-
+/*分享*/
 .select-share > .window-container {
     width: 300px;
 }
@@ -64,7 +60,8 @@
     height: 40px;
     line-height: 40px;
 }
-.select-share .body > .way.image > .btn{
+
+.select-share .body > .way.image > .btn {
     padding: 0 5px;
 }
 
@@ -85,4 +82,34 @@
 .select-share .body > .way.code {
     height: 40px;
     line-height: 40px;
+}
+
+/*打包*/
+.select-package > .window-container {
+    width: 342px;
+    height: 130px;
+}
+
+.select-package .body {
+    width: 100%;
+}
+
+.select-package .body > .platform {
+    width: 100px;
+    height: 50px;
+    background: var(--background5);
+    cursor: pointer;
+    text-align: center;
+    line-height: 50px;
+    float: left;
+    margin: 10px 0 0 10px;
+}
+
+.select-package .body > .platform:hover {
+    background: var(--background8);
+}
+
+.select-package .body > .platform > .iconfont {
+    font-size: 20px;
+    margin-right: 2px;
 }
