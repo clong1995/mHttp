@@ -4,11 +4,13 @@
     text-align: center;
     border-left: var(--border);
 }
+
 .history:after {
     content: "撤销";
     width: 25px;
-    left:10px;
+    left: 10px;
 }
+
 .oper-item {
     width: 20px;
     margin-left: 8px;
@@ -35,7 +37,52 @@
     content: "分享";
     width: 25px;
 }
+
 .oper-item.publish:after {
     content: "发布";
     width: 25px;
+}
+
+
+.select-share {
+    background: var(--background8);
+}
+
+.select-share > .window-container {
+    width: 300px;
+}
+
+.select-share .body {
+    width: 100%;
+}
+
+.select-share .body > .way {
+    padding-left: 10px;
+}
+
+.select-share .body > .way.image {
+    height: 40px;
+    line-height: 40px;
+}
+.select-share .body > .way.image > .btn{
+    padding: 0 5px;
+}
+
+.select-share .body > .way.link {
+    height: 60px;
+}
+
+.select-share .body > .way.link > .text {
+    display: block;
+    width: 200px;
+    height: 50px;
+    margin: 5px 23px 0 0;
+    float: right;
+    resize: none;
+    line-height: 16px;
+}
+
+.select-share .body > .way.code {
+    height: 40px;
+    line-height: 40px;
 }

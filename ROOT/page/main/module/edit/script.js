@@ -53,7 +53,8 @@ class Module {
         ];
     }
 
-    getCover(target) {
+    getCover(target = null) {
+        let name = this.APP.scene.page.name;
         let sceneDom = MODULE("canvas").sceneDom;
         let pageData = this.APP.getPageData();
         //old
@@ -64,23 +65,29 @@ class Module {
         sceneDom.style.backgroundImage = "unset";
         sceneDom.style.border = "none";
 
-        domtoimage.toPng(sceneDom).then(function (dataUrl) {
-            cp.css(target, {
-                backgroundImage: `url("${dataUrl}")`
-            });
+        domtoimage.toPng(sceneDom, {}).then(function (dataUrl) {
             sceneDom.style.transform = transform;
             sceneDom.style.backgroundImage = backgroundImage;
             sceneDom.style.border = "var(--border)";
-            //保存到数据库
-            cp.ajax(CONF.IxDAddr + "/base64/add", {
-                data: {
-                    id: pageData.cover,
-                    value: dataUrl
-                },
-                success: res => {
-                    pageData.cover = res.data;
-                }
-            })
+            if (target) {
+                //更新截图
+                cp.css(target, {
+                    backgroundImage: `url("${dataUrl}")`
+                });
+                //保存到数据库
+                cp.ajax(CONF.IxDAddr + "/base64/add", {
+                    data: {
+                        id: pageData.cover,
+                        value: dataUrl
+                    },
+                    success: res => {
+                        pageData.cover = res.data;
+                    }
+                })
+            } else {
+                //下载
+                cp.fileSave(name, dataUrl);
+            }
         }).catch(function (error) {
             console.error('oops, something went wrong!', error);
         });

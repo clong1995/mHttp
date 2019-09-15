@@ -1,6 +1,6 @@
 class Module {
     DOM() {
-        // sthis.addContentDom = coo.query('.addContent', this.domain);
+        this.selectShareDom = cp.query(".select-share", DOMAIN)
     }
 
     EVENT() {
@@ -8,18 +8,19 @@ class Module {
         cp.on('.preview', DOMAIN, 'click', t => this.preview());
         //分享
         cp.on('.share', DOMAIN, 'click', t => this.share());
+        //保存图片
+        cp.on('.btn', this.selectShareDom, 'click', t => this.saveImage());
     }
 
     INIT() {
-        this.initList();
     }
 
-    initList() {
-
+    saveImage() {
+        MODULE("edit").getCover();
     }
 
     share() {
-
+        MODULE("window").show(this.selectShareDom);
     }
 
     preview() {

@@ -2112,6 +2112,15 @@ class Base {
             left: dom.offsetLeft
         }
     }
+
+    fileSave(name, url) {
+        let a = document.createElement('a');
+        // 创建一个单击事件
+        let event = new MouseEvent('click');
+        a.download = name;
+        a.href = url;
+        a.dispatchEvent(event)
+    }
 }
 
 !window.cp ? window.cp = new Base() : console.warn('cp 全局变量已被占用！');

@@ -53,8 +53,9 @@ class Module {
                 width: calc(100% + 2px);
                 height: 23px;
                 line-height: 23px;
+                font-size: 14px;
                 margin:-23px 0 0 -1px;
-                 position: relative;
+                position: relative;
                 text-align: center;
                 border: var(--border);
                 background: var(--background);
