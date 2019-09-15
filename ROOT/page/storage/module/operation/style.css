@@ -75,3 +75,30 @@
     line-height: 20px;
     width: 75px;
 }
+
+.file-item {
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    float: left;
+}
+
+.file-item.myFile {
+    border-left: none !important;
+}
+
+.file-item:after {
+    content: "|";
+    float: right;
+    margin-right: -2px;
+    color: var(--background4)
+}
+
+.file-item.active {
+    border-bottom: 1px solid var(--background);
+    border-right: var(--border);
+    border-left: var(--border);
+}
+
+

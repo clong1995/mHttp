@@ -1,0 +1,14 @@
+.option-item {
+    margin-left: 5px;
+    float: left;
+    margin-top: 9px;
+}
+.addr{
+    background: var(--background2);
+    border: var(--border);
+    height: 22px;
+    line-height: 22px;
+    margin-top: 9px;
+    width: 300px;
+    padding: 0 5px;
+}

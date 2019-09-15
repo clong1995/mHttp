@@ -10,11 +10,19 @@
     width: calc(100% - 150px);
     height: 40px;
     float: left;
+    border-bottom: var(--border);
+}
+
+#option {
+    width: calc(100% - 150px);
+    height: 40px;
+    float: left;
+    line-height: 40px;
 }
 
 #list {
     width: calc(100% - 150px);
-    height: calc(100% - 45px - 20px);
+    height: calc(100% - 45px - 20px - 40px);
     float: left;
     overflow-x: hidden;
     overflow-y: auto;
