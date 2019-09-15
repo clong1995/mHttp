@@ -35,7 +35,7 @@ class App {
 
         //没有项目直接调走
         if (!pid) {
-            cp.link('/content');
+            cp.link('/project');
             return
         }
     }

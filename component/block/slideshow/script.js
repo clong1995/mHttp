@@ -14,7 +14,7 @@ class Module {
 
 
     back() {
-        cp.link('/content')
+        cp.link('/project')
     }
 
     showStory() {
