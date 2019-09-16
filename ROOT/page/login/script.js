@@ -11,7 +11,7 @@ class App {
         let token = localStorage.getItem("Authorization");
         if (token) {
             //跳转
-            cp.link("/content")
+            cp.link("/project")
         }
     }
 
@@ -39,7 +39,7 @@ class App {
             success: res => {
                 if (res.code === 0) {
                     localStorage.setItem("Authorization", res.data);
-                    cp.link("/content")
+                    cp.link("/project")
                 } else {
                     this.getModule("dialog").show({
                         type: "warn",

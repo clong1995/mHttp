@@ -3,7 +3,25 @@
     float: left;
     margin-top: 9px;
 }
-.addr{
+
+.option-item.add {
+    width: 70px;
+    height: 22px;
+    position: relative;
+}
+
+.option-item.add > .upload {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.addr {
     background: var(--background2);
     border: var(--border);
     height: 22px;

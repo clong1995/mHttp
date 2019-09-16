@@ -13,6 +13,7 @@
     --color: #000000;
     --color1: #000000;
     --color2: #666;
+    --color3: #333;
 }
 
 
@@ -46,8 +47,8 @@ body {
 
 @font-face {
     font-family: 'iconfont';
-    /*src: url('../icon/iconfont.ttf');*/
-    src: url('//at.alicdn.com/t/font_722315_ww6wq3hql9.woff2');
+    src: url('../iconfont/iconfont.woff2');
+    /*src: url('//at.alicdn.com/t/font_722315_6bkzid4uait.woff2');*/
 }
 
 

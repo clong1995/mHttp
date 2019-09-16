@@ -8,27 +8,50 @@ class Module {
     }
 
     INIT() {
+        this.icon = {
+            js: "&#xe64d;",
+            css: "&#xe64c;",
+            zip: "&#xe7b4;",
+            html: "&#xe64b;",
+            psd: "&#xe649;",
+            excel: "&#xe648;",
+            json: "&#xe641;",
+            word: "&#xe92b;",
+            file: "&#xe674;",
+            exe: "&#xe68d;",
+            txt: "&#xe63d;",
+            ppt: "&#xe7a2;",
+            video: "&#xe63c;",
+            folder: "&#xe63b;",
+            image: "&#xe643;",
+        };
         this.defaultSize = 180;
         this.autoSize();
-        this.loadItem();
+        this.loadMyFile();
         window.onresize = () => this.autoSize();
+
     }
 
-    loadItem() {
+    loadMyFile() {
         let html = "";
         [
-            {id: 1, name: "xxxx"},
-            {id: 2, name: "dddd"},
-            {id: 2, name: "dddd"},
-            {id: 2, name: "dddd"},
-            {id: 2, name: "dddd"}
+            {id: 1, name: "xxxx", type: "folder"},
+            {id: 2, name: "dddd", type: "image", thumbnail: ""},
+            {id: 2, name: "dddd", type: "zip"},
+            {id: 2, name: "dddd", type: "word"},
+            {id: 2, name: "dddd", type: "exe"},
+            {id: 2, name: "dddd", type: "ppt"},
+            {id: 2, name: "dddd", type: "psd"},
+            {id: 2, name: "dddd", type: "file"}
         ].forEach(v => {
             html += `<div class="item" data-id=${v.id}>
                             <div class="inner">
-                                <div class="img enter"></div>
+                                <div class="img enter centerWrap">
+                                      <i class="iconfont">${this.icon[v.type]}</i>                          
+                                </div>
                                 <div class="option">
-                                    <i class="preview iconfont icon alt disable">&#xe602;</i>
-                                    <i class="copy iconfont icon alt disable">&#xe635;</i>
+                                    <i class="preview iconfont icon alt">&#xe602;</i>
+                                    <i class="copy iconfont icon alt">&#xe635;</i>
                                     <i class="delete iconfont icon alt">&#xe624;</i>
                                 </div>
                                 <div class="name">${v.name}</div>
@@ -36,7 +59,34 @@ class Module {
                         </div>`;
         });
         cp.html(DOMAIN, html);
+    }
 
+    loadCompanyFile() {
+        let html = "";
+        [
+            {id: 1, name: "青岛项目"},
+            {id: 2, name: "福州长乐项目"},
+            {id: 3, name: "内蒙电力"},
+            {id: 4, name: "内蒙联通"}
+        ].forEach(v => {
+            html += `<div class="item" data-id=${v.id}>
+                            <div class="inner">
+                                <div class="img enter centerWrap">
+                                    <i class="iconfont">&#xe60f;</i>                            
+                                </div>
+                                <div class="option">
+                                    <i class="preview iconfont icon alt disable">&#xe602;</i>
+                                    <i class="copy iconfont icon alt disable">&#xe635;</i>
+                                </div>
+                                <div class="name">${v.name}</div>
+                            </div>
+                        </div>`;
+        });
+        cp.html(DOMAIN, html);
+    }
+
+    loadShareFile() {
+        cp.empty(DOMAIN);
     }
 
     autoSize() {

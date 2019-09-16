@@ -66,7 +66,7 @@ func main() {
 	http.HandleFunc("/component/", componentHandle)
 	//动态页面路由
 	http.HandleFunc("/", pageHandle)
-
+	//服务
 	log.Fatal(http.ListenAndServe(CONF.Addr, nil))
 }
 
