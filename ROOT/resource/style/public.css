@@ -14,9 +14,8 @@
     --color1: #000000;
     --color2: #666;
     --color3: #333;
+    --color4: #FFFAE3;
 }
-
-
 
 /*科技绿*/
 /*
@@ -43,6 +42,8 @@ body {
     font-size: 13px;
     background: var(--background);
     color: var(--color);
+    min-width: 1024px;
+    min-height: 470px;
 }
 
 @font-face {
@@ -50,7 +51,6 @@ body {
     src: url('../iconfont/iconfont.woff2');
     /*src: url('//at.alicdn.com/t/font_722315_6bkzid4uait.woff2');*/
 }
-
 
 .iconfont {
     font-family: "iconfont" !important;

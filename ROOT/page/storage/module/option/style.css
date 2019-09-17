@@ -27,6 +27,24 @@
     height: 22px;
     line-height: 22px;
     margin-top: 9px;
-    width: 300px;
+    width: 290px;
     padding: 0 5px;
+}
+
+.info {
+    float: right;
+    width: 280px;
+    height: 22px;
+    line-height: 22px;
+    font-size: 12px;
+    text-align: right;
+    background: var(--color4);
+    padding-right: 10px;
+}
+
+.info > A {
+    font-size: 12px;
+    color: blue;
+    text-decoration: underline;
+    padding-left: 2px;
 }

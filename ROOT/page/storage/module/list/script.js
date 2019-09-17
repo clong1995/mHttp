@@ -4,7 +4,7 @@ class Module {
     }
 
     EVENT() {
-        //cp.on('.enter', DOMAIN, 'click', t => this.enter(t));
+        cp.on('.item', DOMAIN, 'click', t => this.enter(t));
     }
 
     INIT() {
@@ -18,12 +18,13 @@ class Module {
             json: "&#xe641;",
             word: "&#xe92b;",
             file: "&#xe674;",
-            exe: "&#xe68d;",
+            exe: "&#xe651;",
             txt: "&#xe63d;",
             ppt: "&#xe7a2;",
             video: "&#xe63c;",
             folder: "&#xe63b;",
             image: "&#xe643;",
+            richText: "&#xe650;"
         };
         this.defaultSize = 180;
         this.autoSize();
@@ -42,6 +43,7 @@ class Module {
             {id: 2, name: "dddd", type: "exe"},
             {id: 2, name: "dddd", type: "ppt"},
             {id: 2, name: "dddd", type: "psd"},
+            {id: 2, name: "dddd", type: "richText"},
             {id: 2, name: "dddd", type: "file"}
         ].forEach(v => {
             html += `<div class="item" data-id=${v.id}>
@@ -50,7 +52,9 @@ class Module {
                                       <i class="iconfont">${this.icon[v.type]}</i>                          
                                 </div>
                                 <div class="option">
-                                    <i class="preview iconfont icon alt">&#xe602;</i>
+                                    ${(v.type === "image" || v.type === "video" || v.type === "richText" || v.type === "text")
+                ? '<i class="preview iconfont icon alt" data-type="${v.type}">&#xe611;</i>' : ''}
+                                    <i class="share iconfont icon alt">&#xe602;</i>
                                     <i class="copy iconfont icon alt">&#xe635;</i>
                                     <i class="delete iconfont icon alt">&#xe624;</i>
                                 </div>
@@ -75,8 +79,7 @@ class Module {
                                     <i class="iconfont">&#xe60f;</i>                            
                                 </div>
                                 <div class="option">
-                                    <i class="preview iconfont icon alt disable">&#xe602;</i>
-                                    <i class="copy iconfont icon alt disable">&#xe635;</i>
+                                    <i class="preview iconfont icon alt">&#xe611;</i>
                                 </div>
                                 <div class="name">${v.name}</div>
                             </div>

@@ -26,7 +26,7 @@
 }
 
 .item > .inner > .option > .icon {
-    margin: 0 3px;
+    margin: 0 2px;
     color: var(--color);
     background: var(--background2);
     padding: 3px 4px;
@@ -35,6 +35,11 @@
 }
 
 .item > .inner > .option > .preview:after {
+    content: "预览";
+    width: 25px;
+    bottom: -20px;
+}
+.item > .inner > .option > .share:after {
     content: "分享";
     width: 25px;
     bottom: -20px;
