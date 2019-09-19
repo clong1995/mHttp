@@ -26,7 +26,7 @@ class Module {
             image: "&#xe643;",
             richText: "&#xe650;"
         };
-        this.defaultSize = 180;
+        this.defaultSize = 125;
         this.autoSize();
         this.loadMyFile();
         window.onresize = () => this.autoSize();
@@ -65,7 +65,7 @@ class Module {
         cp.html(DOMAIN, html);
     }
 
-    loadCompanyFile() {
+    loadProjectFile() {
         let html = "";
         [
             {id: 1, name: "青岛项目"},
@@ -77,6 +77,29 @@ class Module {
                             <div class="inner">
                                 <div class="img enter centerWrap">
                                     <i class="iconfont">&#xe60f;</i>                            
+                                </div>
+                                <div class="option">
+                                    <i class="preview iconfont icon alt">&#xe611;</i>
+                                </div>
+                                <div class="name">${v.name}</div>
+                            </div>
+                        </div>`;
+        });
+        cp.html(DOMAIN, html);
+    }
+
+    loadDepartmentFile() {
+        let html = "";
+        [
+            {id: 1, name: "复仇者联盟"},
+            {id: 2, name: "银河联邦"},
+            {id: 3, name: "天网"},
+            {id: 4, name: "朝阳群众"}
+        ].forEach(v => {
+            html += `<div class="item" data-id=${v.id}>
+                            <div class="inner">
+                                <div class="img enter centerWrap">
+                                    <i class="iconfont">&#xe652;</i>                            
                                 </div>
                                 <div class="option">
                                     <i class="preview iconfont icon alt">&#xe611;</i>

@@ -31,21 +31,14 @@ class App {
                 text: "请填写完整账号密码"
             });
         }
-        cp.ajax(CONF.IxDAddr + "/auth/signinAndSignup", {
+        cp.ajax(CONF.IxDAddr + "/auth/signin", {
             data: {
                 email: id,
                 password: pwd
             },
             success: res => {
-                if (res.code === 0) {
-                    localStorage.setItem("Authorization", res.data);
-                    cp.link("/project")
-                } else {
-                    this.getModule("dialog").show({
-                        type: "warn",
-                        text: "账号密码错误！"
-                    });
-                }
+                localStorage.setItem("Authorization", res.data);
+                cp.link("/project")
             }
         })
     }

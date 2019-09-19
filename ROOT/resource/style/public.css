@@ -48,8 +48,8 @@ body {
 
 @font-face {
     font-family: 'iconfont';
-    src: url('../iconfont/iconfont.woff2');
-    /*src: url('//at.alicdn.com/t/font_722315_6bkzid4uait.woff2');*/
+    /*src: url('../iconfont/iconfont.woff2');*/
+    src: url('//at.alicdn.com/t/font_722315_knas7ydc44.woff2');
 }
 
 .iconfont {

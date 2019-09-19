@@ -22,14 +22,13 @@
     top: calc(50% - 25px);
     left: 0;
     display: none;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 .item > .inner > .option > .icon {
-    margin: 0 2px;
     color: var(--color);
     background: var(--background2);
-    padding: 3px 4px;
+    padding: 3px 3px;
     border-radius: 5px;
     cursor: pointer;
 }
@@ -39,6 +38,7 @@
     width: 25px;
     bottom: -20px;
 }
+
 .item > .inner > .option > .share:after {
     content: "分享";
     width: 25px;
@@ -76,16 +76,16 @@
 
 .item > .inner > .img {
     width: calc(100% - 10px);
-    height: calc(100% - 40px);
-    margin: 5px auto;
-    font-size: 60px;
+    height: calc(100% - 25px);
+    margin: 5px auto 0 auto;
+    font-size: 40px;
     color: var(--color3);
     background: var(--background4);;
 }
 
 .item > .inner > .name {
     width: 100%;
-    height: 30px;
-    line-height: 30px;
+    height: 20px;
+    line-height: 20px;
     text-align: center;
 }

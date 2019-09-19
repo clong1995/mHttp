@@ -10,7 +10,7 @@ const ajaxHeadersInterceptor = url => {
     let arr = url.split("/");
     let l = arr.pop(),
         p = arr.pop();
-    if (p + "/" + l === "auth/signinAndSignup") {
+    if (p + "/" + l === "auth/signin") {
         return {
             "Content-type": "application/x-www-form-urlencoded"
         }
