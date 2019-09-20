@@ -778,26 +778,28 @@ class Module {
                 projectId: localStorage.getItem("pid")
             },
             success: res => {
-
-                if (res.data.length === 0) {
-                    //设置默认数据，赋值给了主页面
-                    this.APP.loadData();
-                } else {
-                    //已经有的场景
-                    //TODO 场景切换组件
-                    let html = '';
-                    res.data.forEach((v, i) => {
-                        html += `
+                if (res.code === 0) {
+                    if (res.data.length === 0) {
+                        //设置默认数据，赋值给了主页面
+                        this.APP.loadData();
+                    } else {
+                        //已经有的场景
+                        //TODO 场景切换组件
+                        let html = '';
+                        res.data.forEach((v, i) => {
+                            html += `
                                  <div class="item ellipsis ${!i ? "active" : ""}" data-id="${v.id}">
                                     ${v.name}
                                 </div>
                             `;
-                    });
-                    cp.html(this.sheetInnerDom, html);
-                    //获取第一个数据
-                    this.APP.getSceneById(res.data[0].id);
+                        });
+                        cp.html(this.sheetInnerDom, html);
+                        //获取第一个数据
+                        this.APP.getSceneById(res.data[0].id);
+                    }
+                } else {
+                    console.error(res)
                 }
-
             }
         })
     }

@@ -35,12 +35,16 @@ class Module {
                     data: {
                         project: pid
                     },
-                    success: () => {
-                        //删除dom
-                        cp.remove(p);
-                        //删除localStorage
-                        localStorage.removeItem("pid");
-                        close();
+                    success: res => {
+                        if (res.code === 0) {
+                            //删除dom
+                            cp.remove(p);
+                            //删除localStorage
+                            localStorage.removeItem("pid");
+                            close();
+                        } else {
+                            console.error(res)
+                        }
                     }
                 })
             },
@@ -51,9 +55,10 @@ class Module {
     loadItem() {
         cp.ajax(CONF.IxDAddr + "/project/list", {
             success: res => {
-                let html = '';
-                res.data.forEach(v => {
-                    html += `<div class="item" data-id=${v.id}>
+                if (res.code === 0) {
+                    let html = '';
+                    res.data.forEach(v => {
+                        html += `<div class="item" data-id=${v.id}>
                             <div class="inner">
                                 <div class="img enter"></div>
                                 <div class="option">
@@ -64,9 +69,11 @@ class Module {
                                 <div class="name">${v.name}</div>
                             </div>
                         </div>`;
-                });
-                cp.html(DOMAIN, html);
-
+                    });
+                    cp.html(DOMAIN, html);
+                } else {
+                    console.error(res)
+                }
             }
         });
     }

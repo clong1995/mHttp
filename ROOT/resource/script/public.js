@@ -29,15 +29,18 @@ const ajaxHeadersInterceptor = url => {
 };
 //消息体处理
 const ajaxResponseInterceptor = res => {
-    //是否正确
     if (res.code !== 0) {
-        if (res.code === 1) {
+        if (res.code === 2) { //认证错误
             localStorage.removeItem("Authorization");
             cp.link("/login");
-        } else {
-            console.error(res.msg);
-            return false;
+        } else if (res.code === 3) {
+            //请求异常
+        } else if (res.code === 4) {
+            //参数异常
         }
+        console.error(res);
+        //终止程序
+        return false;
     }
     return res;
 };

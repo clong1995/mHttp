@@ -90,7 +90,7 @@
     cursor: pointer;
 }
 
-.menu > .file-item.myFile {
+.menu > .file-item:first-child {
     border-left: none !important;
 }
 

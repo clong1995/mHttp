@@ -16,12 +16,16 @@ class Module {
                 id: sid.id
             },
             success: res => {
+                if (res.code === 0) {
                     this.sceneDom = null;
                     this.sceneMargin = 10;
                     //加载场景，赋值给了主页面
                     this.scene = JSON.parse(res.data.data);
                     //加载场景
                     this.loadScene();
+                } else {
+                    console.error(res)
+                }
             }
         })
     }

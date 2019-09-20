@@ -29,9 +29,13 @@ class Module {
             data: {
                 email: email
             },
-            success: () => {
-                MODULE("window").hide(this.addUserDom);
-                MODULE("list").getList();
+            success: res => {
+                if (res.code === 0) {
+                    MODULE("window").hide(this.addUserDom);
+                    MODULE("list").getList();
+                } else {
+                    console.error(res)
+                }
             }
         });
     }

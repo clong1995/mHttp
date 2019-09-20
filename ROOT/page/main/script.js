@@ -237,9 +237,12 @@ class App {
                 id: sid
             },
             success: res => {
-                //加载场景，赋值给了主页面
-                this.loadData(sid, JSON.parse(res.data.data));
-
+                if (res.code === 0) {
+                    //加载场景，赋值给了主页面
+                    this.loadData(sid, JSON.parse(res.data.data));
+                } else {
+                    console.error(res)
+                }
             }
         })
     }

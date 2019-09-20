@@ -32,8 +32,12 @@ class Module {
                 data: data
             },
             success: res => {
-                this.APP.setSceneId(res.data);
-                typeof cb === "function" && cb()
+                if (res.code === 0) {
+                    this.APP.setSceneId(res.data);
+                    typeof cb === "function" && cb()
+                } else {
+                    console.error(res)
+                }
             }
         })
     }

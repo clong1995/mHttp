@@ -24,8 +24,12 @@ class Module {
                     name: name
                 },
                 success: res => {
-                    MODULE("list").loadItem();
-                    cp.hide(this.addProjectDom);
+                    if (res.code === 0) {
+                        MODULE("list").loadItem();
+                        cp.hide(this.addProjectDom);
+                    } else {
+                        console.error(res)
+                    }
                 }
             });
         }

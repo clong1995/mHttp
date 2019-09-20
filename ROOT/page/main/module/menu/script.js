@@ -47,9 +47,12 @@ class Module {
                 id: templateId
             },
             success: res => {
-                //加载场景，赋值给了主页面
-                this.APP.loadData(this.APP.getSceneId(), JSON.parse(res.data.data));
-
+                if (res.code === 0) {
+                    //加载场景，赋值给了主页面
+                    this.APP.loadData(this.APP.getSceneId(), JSON.parse(res.data.data));
+                } else {
+                    console.error(res)
+                }
             }
         });
     }
@@ -489,19 +492,21 @@ class Module {
     myTemplate() {
         cp.ajax(CONF.IxDAddr + "/template/getListByUser", {
             success: res => {
-
-                let html = '';
-                res.data.forEach(v => {
-                    html += `<div class="li tmp" data-id="${v.id}">
+                if (res.code === 0) {
+                    let html = '';
+                    res.data.forEach(v => {
+                        html += `<div class="li tmp" data-id="${v.id}">
                                     <div class="thumbnail">
                                         <span class="iconfont icon"></span>
                                         <span class="iconfont icon"></span>
                                     </div>
                                     <div class="title">${v.name}</div>
                                  </div>`;
-                });
-                cp.html(cp.query('.myTemplate', DOMAIN), html)
-
+                    });
+                    cp.html(cp.query('.myTemplate', DOMAIN), html)
+                } else {
+                    console.error(res)
+                }
             }
         });
     }

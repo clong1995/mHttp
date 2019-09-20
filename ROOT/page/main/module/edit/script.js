@@ -81,7 +81,11 @@ class Module {
                         value: dataUrl
                     },
                     success: res => {
-                        pageData.cover = res.data;
+                        if (res.code === 0) {
+                            pageData.cover = res.data;
+                        } else {
+                            console.error(res)
+                        }
                     }
                 })
             } else {
@@ -104,8 +108,11 @@ class Module {
                 data: data
             },
             success: res => {
+                if (res.code === 0) {
 
-
+                } else {
+                    console.error(res)
+                }
             }
         })
     }
@@ -463,9 +470,13 @@ class Module {
                 id: pageData.cover
             },
             success: res => {
-                cp.css(this.pageCover, {
-                    backgroundImage: `url("${res.data.value}")`
-                });
+                if (res.code === 0) {
+                    cp.css(this.pageCover, {
+                        backgroundImage: `url("${res.data.value}")`
+                    });
+                } else {
+                    console.error(res)
+                }
             }
         });
         this.pageComment.value = pageData.comment;

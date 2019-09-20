@@ -37,8 +37,12 @@ class App {
                 password: pwd
             },
             success: res => {
-                localStorage.setItem("Authorization", res.data);
-                cp.link("/project")
+                if (res.code === 0) {
+                    localStorage.setItem("Authorization", res.data);
+                    cp.link("/project")
+                } else {
+                    console.error(res)
+                }
             }
         })
     }

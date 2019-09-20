@@ -4,7 +4,8 @@ class Module {
     }
 
     EVENT() {
-        cp.on('.item', DOMAIN, 'click', t => this.enter(t));
+        cp.on('.enter', DOMAIN, 'click', t => this.enter(t));
+        cp.on('.delete', DOMAIN, 'click', t => this.delete(t));
     }
 
     INIT() {
@@ -28,91 +29,58 @@ class Module {
         };
         this.defaultSize = 125;
         this.autoSize();
-        this.loadMyFile();
         window.onresize = () => this.autoSize();
-
     }
 
-    loadMyFile() {
-        let html = "";
-        [
-            {id: 1, name: "xxxx", type: "folder"},
-            {id: 2, name: "dddd", type: "image", thumbnail: ""},
-            {id: 2, name: "dddd", type: "zip"},
-            {id: 2, name: "dddd", type: "word"},
-            {id: 2, name: "dddd", type: "exe"},
-            {id: 2, name: "dddd", type: "ppt"},
-            {id: 2, name: "dddd", type: "psd"},
-            {id: 2, name: "dddd", type: "richText"},
-            {id: 2, name: "dddd", type: "file"}
-        ].forEach(v => {
-            html += `<div class="item" data-id=${v.id}>
+    delete(target) {
+        let p = cp.parent(target, ".item");
+        let id = cp.getData(p);
+        cp.ajax(CONF.IxDAddr + "/file/delete", {
+            data: {
+                id: id
+            },
+            success: res => {
+                if (res.code === 0) {
+                    cp.remove(p)
+                } else {
+                    console.error(res)
+                }
+            }
+        });
+    }
+
+    loadFileList() {
+        let {key} = MODULE("option").currNavigate();
+        cp.ajax(CONF.IxDAddr + "/file/list", {
+            data: {
+                pid: key
+            },
+            success: res => {
+                if (res.code === 0) {
+                    let html = "";
+                    res.data.forEach(v => {
+                        html += `<div class="item" data-id=${v.id}>
                             <div class="inner">
                                 <div class="img enter centerWrap">
                                       <i class="iconfont">${this.icon[v.type]}</i>                          
                                 </div>
                                 <div class="option">
                                     ${(v.type === "image" || v.type === "video" || v.type === "richText" || v.type === "text")
-                ? '<i class="preview iconfont icon alt" data-type="${v.type}">&#xe611;</i>' : ''}
+                            ? '<i class="preview iconfont icon alt" data-type="${v.type}">&#xe611;</i>' : ''}
                                     <i class="share iconfont icon alt">&#xe602;</i>
-                                    <i class="copy iconfont icon alt">&#xe635;</i>
+                                    <i class="download iconfont icon alt">&#xe635;</i>
                                     <i class="delete iconfont icon alt">&#xe624;</i>
                                 </div>
                                 <div class="name">${v.name}</div>
                             </div>
                         </div>`;
+                    });
+                    cp.empty(DOMAIN, html);
+                } else {
+                    console.error(res)
+                }
+            }
         });
-        cp.html(DOMAIN, html);
-    }
-
-    loadProjectFile() {
-        let html = "";
-        [
-            {id: 1, name: "青岛项目"},
-            {id: 2, name: "福州长乐项目"},
-            {id: 3, name: "内蒙电力"},
-            {id: 4, name: "内蒙联通"}
-        ].forEach(v => {
-            html += `<div class="item" data-id=${v.id}>
-                            <div class="inner">
-                                <div class="img enter centerWrap">
-                                    <i class="iconfont">&#xe60f;</i>                            
-                                </div>
-                                <div class="option">
-                                    <i class="preview iconfont icon alt">&#xe611;</i>
-                                </div>
-                                <div class="name">${v.name}</div>
-                            </div>
-                        </div>`;
-        });
-        cp.html(DOMAIN, html);
-    }
-
-    loadDepartmentFile() {
-        let html = "";
-        [
-            {id: 1, name: "复仇者联盟"},
-            {id: 2, name: "银河联邦"},
-            {id: 3, name: "天网"},
-            {id: 4, name: "朝阳群众"}
-        ].forEach(v => {
-            html += `<div class="item" data-id=${v.id}>
-                            <div class="inner">
-                                <div class="img enter centerWrap">
-                                    <i class="iconfont">&#xe652;</i>                            
-                                </div>
-                                <div class="option">
-                                    <i class="preview iconfont icon alt">&#xe611;</i>
-                                </div>
-                                <div class="name">${v.name}</div>
-                            </div>
-                        </div>`;
-        });
-        cp.html(DOMAIN, html);
-    }
-
-    loadShareFile() {
-        cp.empty(DOMAIN);
     }
 
     autoSize() {
@@ -141,5 +109,13 @@ class Module {
             height: autoWidth + 'px'
         });
         cp.addClass(DOMAIN, clazz);
+    }
+
+    enter(target) {
+        let p = cp.parent(target, ".item");
+        let id = cp.getData(p);
+        let name = cp.text(cp.query(".name", p));
+        MODULE("option").setNavigate(id, name);
+        this.loadFileList();
     }
 }

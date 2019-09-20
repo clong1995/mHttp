@@ -4,19 +4,45 @@ class Module {
     }
 
     EVENT() {
-        //cp.on('.item', DOMAIN, 'click', t => this.enter(t));
+        cp.on('.delete', this.bodyDom, 'click', t => this.deleteUser(t));
     }
 
     INIT() {
         this.getList();
     }
 
+    deleteUser(t) {
+        let p = cp.parent(t, ".line");
+        let id = cp.getData(p);
+        MODULE("dialog").show({
+            type: "warn",
+            text: "确定要删除?",
+            confirm: close => {
+                cp.ajax(CONF.IxDAddr + "/user/delete", {
+                    data: {
+                        uid: id
+                    },
+                    success: res => {
+                        if (res.code === 0) {
+                            cp.remove(p);
+                            close();
+                        } else {
+                            console.error(res)
+                        }
+                    }
+                })
+            },
+            cancel: close => close()
+        });
+    }
+
     getList() {
         cp.ajax(CONF.IxDAddr + "/user/list", {
             success: res => {
-                let html = "";
-                res.data.forEach(v => {
-                    html += `<div class="line">
+                if (res.code === 0) {
+                    let html = "";
+                    res.data.forEach(v => {
+                        html += `<div class="line" data-id="${v.id}">
                             <div class="item id">
                                 ${v.email}
                             </div>
@@ -32,14 +58,17 @@ class Module {
                             <div class="item setting">
                                  <button class="button">重置密码</button>
                                  <button class="button">停用</button>
-                                 <button class="button">删除</button>
+                                 <button class="button delete">删除</button>
                             </div>
                             <div class="item info">
                                 <button class="button">查看</button>
                             </div>
                         </div>`;
-                });
-                cp.html(this.bodyDom, html)
+                    });
+                    cp.html(this.bodyDom, html)
+                } else {
+                    console.error(res)
+                }
             }
         });
     }
