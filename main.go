@@ -41,7 +41,7 @@ type cacheItem struct {
 var cacheServer = make(map[string]cacheItem)
 
 func main() {
-	addr := flag.String("addr", ":8800", "服务器端口")
+	addr := flag.String("addr", ":50000", "服务器端口")
 	root := flag.String("root", "./ROOT", "项目根目录")
 	cors := flag.Bool("cors", true, "跨域")
 	cache := flag.Bool("cache", false, "缓存")
