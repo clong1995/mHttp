@@ -8,11 +8,11 @@ class App {
     //初始化函数
     INIT() {
         //检查token
-        let token = localStorage.getItem("Authorization");
+        /*let token = localStorage.getItem("Authorization");
         if (token) {
             //跳转
             cp.link("/project")
-        }
+        }*/
     }
 
     //添加事件

@@ -1,11 +1,16 @@
-.item {
+.list {
+    width: 100%;
+    height: 100%;
+}
+
+.list > .item {
     float: left;
     padding: 5px;
     padding-top: unset;
     padding-bottom: 10px;
 }
 
-.item > .inner {
+.list > .item > .inner {
     width: 100%;
     height: 100%;
     background: var(--background2);
@@ -13,7 +18,7 @@
     position: relative;
 }
 
-.item > .inner > .option {
+.list > .item > .inner > .option {
     width: 100%;
     height: 25px;
     line-height: 25px;
@@ -25,7 +30,7 @@
     font-size: 15px;
 }
 
-.item > .inner > .option > .icon {
+.list > .item > .inner > .option > .icon {
     color: var(--color);
     background: var(--background2);
     padding: 3px 3px;
@@ -33,48 +38,48 @@
     cursor: pointer;
 }
 
-.item > .inner > .option > .preview:after {
+.list > .item > .inner > .option > .preview:after {
     content: "预览";
     width: 25px;
     bottom: -20px;
 }
 
-.item > .inner > .option > .share:after {
+.list > .item > .inner > .option > .share:after {
     content: "分享";
     width: 25px;
     bottom: -20px;
 }
 
-.item > .inner > .option > .copy:after {
+.list > .item > .inner > .option > .copy:after {
     content: "下载";
     width: 25px;
     bottom: -20px;
 }
 
-.item > .inner > .option > .delete:after {
+.list > .item > .inner > .option > .delete:after {
     content: "删除";
     width: 25px;
     bottom: -20px;
 }
 
-.item > .inner > .option > .icon:hover {
+.list > .item > .inner > .option > .icon:hover {
     background: var(--background);
 }
 
-.item > .inner > .option > .preview:hover,
-.item > .inner > .option > .copy:hover {
+.list > .item > .inner > .option > .preview:hover,
+.list > .item > .inner > .option > .copy:hover {
     color: var(--color1)
 }
 
-.item > .inner > .option > .delete:hover {
+.list > .item > .inner > .option > .delete:hover {
     color: red;
 }
 
-.item > .inner:hover > .option {
+.list > .item > .inner:hover > .option {
     display: block;
 }
 
-.item > .inner > .img {
+.list > .item > .inner > .img {
     width: calc(100% - 10px);
     height: calc(100% - 25px);
     margin: 5px auto 0 auto;
@@ -83,9 +88,51 @@
     background: var(--background4);;
 }
 
-.item > .inner > .name {
+.list > .item > .inner > .name {
     width: 100%;
     height: 20px;
     line-height: 20px;
     text-align: center;
+}
+
+.list > .item > .inner > .img > .image {
+    width: 100%;
+    height: 100%;
+}
+
+.share-window {
+    background: var(--background8);
+}
+
+.share-window > .window-container {
+    width: 300px;
+    height: 100px;
+}
+
+.share-window .body {
+    padding-top: 10px;
+    width: 100%;
+    height: 90px;
+    line-height: 30px;
+    text-align: center;
+}
+
+.share-window .body > .name {
+    width: 210px;
+    padding: 0 5px;
+}
+
+.share-window .body > .link {
+    width: 210px;
+    height: 45px;
+    font-size: 12px;
+    line-height: 14px;
+    padding: 0 5px;
+    resize: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.share-window .body > .confirm {
+    width: 70px;
 }

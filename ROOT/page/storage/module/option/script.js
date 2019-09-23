@@ -9,9 +9,10 @@ class Module {
         cp.on('.new-folder', DOMAIN, 'click', () => this.newFolder());
         cp.on('.back', DOMAIN, 'click', () => this.goBack());
         cp.on('.refresh', DOMAIN, 'click', () => this.refresh());
-        cp.on('.download', DOMAIN, 'click', () => this.showDownload());
+        cp.on('.client', DOMAIN, 'click', () => this.showDownloadClient());
         cp.on('.confirm', this.addFolderDom, 'click', () => this.confirmNewFolder());
         cp.on('.addr-list-item', this.addrListDom, 'click', t => this.goToFolder(t));
+        cp.on('.upload', DOMAIN, 'change', t => this.upload(t));
     }
 
     INIT() {
@@ -19,7 +20,30 @@ class Module {
         this.navigate = [];
     }
 
-    showDownload() {
+    upload(target) {
+        MODULE("upload").upload(target, res => {
+            //保存文件信息
+            cp.ajax(CONF.IxDAddr + "/file/addFile", {
+                data: {
+                    etag: res.hash,
+                    name: res.name,
+                    size: res.size,
+                    type: res.type,
+                    pid: this.currNavigate().key
+                },
+                success: res => {
+                    if (res.code === 0) {
+                        MODULE("list").loadFileList();
+                        MODULE("window").hide(this.addFolderDom);
+                    } else {
+                        console.error(res)
+                    }
+                }
+            })
+        });
+    }
+
+    showDownloadClient() {
         MODULE("window").show(this.downloadClientDom);
     }
 
@@ -44,10 +68,11 @@ class Module {
         this.changeAddr();
     }
 
-    initNavigate(key, name) {
+    initNavigate(key, name, type) {
         this.navigate = [{
             key: key,
-            name: name
+            name: name,
+            type: type
         }];
         this.changeAddr();
     }

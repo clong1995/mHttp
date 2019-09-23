@@ -7,8 +7,9 @@ class Module {
     }
 
     INIT() {
-        this.authUrl = "http://127.0.0.1:19959/auth/qiniu";
-        this.downloadUrl = "http://img.quickex.com.cn";
+        this.authUrl = "http://127.0.0.1:8801/auth/qiniu";
+        this.downloadUrl = "http://storage.quickex.com.cn";
+        this.maxSize = 20;//M
         this.status = null;
         //加载七牛sdk
         cp.loadScript("/resource/lib/qiniu/qiniu.min.js", () => {
@@ -29,9 +30,9 @@ class Module {
         //超大文件
         let file = files[0];
         let size = file.size / Math.pow(1024, 2);
-        if (size > 10) {
+        if (size > this.maxSize) {
             MODULE("dialog").show({
-                text: "文件超大，请下载编辑器客户端"
+                text: "文件超大，请下载客户端"
             });
             return;
         }
@@ -43,13 +44,11 @@ class Module {
             let res = JSON.parse(xhr.responseText).data;
 
             //上传
-            let putExtra = {
-                fname: file.name
-            };
+            /* let putExtra = {
+                 fname: file.name
+             };*/
 
-            let observable = qiniu.upload(file, res.upKey, res.upToken, putExtra, {
-                useCdnDomain: true
-            });
+            let observable = qiniu.upload(file, null, res.upToken, null, null);
 
             //TODO 七牛内方法的的指向改不了呢，回头再研究
             let _this = this;

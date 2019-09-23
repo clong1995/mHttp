@@ -1,7 +1,9 @@
 const CONF = {
     //IxD的地址
     //IxDAddr: "http://192.168.10.252:19959"
-    IxDAddr: "http://127.0.0.1:8801"
+    IxDAddr: "http://127.0.0.1:8801",
+    QiniuAddr: "http://storage.quickex.com.cn",
+    QiniuThumbnail: "imageMogr2/thumbnail/100x100>/blur/1x0/quality/75"
 };
 
 //ajax的额外处理器

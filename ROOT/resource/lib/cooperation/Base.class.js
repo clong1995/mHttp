@@ -2113,13 +2113,13 @@ class Base {
         }
     }
 
-    fileSave(name, url) {
+    fileSave(name, url, open = false) {
         let a = document.createElement('a');
         // 创建一个单击事件
         let event = new MouseEvent('click');
         a.download = name;
         a.href = url;
-        a.dispatchEvent(event)
+        a.dispatchEvent(event);
     }
 }
 
