@@ -55,7 +55,7 @@ class Module {
             confirm: close => {
                 let p = cp.parent(target, ".item");
                 let id = cp.getData(p);
-                cp.ajax(CONF.IxDAddr + "/file/delete", {
+                cp.ajax(CONF.ServerAddr + "/file/delete", {
                     data: {
                         id: id
                     },
@@ -108,13 +108,21 @@ class Module {
     loadFileList() {
         this.recycle = false;//是否在回收站内
         let {key, type} = MODULE("option").currNavigate();
-        let url = CONF.IxDAddr + "/file/list";
+
+        //隐藏不必要的菜单
+        MODULE("option").hideForBucket(type);
+
+        if (type === "taskBucket") {
+            cp.empty(this.listDom);
+            return
+        }
+        let url = CONF.ServerAddr + "/file/list";
         let data = {
             pid: key
         };
         if (type === "recycleBucket") {
             this.recycle = true;
-            url = CONF.IxDAddr + "/file/deleteList";
+            url = CONF.ServerAddr + "/file/deleteList";
             data = {}
         }
         //加载列表

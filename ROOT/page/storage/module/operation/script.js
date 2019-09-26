@@ -12,7 +12,11 @@ class Module {
     }
 
     topList() {
-        cp.ajax(CONF.IxDAddr + "/file/listTopFolder", {
+        let taskDom = "";
+        if (localStorage.getItem("client")) {
+            taskDom = `<div class="file-item" data-type="taskBucket">传输列表</div>`;
+        }
+        cp.ajax(CONF.ServerAddr + "/file/listTopFolder", {
             success: res => {
                 if (res.code === 0) {
                     let html = '';
@@ -25,7 +29,7 @@ class Module {
                         }
                         html += `<div class="file-item ${i ? "" : "active"}" data-id="${v.id}" data-type="${v.type}">${v.name}</div>`
                     });
-                    cp.html(this.menuDom, html);
+                    cp.html(this.menuDom, html + taskDom);
                 } else {
                     console.error(res)
                 }

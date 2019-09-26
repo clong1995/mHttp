@@ -232,7 +232,7 @@ class App {
     }
 
     getSceneById(sid) {
-        cp.ajax(CONF.IxDAddr + "/scene/getById", {
+        cp.ajax(CONF.ServerAddr + "/scene/getById", {
             data: {
                 id: sid
             },

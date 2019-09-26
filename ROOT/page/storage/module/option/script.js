@@ -3,6 +3,17 @@ class Module {
         this.addFolderDom = cp.query('.add-folder', DOMAIN);
         this.addrListDom = cp.query(".addr-list", DOMAIN);
         this.downloadClientDom = cp.query(".download-client", DOMAIN);
+        this.infoDom = cp.query(".info", DOMAIN);
+
+        this.backDom = cp.query(".back", DOMAIN);
+        this.addDom = cp.query(".add", DOMAIN);
+        this.uploadDom = cp.query(".upload", this.addDom);
+        this.uploadClientDom = cp.query(".upload-client", this.addDom);
+        this.newFolderDom = cp.query(".new-folder", DOMAIN);
+        this.addrDom = cp.query(".addr", DOMAIN);
+        this.optionItemDoms = cp.query(".option-item", DOMAIN, true);
+        this.uploadClientWindowDom = cp.query(".upload-client-window", DOMAIN);
+
     }
 
     EVENT() {
@@ -12,18 +23,65 @@ class Module {
         cp.on('.client', DOMAIN, 'click', () => this.showDownloadClient());
         cp.on('.confirm', this.addFolderDom, 'click', () => this.confirmNewFolder());
         cp.on('.addr-list-item', this.addrListDom, 'click', t => this.goToFolder(t));
-        cp.on('.upload', DOMAIN, 'change', t => this.upload(t));
+        //浏览器上传
+        cp.on('.upload', this.addDom, 'change', t => this.upload(t));
+        //客户端上传
+        cp.on('.upload-client', this.addDom, 'click', t => this.uploadClient(t));
+        cp.on('.file', this.uploadClientWindowDom, 'click', t => this.uploadClientFile(t));
+        cp.on('.folder', this.uploadClientWindowDom, 'click', t => this.uploadClientFolder(t));
     }
 
     INIT() {
+        if (localStorage.getItem("client")) {//客户端
+            //隐藏提示下载客户端
+            cp.hide(this.infoDom);
+            //隐藏通过浏览器上传
+            cp.hide(this.uploadDom);
+            //显示客户端上传
+            cp.show(this.uploadClientDom)
+        } else {
+            //隐藏客户端上传
+            cp.hide(this.uploadClientDom)
+        }
         //导航
         this.navigate = [];
+        //相应go回调
+        window.externalInvokeOpen = res => {
+            let file = res;
+            let pid = this.currNavigate();
+            this.doUploadClientFile(file, pid)
+        };
+        window.externalInvokeOpenDir = res => {
+            let dir = res;
+            let pid = this.currNavigate();
+            this.doUploadClientFolder(dir, pid)
+        }
+    }
+
+    doUploadClientFile(file, pid) {
+
+    }
+
+    doUploadClientFolder(dir, pid) {
+
+    }
+
+    uploadClientFile(type) {
+        external.invoke(JSON.stringify({
+            key: "open"
+        }))
+    }
+
+    uploadClientFolder(type) {
+        external.invoke(JSON.stringify({
+            key: "openDir"
+        }))
     }
 
     upload(target) {
         MODULE("upload").upload(target, res => {
             //保存文件信息
-            cp.ajax(CONF.IxDAddr + "/file/addFile", {
+            cp.ajax(CONF.ServerAddr + "/file/addFile", {
                 data: {
                     etag: res.hash,
                     name: res.name,
@@ -41,6 +99,10 @@ class Module {
                 }
             })
         });
+    }
+
+    uploadClient(target) {
+        MODULE("window").show(this.uploadClientWindowDom);
     }
 
     showDownloadClient() {
@@ -111,7 +173,7 @@ class Module {
         let name = cp.query(".name", this.addFolderDom).value;
         let {key} = this.currNavigate();
         if (!name || !key) return;
-        cp.ajax(CONF.IxDAddr + "/file/addFolder", {
+        cp.ajax(CONF.ServerAddr + "/file/addFolder", {
             data: {
                 name: name,
                 pid: key
@@ -125,5 +187,21 @@ class Module {
                 }
             }
         })
+    }
+
+    hideForBucket(key) {
+        cp.show(this.optionItemDoms);
+        switch (key) {
+            case "taskBucket":
+                cp.hide(this.backDom);
+                cp.hide(this.addDom);
+                cp.hide(this.newFolderDom);
+                cp.hide(this.addrDom);
+                break;
+            case "recycleBucket":
+                cp.hide(this.addDom);
+                cp.hide(this.newFolderDom);
+                break;
+        }
     }
 }

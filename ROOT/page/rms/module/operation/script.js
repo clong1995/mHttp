@@ -25,7 +25,7 @@ class Module {
             });
             return
         }
-        cp.ajax(CONF.IxDAddr + "/user/add", {
+        cp.ajax(CONF.ServerAddr + "/user/add", {
             data: {
                 email: email
             },

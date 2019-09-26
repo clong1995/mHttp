@@ -31,7 +31,7 @@ class Module {
             confirm: close => {
                 let p = cp.parent(target, "item");
                 let pid = cp.getData(p);
-                cp.ajax(CONF.IxDAddr + "/project/delete", {
+                cp.ajax(CONF.ServerAddr + "/project/delete", {
                     data: {
                         project: pid
                     },
@@ -53,7 +53,7 @@ class Module {
     }
 
     loadItem() {
-        cp.ajax(CONF.IxDAddr + "/project/list", {
+        cp.ajax(CONF.ServerAddr + "/project/list", {
             success: res => {
                 if (res.code === 0) {
                     let html = '';

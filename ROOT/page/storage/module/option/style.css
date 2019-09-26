@@ -2,15 +2,18 @@
     margin-left: 5px;
     float: left;
     margin-top: 9px;
+    text-align: center;
+    height: 22px;
+    line-height: 22px;
 }
 
 .option-item.add {
     width: 70px;
-    height: 22px;
     position: relative;
 }
 
-.option-item.add > .upload {
+.option-item.add > .upload,
+.option-item.add > .upload-client {
     position: absolute;
     top: 0;
     left: 0;
@@ -24,8 +27,7 @@
 .addr {
     background: var(--background2);
     border: var(--border);
-    height: 22px;
-    line-height: 22px;
+    text-align: left;
     margin-top: 9px;
     width: 290px;
     padding: 0 5px;
@@ -34,10 +36,11 @@
 .info {
     float: right;
     width: 275px;
-    height: 22px;
-    line-height: 22px;
     font-size: 12px;
     text-align: right;
+    height: 22px;
+    line-height: 22px;
+    margin-top: 9px;
     background: var(--color4);
     padding-right: 10px;
 }
@@ -109,4 +112,48 @@
 .download-client .body > .platform > .iconfont {
     font-size: 20px;
     margin-right: 2px;
+}
+
+.upload-client-window {
+    background: var(--background8);
+}
+
+.upload-client-window > .window-container {
+    width: 342px;
+    height: 130px;
+}
+
+.upload-client-window .body {
+    width: 100%;
+    height: 90px;
+    text-align: center;
+}
+
+.upload-client-window .body > .type {
+    width: 100px;
+    height: 100px;
+    background: var(--background5);
+    cursor: pointer;
+    text-align: center;
+    float: left;
+    margin: 10px 0 0 10px;
+    position: relative;
+}
+
+.upload-client-window .body > .type:hover {
+    background: var(--background8);
+}
+
+.upload-client-window .body > .type > .iconfont {
+    font-size: 50px;
+    display: block;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    margin: 0 auto;
+}
+.upload-client-window .body > .type > .text {
+    height: 20px;
+    line-height: 20px;
 }

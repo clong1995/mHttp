@@ -773,7 +773,7 @@ class Module {
      * 获取场景列表，用于切换场景
      */
     getSceneList() {
-        cp.ajax(CONF.IxDAddr + "/scene/getListByProject", {
+        cp.ajax(CONF.ServerAddr + "/scene/getListByProject", {
             data: {
                 projectId: localStorage.getItem("pid")
             },

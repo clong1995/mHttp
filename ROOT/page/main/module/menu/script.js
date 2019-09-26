@@ -42,7 +42,7 @@ class Module {
     }
 
     getTemplateSceneById(templateId) {
-        cp.ajax(CONF.IxDAddr + "/template/getById", {
+        cp.ajax(CONF.ServerAddr + "/template/getById", {
             data: {
                 id: templateId
             },
@@ -490,7 +490,7 @@ class Module {
     }
 
     myTemplate() {
-        cp.ajax(CONF.IxDAddr + "/template/getListByUser", {
+        cp.ajax(CONF.ServerAddr + "/template/getListByUser", {
             success: res => {
                 if (res.code === 0) {
                     let html = '';

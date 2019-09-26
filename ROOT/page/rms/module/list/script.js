@@ -18,7 +18,7 @@ class Module {
             type: "warn",
             text: "确定要删除?",
             confirm: close => {
-                cp.ajax(CONF.IxDAddr + "/user/delete", {
+                cp.ajax(CONF.ServerAddr + "/user/delete", {
                     data: {
                         uid: id
                     },
@@ -37,7 +37,7 @@ class Module {
     }
 
     getList() {
-        cp.ajax(CONF.IxDAddr + "/user/list", {
+        cp.ajax(CONF.ServerAddr + "/user/list", {
             success: res => {
                 if (res.code === 0) {
                     let html = "";

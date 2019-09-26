@@ -3,39 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="test.js"></script>
-    <script>
-        let sql = "INSERT INTO region (code,name) values ";
-        a.forEach(v => {
-            //console.log(v.code, v.region);
-            sql += "(" + v.code + ",'" + v.region + "'),";
-            if (v.regionEntitys) {
-                v.regionEntitys.forEach(vv => {
-                    if (vv.region === "市辖区" || vv.region === "省直辖县级行政区划" || vv.region === "自治区直辖县级行政区划") {
-                        //console.log(vv.code, v.region + vv.region);
-                        sql += "(" + vv.code + ",'" + v.region + vv.region + "'),";
-                    } else {
-                        //console.log(vv.code, vv.region);
-                        sql += "(" + vv.code + ",'" + vv.region + "'),";
-                    }
-                    if (vv.regionEntitys) {
-                        vv.regionEntitys.forEach(vvv => {
-                            if (vvv.region === "市辖区") {
-                                //console.log(vvv.code, vv.region + vvv.region);
-                                sql += "(" + vvv.code + ",'" + vv.region + vvv.region + "'),";
-                            } else {
-                                //console.log(vvv.code, vvv.region);
-                                sql += "(" + vvv.code + ",'" + vvv.region + "'),";
-                            }
-                        })
-                    }
-                })
-            }
-        });
-        console.log(sql);
-    </script>
 </head>
 <body>
-
+<input type="file" webkitdirectory directory />
 </body>
 </html>

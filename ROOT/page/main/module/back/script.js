@@ -24,7 +24,7 @@ class Module {
         let name = this.APP.scene.page.name;
         let data = JSON.stringify(this.APP.scene);
 
-        cp.ajax(CONF.IxDAddr + "/scene/add", {
+        cp.ajax(CONF.ServerAddr + "/scene/add", {
             data: {
                 sceneId: this.APP.getSceneId() || "",
                 projectId: localStorage.getItem("pid"),

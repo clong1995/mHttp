@@ -11,7 +11,7 @@ class Module {
         let sid = cp.getQueryVar();
 
         //获取数据，加载场景
-        cp.ajax(CONF.IxDAddr + "/scene/getById", {
+        cp.ajax(CONF.ServerAddr + "/scene/getById", {
             data: {
                 id: sid.id
             },

@@ -38,7 +38,7 @@ body {
     user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
-    -ms-user-select:none;
+    -ms-user-select: none;
     font-size: 13px;
     background: var(--background);
     color: var(--color);
@@ -49,7 +49,7 @@ body {
 @font-face {
     font-family: 'iconfont';
     /*src: url('../iconfont/iconfont.woff2');*/
-    src: url('//at.alicdn.com/t/font_722315_knas7ydc44.woff2');
+    src: url('//at.alicdn.com/t/font_722315_5mpzpee0963.woff2');
 }
 
 .iconfont {
@@ -87,13 +87,14 @@ input, select {
     padding: 0 5px;
     line-height: 20px;
     cursor: pointer;
+    color: var(--color);
     border-radius: 2px;
 }
 
 .button:active {
-    background: #ffffff;
+    background: var(--background);
     font-weight: bold;
-    border: 1px solid #bfbfbf;
+    border: 1px solid var(--color2);
 }
 
 /*滚动条整体部分*/

@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func init() {
@@ -59,15 +60,24 @@ func main() {
 	CONF.Component = *component
 
 	//静态资源服
-	http.Handle("/resource/", http.StripPrefix("/resource/", http.FileServer(http.Dir(CONF.Root+"/resource"))))
+	http.Handle("/resource/", http.StripPrefix("/resource/", SetCacheHeader(http.FileServer(http.Dir(CONF.Root+"/resource")))))
 	//页面和模块内静态资源
-	http.Handle("/page/", http.StripPrefix("/page/", http.FileServer(http.Dir(CONF.Root+"/page"))))
+	http.Handle("/page/", http.StripPrefix("/page/", SetCacheHeader(http.FileServer(http.Dir(CONF.Root+"/page")))))
 	//TODO 专用
 	http.HandleFunc("/component/", componentHandle)
 	//动态页面路由
 	http.HandleFunc("/", pageHandle)
 	//服务
 	log.Fatal(http.ListenAndServe(CONF.Addr, nil))
+}
+
+func SetCacheHeader(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+		h.ServeHTTP(w, r)
+	})
 }
 
 //TODO 专用
@@ -313,6 +323,9 @@ func httpWriteAndCache(w http.ResponseWriter, urlPath, contentType string, body 
 func httpWrite(w http.ResponseWriter, cache *cacheItem) {
 	w.Header().Set("Content-Type", cache.Type)
 	w.Header().Set("Content-Length", cache.Length)
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
 	_, err := w.Write(cache.Body)
 	if err != nil {
 		log.Println(err)
@@ -329,6 +342,10 @@ func moduleHtmlCompiler(entryPath, entry, moduleTag, class, appHtml string) stri
 			return appHtml
 		} else {
 			appHtml = strings.ReplaceAll(appHtml, moduleTag, fmt.Sprintf(`<div id="%s"%s>%s</div>`, entry, class, string(data)))
+			//去掉缓存
+			t := time.Now().Unix()
+			appHtml = strings.ReplaceAll(appHtml, `.css">`, fmt.Sprintf(`.css?t=%d">`, t))
+			appHtml = strings.ReplaceAll(appHtml, `.js">`, fmt.Sprintf(`.js?t=%d">`, t))
 			return appHtml
 		}
 	} else {

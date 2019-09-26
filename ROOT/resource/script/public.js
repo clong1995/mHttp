@@ -1,7 +1,8 @@
 const CONF = {
-    //IxD的地址
-    //IxDAddr: "http://192.168.10.252:19959"
-    IxDAddr: "http://127.0.0.1:50001",
+    //服务地址
+    ServerAddr: "http://127.0.0.1:50001",
+    //本地址
+    LocalAddr: "http://127.0.0.1:50003",
     QiniuAddr: "http://storage.quickex.com.cn",
     QiniuThumbnail: "imageMogr2/thumbnail/100x100>/blur/1x0/quality/75"
 };

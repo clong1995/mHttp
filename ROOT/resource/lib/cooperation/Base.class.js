@@ -903,16 +903,21 @@ class Base {
     /**
      * 打开连接
      * @param url
-     * @param target
+     * @param data
      */
     link(url, data = {}) {
-        let param = '?';
-        for (let k in data) {
-            param += k + '=' + data[k] + '&';
+        let param = '';
+        if (data) {
+            for (let k in data) {
+                param += k + '=' + data[k] + '&';
+            }
+            //param = param.substring(0, param.length - 1);
         }
-        if (param !== '?') {
-            param = param.substring(0, param.length - 1);
-            url += param;
+        param = param+this.randomChar()+"="+new Date().getTime();
+        if (url.includes("?")) {
+            url += "&" + param;
+        } else {
+            url += "?" + param;
         }
         window.location.href = url;
     }

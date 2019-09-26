@@ -45,7 +45,7 @@ class Module {
     }
 
     weather(value) {
-        cp.ajax(CONF.IxDAddr + "/other/weather", {
+        cp.ajax(CONF.ServerAddr + "/other/weather", {
             data: {
                 city: value
             },

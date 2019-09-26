@@ -75,7 +75,7 @@ class Module {
                     backgroundImage: `url("${dataUrl}")`
                 });
                 //保存到数据库
-                cp.ajax(CONF.IxDAddr + "/base64/add", {
+                cp.ajax(CONF.ServerAddr + "/base64/add", {
                     data: {
                         id: pageData.cover,
                         value: dataUrl
@@ -102,7 +102,7 @@ class Module {
         let name = this.APP.scene.page.name;
         let data = JSON.stringify(this.APP.scene);
 
-        cp.ajax(CONF.IxDAddr + "/template/add", {
+        cp.ajax(CONF.ServerAddr + "/template/add", {
             data: {
                 name: name,
                 data: data
@@ -465,7 +465,7 @@ class Module {
         //this.pageFlipOver = pageData.flipOver;
 
         //封面
-        pageData.cover && cp.ajax(CONF.IxDAddr + "/base64/get", {
+        pageData.cover && cp.ajax(CONF.ServerAddr + "/base64/get", {
             data: {
                 id: pageData.cover
             },

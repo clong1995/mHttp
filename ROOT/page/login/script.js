@@ -7,6 +7,13 @@ class App {
 
     //初始化函数
     INIT() {
+        let client = cp.getQueryVar().client;
+        if (client) {
+            localStorage.setItem("client", "true");
+        } else {
+            localStorage.removeItem("client");
+        }
+
         //检查token
         /*let token = localStorage.getItem("Authorization");
         if (token) {
@@ -31,7 +38,7 @@ class App {
                 text: "请填写完整账号密码"
             });
         }
-        cp.ajax(CONF.IxDAddr + "/auth/signin", {
+        cp.ajax(CONF.ServerAddr + "/auth/signin", {
             data: {
                 email: id,
                 password: pwd

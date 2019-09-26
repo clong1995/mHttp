@@ -96,8 +96,7 @@
 
 .menu > .file-item:after {
     content: "|";
-    float: right;
-    margin-right: -2px;
+    float: left;
     color: var(--background4)
 }
 
@@ -105,4 +104,10 @@
     border-bottom: 1px solid var(--background);
     border-right: var(--border);
     border-left: var(--border);
+}
+
+.menu > .file-item:first-child:after,
+.menu > .file-item.active:after,
+.menu > .file-item.active + .file-item:after {
+    display: none;
 }

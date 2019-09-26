@@ -17,7 +17,6 @@
     width: calc(100% - 150px);
     height: 40px;
     float: left;
-    line-height: 40px;
 }
 
 #list {

@@ -19,7 +19,7 @@ class Module {
     addProject() {
         let name = this.projectNameDom.value;
         if (name !== "") {
-            cp.ajax(CONF.IxDAddr + "/project/add", {
+            cp.ajax(CONF.ServerAddr + "/project/add", {
                 data: {
                     name: name
                 },

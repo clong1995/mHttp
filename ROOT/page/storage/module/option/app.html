@@ -1,15 +1,18 @@
 <button class="back button option-item"><i class="iconfont">&#xe61a;</i> 返回上级</button>
-<button class="add button option-item">
+<div class="add button option-item">
     <i class="iconfont">&#xe64f;</i> 上传
+    <!-- 浏览器上传 -->
     <input type="file" class="upload">
-</button>
+    <!-- 客户端上床 -->
+    <div class="upload-client hide"></div>
+</div>
 <button class="button option-item new-folder"><i class="iconfont">&#xe612;</i> 新建文件夹</button>
 <button class="refresh button option-item"><i class="iconfont">&#xe636;</i> 刷新</button>
 <div class="addr option-item">
     <i class="iconfont">&#xe788;</i>
     位于: <span class="addr-list"></span>
 </div>
-<div class="info option-item">
+<div class="info">
     大文件、秒传、文件夹、断点续传请使用<span class="client">客户端</span>
 </div>
 
@@ -35,6 +38,27 @@
             <div class="platform disable"><i class="iconfont">&#xe67c;</i>android</div>
             <div class="platform disable"><i class="iconfont">&#xe640;</i>ios</div>
             <div class="platform disable"><i class="iconfont">&#xe695;</i>鸿蒙</div>
+        </div>
+    </div>
+</div>
+
+<!-- 客户端上传文件夹和文件 -->
+<div class="upload-client-window hide">
+    <div class="window-container">
+        <div class="window-title">上传文件</div>
+        <div class="body">
+            <div class="type file">
+                <i class="iconfont">&#xe657;</i>
+                <div class="text">单文件</div>
+            </div>
+            <div class="type folder">
+                <i class="iconfont">&#xe63b;</i>
+                <div class="text">文件夹</div>
+            </div>
+            <div class="type offline disable">
+                <i class="iconfont">&#xe692;</i>
+                <div class="text">离线上传</div>
+            </div>
         </div>
     </div>
 </div>
