@@ -24,10 +24,12 @@ class Module {
         cp.on('.confirm', this.addFolderDom, 'click', () => this.confirmNewFolder());
         cp.on('.addr-list-item', this.addrListDom, 'click', t => this.goToFolder(t));
         //浏览器上传
-        cp.on('.upload', this.addDom, 'change', t => this.upload(t));
+        cp.on('.upload', this.addDom, 'change', t => this.doUploadWeb(t));
         //客户端上传
         cp.on('.upload-client', this.addDom, 'click', t => this.uploadClient(t));
+        //客户端上传文件
         cp.on('.file', this.uploadClientWindowDom, 'click', t => this.uploadClientFile(t));
+        //客户端上传文件夹
         cp.on('.folder', this.uploadClientWindowDom, 'click', t => this.uploadClientFolder(t));
     }
 
@@ -46,24 +48,67 @@ class Module {
         //导航
         this.navigate = [];
         //相应go回调
-        window.externalInvokeOpen = res => {
-            let file = res;
-            let pid = this.currNavigate();
-            this.doUploadClientFile(file, pid)
-        };
-        window.externalInvokeOpenDir = res => {
-            let dir = res;
-            let pid = this.currNavigate();
-            this.doUploadClientFolder(dir, pid)
-        }
+        window.externalInvokeOpen = res => this.doUploadClientFile(res);
+        window.externalInvokeOpenDir = res => this.doUploadClientFolder(res);
     }
 
-    doUploadClientFile(file, pid) {
-
+    /**
+     * 客户端上传
+     * @param file
+     */
+    doUploadClientFile(file) {
+        cp.ajax(CONF.LocalAddr + "/upload/one", {
+            data: {
+                localPath: file,
+                pid: this.currNavigate()
+            },
+            success: res => {
+                if (res.code === 0) {
+                    if (res.data.InQiniu) {
+                        //触发秒传
+                        //保存文件信息
+                        cp.ajax(CONF.ServerAddr + "/file/addFile", {
+                            data: {
+                                etag: res.data.Hash,
+                                name: res.data.Name,
+                                size: res.data.Fsize,
+                                type: res.data.MimeType,
+                                pid: this.currNavigate().key
+                            },
+                            success: res1 => {
+                                if (res1.code === 0) {
+                                    MODULE("list").loadFileList();
+                                    MODULE("window").hide(this.uploadClientWindowDom);
+                                } else {
+                                    alert(JSON.stringify(res1));
+                                    console.error(res1)
+                                }
+                            }
+                        })
+                    } else {
+                        //加入上传列表
+                    }
+                } else {
+                    console.error(res)
+                }
+            }
+        })
     }
 
-    doUploadClientFolder(dir, pid) {
-
+    doUploadClientFolder(dir) {
+        /*cp.ajax(CONF.LocalAddr + "/upload/one", {
+            data: {
+                localPath: dir,
+                pid: this.currNavigate()
+            },
+            success: res => {
+                if (res.code === 0) {
+                    MODULE("list").loadFileList();
+                } else {
+                    console.error(res)
+                }
+            }
+        })*/
     }
 
     uploadClientFile(type) {
@@ -78,7 +123,11 @@ class Module {
         }))
     }
 
-    upload(target) {
+    /**
+     * 浏览器上传
+     * @param target
+     */
+    doUploadWeb(target) {
         MODULE("upload").upload(target, res => {
             //保存文件信息
             cp.ajax(CONF.ServerAddr + "/file/addFile", {
@@ -87,7 +136,8 @@ class Module {
                     name: res.name,
                     size: res.size,
                     type: res.type,
-                    pid: this.currNavigate().key
+                    pid: this.currNavigate().key,
+                    inQiniu: 1
                 },
                 success: res => {
                     if (res.code === 0) {
