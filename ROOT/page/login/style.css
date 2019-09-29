@@ -54,10 +54,15 @@
     text-align: center;
 }
 
-.login-box > .txt {
+.login-box > .support-info,
+.login-box > .client-download {
     width: 100%;
     font-size: 12px;
     text-align: center;
     color: #3e3e3e;
-    height: 100px;
+    height: 45px;
+}
+
+.login-box > .client-download > A:hover {
+    color: var(--color5);
 }

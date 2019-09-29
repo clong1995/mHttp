@@ -60,34 +60,12 @@ class Module {
         cp.ajax(CONF.LocalAddr + "/upload/one", {
             data: {
                 localPath: file,
-                pid: this.currNavigate()
+                pid: this.currNavigate().key
             },
             success: res => {
                 if (res.code === 0) {
-                    if (res.data.InQiniu) {
-                        //触发秒传
-                        //保存文件信息
-                        cp.ajax(CONF.ServerAddr + "/file/addFile", {
-                            data: {
-                                etag: res.data.Hash,
-                                name: res.data.Name,
-                                size: res.data.Fsize,
-                                type: res.data.MimeType,
-                                pid: this.currNavigate().key
-                            },
-                            success: res1 => {
-                                if (res1.code === 0) {
-                                    MODULE("list").loadFileList();
-                                    MODULE("window").hide(this.uploadClientWindowDom);
-                                } else {
-                                    alert(JSON.stringify(res1));
-                                    console.error(res1)
-                                }
-                            }
-                        })
-                    } else {
-                        //加入上传列表
-                    }
+                    MODULE("list").loadFileList();
+                    MODULE("window").hide(this.uploadClientWindowDom);
                 } else {
                     console.error(res)
                 }

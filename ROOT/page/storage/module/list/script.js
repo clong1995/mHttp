@@ -112,18 +112,19 @@ class Module {
         //隐藏不必要的菜单
         MODULE("option").hideForBucket(type);
 
-        if (type === "taskBucket") {
-            cp.empty(this.listDom);
-            return
-        }
         let url = CONF.ServerAddr + "/file/list";
         let data = {
             pid: key
         };
-        if (type === "recycleBucket") {
+        if (type === "recycleBucket") {//回收站
             this.recycle = true;
             url = CONF.ServerAddr + "/file/deleteList";
             data = {}
+        }
+        if (type === "taskBucket") {//任务列表
+            cp.empty(this.listDom);
+            this.taskList();
+            return;
         }
         //加载列表
         cp.ajax(url, {
@@ -137,10 +138,9 @@ class Module {
                                 <div class="img enter centerWrap">
                                     ${v.type === "image" ? `<div class="image centerBg" 
                                         style="background-image:url(${CONF.QiniuAddr}/${v.etag}?${CONF.QiniuThumbnail})"></div>`
-                            //: v.type === "video" ? "视频"
-                            : `<i class="iconfont">${this.icon[v.type]}</i>`}                          
+                            : `<i class="iconfont">${v.state === 2 ? "&#xe658;" : this.icon[v.type]}</i>`}  
                                 </div>
-                                <div class="option">
+                                <div class="option ${v.state === 2 ? 'hide' : ''}">
                                     ${(v.type === "image" || v.type === "video" || v.type === "richText" || v.type === "text")
                             ? '<i class="preview iconfont icon alt" data-type="${v.type}">&#xe611;</i>' : ''}
                                     ${this.recycle ? "" : '<i class="share iconfont icon alt">&#xe602;</i>'}
@@ -196,5 +196,14 @@ class Module {
             MODULE("option").setNavigate(id, name, type);
             this.loadFileList();
         }
+    }
+
+    taskList() {
+        cp.ajax(CONF.LocalAddr + "/upload/restartTask", {
+            success: res => {
+                if (res.code === 0) {
+                }
+            }
+        })
     }
 }

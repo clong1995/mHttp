@@ -1,8 +1,11 @@
 class App {
     DOM() {
-        this.signinDom = cp.query(".signin");
+        this.loginBoxDom = cp.query(".login-box");
+        this.signinDom = cp.query(".signin",this.loginBoxDom);
         this.idDom = cp.query(".id > input", this.signinDom);
         this.pwdDom = cp.query(".pwd > input", this.signinDom);
+        this.supportInfoDom = cp.query(".support-info", this.loginBoxDom);
+        this.clientDownloadDom = cp.query(".client-download", this.loginBoxDom);
     }
 
     //初始化函数
@@ -12,6 +15,8 @@ class App {
             localStorage.setItem("client", "true");
         } else {
             localStorage.removeItem("client");
+            cp.show(this.supportInfoDom);
+            cp.show(this.clientDownloadDom)
         }
 
         //检查token

@@ -15,6 +15,7 @@
     --color2: #666;
     --color3: #333;
     --color4: #FFFAE3;
+    --color5: #408BFA;
 }
 
 /*科技绿*/
@@ -49,7 +50,7 @@ body {
 @font-face {
     font-family: 'iconfont';
     /*src: url('../iconfont/iconfont.woff2');*/
-    src: url('//at.alicdn.com/t/font_722315_5mpzpee0963.woff2');
+    src: url('//at.alicdn.com/t/font_722315_niudm8r6a9.woff2');
 }
 
 .iconfont {
