@@ -1,7 +1,7 @@
 const CONF = {
     //服务地址
     ServerAddr: "http://127.0.0.1:50001",
-    //本地址
+    //本地址，不需要改！
     LocalAddr: "http://127.0.0.1:50003",
     QiniuAddr: "http://storage.quickex.com.cn",
     QiniuThumbnail: "imageMogr2/thumbnail/100x100>/blur/1x0/quality/75"

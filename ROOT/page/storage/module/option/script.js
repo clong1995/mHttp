@@ -89,16 +89,16 @@ class Module {
         })*/
     }
 
-    uploadClientFile(type) {
-        external.invoke(JSON.stringify({
-            key: "open"
-        }))
+    uploadClientFile() {
+        external.invoke ? external.invoke(JSON.stringify({
+            key: "openFileDialog"
+        })) : openFileDialog();
     }
 
-    uploadClientFolder(type) {
-        external.invoke(JSON.stringify({
-            key: "openDir"
-        }))
+    uploadClientFolder() {
+        external.invoke ? external.invoke(JSON.stringify({
+            key: "openDirDialog"
+        })) : openDirDialog()
     }
 
     /**
