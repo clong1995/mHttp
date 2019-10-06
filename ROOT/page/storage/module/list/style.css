@@ -50,7 +50,7 @@
     bottom: -20px;
 }
 
-.list > .item > .inner > .option > .copy:after {
+.list > .item > .inner > .option > .download:after {
     content: "下载";
     width: 25px;
     bottom: -20px;
@@ -89,7 +89,8 @@
 }
 
 .list > .item > .inner > .name {
-    width: 100%;
+    width: calc(100% - 10px);
+    padding: 0 5px;
     height: 20px;
     line-height: 20px;
     text-align: center;
@@ -98,6 +99,10 @@
 .list > .item > .inner > .img > .image {
     width: 100%;
     height: 100%;
+}
+
+.list > .item > .inner > .img > .progress {
+    font-size: 30px;
 }
 
 .share-window {

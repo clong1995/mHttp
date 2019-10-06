@@ -1,7 +1,7 @@
 class App {
     DOM() {
         this.loginBoxDom = cp.query(".login-box");
-        this.signinDom = cp.query(".signin",this.loginBoxDom);
+        this.signinDom = cp.query(".signin", this.loginBoxDom);
         this.idDom = cp.query(".id > input", this.signinDom);
         this.pwdDom = cp.query(".pwd > input", this.signinDom);
         this.supportInfoDom = cp.query(".support-info", this.loginBoxDom);
@@ -16,7 +16,7 @@ class App {
         } else {
             localStorage.removeItem("client");
             cp.show(this.supportInfoDom);
-            cp.show(this.clientDownloadDom)
+            cp.show(this.clientDownloadDom);
         }
 
         //检查token
@@ -30,6 +30,13 @@ class App {
     //添加事件
     EVENT() {
         cp.on('.submit', this.signinDom, 'click', () => this.submit());
+    }
+
+    doRestartTask(token) {
+        external.invoke ? external.invoke(JSON.stringify({
+            key: "restartTask",
+            data: token
+        })) : restartTask(token)
     }
 
     //提交
@@ -51,7 +58,12 @@ class App {
             success: res => {
                 if (res.code === 0) {
                     localStorage.setItem("Authorization", res.data);
-                    cp.link("/project")
+                    //检查未完成的上传任务
+                    this.doRestartTask(res.data);
+                    setTimeout(() => {
+                        //这里暂时延时处理，因为后期可能会把网盘独立，不耦合，或者有其他松耦合的方式
+                        cp.link("/project")
+                    }, 1000);
                 } else {
                     console.error(res)
                 }

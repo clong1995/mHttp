@@ -50,7 +50,7 @@ body {
 @font-face {
     font-family: 'iconfont';
     /*src: url('../iconfont/iconfont.woff2');*/
-    src: url('//at.alicdn.com/t/font_722315_niudm8r6a9.woff2');
+    src: url('//at.alicdn.com/t/font_722315_tj7nj547oci.woff2');
 }
 
 .iconfont {
@@ -138,4 +138,17 @@ input, select {
 /*定义右下角拖动块的样式*/
 .scrollbar::-webkit-resizer {
 
+}
+
+.animation_rotate {
+    animation: rotate 5s linear infinite
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0)
+    }
+    100% {
+        transform: rotate(360deg)
+    }
 }

@@ -913,7 +913,7 @@ class Base {
             }
             //param = param.substring(0, param.length - 1);
         }
-        param = param+this.randomChar()+"="+new Date().getTime();
+        param = param + this.randomChar() + "=" + new Date().getTime();
         if (url.includes("?")) {
             url += "&" + param;
         } else {
@@ -1205,8 +1205,14 @@ class Base {
         //父元素有缩放，转化偏移量
         let offset = 1;
         let zoom = target.parentNode.style.zoom;
+        let transform = target.parentNode.style.transform;
         if (zoom) {
             offset = 1 / parseFloat(zoom)
+        }else if(transform){
+            let substr = transform.match(/scale\((\S*)\)/);
+            if(substr[1]){
+                offset = 1 / parseFloat(substr[1])
+            }
         }
 
         let x0 = window.event.screenX * offset,
@@ -1448,11 +1454,14 @@ class Base {
     /**
      * 删除节点
      * @param dom
+     * @param parent
      */
-    remove(dom) {
-        dom && (dom.length !== undefined
-            ? dom.forEach(v => v.parentNode.removeChild(v))
-            : dom.parentNode.removeChild(dom));
+    remove(dom, parent = null) {
+        dom && (typeof dom === "string" && parent
+            ? this.remove(this.query(dom, parent, true))
+            : dom.length !== undefined
+                ? dom.forEach(v => v.parentNode.removeChild(v))
+                : dom.parentNode.removeChild(dom))
     }
 
     /**
@@ -2081,7 +2090,7 @@ class Base {
         this.attr(dom, attr)
     }
 
-    //TODO https://blog.csdn.net/wconvey/article/details/54171693
+//TODO https://blog.csdn.net/wconvey/article/details/54171693
 
     /**
      * 设置临时的数据

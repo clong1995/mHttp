@@ -52,6 +52,7 @@ class Module {
         window.externalInvokeOpenDir = res => this.doUploadClientFolder(res);
     }
 
+
     /**
      * 客户端上传
      * @param file
@@ -167,11 +168,12 @@ class Module {
         this.changeAddr();
     }
 
-    setNavigate(key, name) {
+    setNavigate(key, name, type) {
         let len = this.navigate.length;
         this.navigate[len] = {
             key: key,
-            name: name
+            name: name,
+            type: type
         };
         this.changeAddr();
     }

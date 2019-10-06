@@ -31,12 +31,51 @@ class Module {
             video: "&#xe63c;",
             folder: "&#xe63b;",
             image: "&#xe643;",
-            richText: "&#xe650;"
+            richText: "&#xe650;",
+            audio: "&#xe623;",
+            database: "&#xe659;",
+            dmg: "&#xe69c;",
+            pkg: "&#xe65b;",
+            apk: "&#xe65a;",
+            pdf: "&#xe740;"
         };
         this.recycle = false;
         this.defaultSize = 125;
         this.autoSize();
         window.onresize = () => this.autoSize();
+        //相应go
+        window.externalInvokeLoadingList = res => this.loadingList(res);
+        window.externalInvokeLoadingProgress = res => this.loadingProgress(res);
+    }
+
+    loadingProgress(res) {
+        clearTimeout(this.stoLoadingProgress);
+        let uploadingDoms = cp.query(".loading", this.listDom, true);
+        for (let key in res) {
+            [...uploadingDoms].some(v => {
+                if (cp.getData(v, "etag") === key) {
+                    let imgDom = cp.query(".img", v);
+                    let progressDom = cp.query(".progress", imgDom);
+                    if (!progressDom) {
+                        //移除旋转
+                        cp.remove(".animation_rotate", v);
+                        //创建progress
+                        progressDom = cp.createDom("span", {
+                            "class": "progress"
+                        });
+                        cp.append(imgDom, progressDom)
+                    }
+                    cp.text(progressDom, res[key] + "%");
+                    console.log(parseInt(res[key]));
+                    if (parseInt(res[key]) >= 100) {
+                        cp.remove(v);
+                    }
+                    return true
+                }
+            })
+        }
+        console.log("检查进度");
+        this.stoLoadingProgress = setTimeout(() => this.progress(), 3000)
     }
 
     share(target) {
@@ -127,36 +166,72 @@ class Module {
             return;
         }
         //加载列表
+        this.showFileList(url, data)
+    }
+
+    showFileList(url, data) {
         cp.ajax(url, {
             data: data,
             success: res => {
                 if (res.code === 0) {
                     let html = "";
                     res.data.forEach(v => {
-                        html += `<div class="item" data-id=${v.id} data-etag="${v.etag}" data-type="${v.type}" data-mime="${v.mime}">
+                        html += `<div class="item ${v.state ? "loading" : ""} ${v.user}" data-id=${v.id} data-etag="${v.etag}" data-type="${v.type}" data-mime="${v.mime}">
                             <div class="inner">
+                                <!-- icon -->
                                 <div class="img enter centerWrap">
-                                    ${v.type === "image" ? `<div class="image centerBg" 
-                                        style="background-image:url(${CONF.QiniuAddr}/${v.etag}?${CONF.QiniuThumbnail})"></div>`
-                            : `<i class="iconfont">${v.state === 2 ? "&#xe658;" : this.icon[v.type]}</i>`}  
+                                    ${v.type === "image" && v.state !== 2
+                            ? `<div class="image centerBg" style="background-image:url(${CONF.QiniuAddr}/${v.etag}?${CONF.QiniuThumbnail})"></div>`
+                            : `${v.state === 2
+                                ? `<i class='iconfont animation_rotate'>&#xe6ab;</i><i class='iconfont hide'>${this.icon[v.type]}</i>`
+                                : `<i class='iconfont'>${this.icon[v.type]}</i>`
+                            }`
+                        }       
                                 </div>
+                                
+                                <!-- option -->
                                 <div class="option ${v.state === 2 ? 'hide' : ''}">
                                     ${(v.type === "image" || v.type === "video" || v.type === "richText" || v.type === "text")
-                            ? '<i class="preview iconfont icon alt" data-type="${v.type}">&#xe611;</i>' : ''}
-                                    ${this.recycle ? "" : '<i class="share iconfont icon alt">&#xe602;</i>'}
+                            ? `<i class="preview iconfont icon alt" data-type="${v.type}">&#xe611;</i>`
+                            : ''
+                        }
+                                    
+                                    ${this.recycle
+                            ? ""
+                            : '<i class="share iconfont icon alt">&#xe602;</i>'
+                        }
                                     <i class="download iconfont icon alt">&#xe635;</i>
                                     <i class="delete iconfont icon alt">&#xe624;</i>
                                 </div>
-                                <div class="name">${v.name}</div>
+                                
+                                <!-- name -->
+                                <div class="name ellipsis">${v.name}</div>
+                                
                             </div>
                         </div>`;
                     });
                     cp.empty(this.listDom, html);
+                    //如果是浏览器，则不查询
+                    if (localStorage.getItem("client")) {//客户端
+                        //定期检查是否完全上传
+                        this.checkFinish();
+                        //如果是在任务列表下，查询试试进度
+                        this.progress();
+                    }
                 } else {
                     console.error(res)
                 }
             }
         });
+    }
+
+    progress() {
+        let {type} = MODULE("option").currNavigate();
+        if (type === "taskBucket") {
+            external.invoke ? external.invoke(JSON.stringify({
+                key: "getLoadingProgress"
+            })) : getLoadingProgress()
+        }
     }
 
     autoSize() {
@@ -199,10 +274,51 @@ class Module {
     }
 
     taskList() {
-        cp.ajax(CONF.LocalAddr + "/upload/restartTask", {
-            success: res => {
-                if (res.code === 0) {
+        external.invoke ? external.invoke(JSON.stringify({
+            key: "getLoadingList"
+        })) : getLoadingList()
+    }
+
+    loadingList(res) {
+        let etags = res.split(",");
+        //获取未完成的文件列表
+        this.showFileList(CONF.ServerAddr + "/file/uploading", {
+            etags: etags
+        })
+    }
+
+    checkFinish() {
+        let ids = [];
+        cp.query(".own", this.listDom, true).forEach(v =>
+            cp.hasClass(v, "loading") && ids.push(cp.getData(v)));
+        if (ids.length) {
+            cp.ajax(CONF.ServerAddr + "/file/checkFinish", {
+                data: {
+                    ids: ids
+                },
+                success: res => {
+                    if (res.code === 0) {
+                        res.data.forEach(v => this.loadFinish(v.id))
+                    } else {
+                        console.error(res)
+                    }
                 }
+            });
+            clearTimeout(this.stoCheckFinish);
+            this.stoCheckFinish = setTimeout(() => {
+                this.checkFinish()
+            }, 5000)
+        }
+    }
+
+    loadFinish(id) {
+        cp.query(".loading", this.listDom, true).forEach(v => {
+            if (cp.getData(v) === id) {
+                let imgDom = cp.query(".img", v);
+                cp.removeClass(v, "loading");
+                cp.remove(".animation_rotate", imgDom);
+                cp.show(cp.query(".hide", imgDom));
+                return true
             }
         })
     }
