@@ -35,7 +35,7 @@ class App {
     doRestartTask(token) {
         external.invoke ? external.invoke(JSON.stringify({
             key: "restartTask",
-            data: token
+            value: token
         })) : restartTask(token)
     }
 

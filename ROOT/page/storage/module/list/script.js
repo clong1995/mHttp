@@ -66,7 +66,6 @@ class Module {
                         cp.append(imgDom, progressDom)
                     }
                     cp.text(progressDom, res[key] + "%");
-                    console.log(parseInt(res[key]));
                     if (parseInt(res[key]) >= 100) {
                         cp.remove(v);
                     }
@@ -317,6 +316,7 @@ class Module {
                 let imgDom = cp.query(".img", v);
                 cp.removeClass(v, "loading");
                 cp.remove(".animation_rotate", imgDom);
+                cp.remove(".progress", imgDom);
                 cp.show(cp.query(".hide", imgDom));
                 return true
             }
