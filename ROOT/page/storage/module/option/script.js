@@ -50,28 +50,27 @@ class Module {
         //相应go回调
         window.externalInvokeOpen = res => this.doUploadClientFile(res);
         window.externalInvokeOpenDir = res => this.doUploadClientFolder(res);
+        window.externalInvokeClientUploadOne = res => this.cbClientUploadOne(res);
     }
 
+    cbClientUploadOne(res) {
+        if (res === 0) {
+            MODULE("list").loadFileList();
+            MODULE("window").hide(this.uploadClientWindowDom);
+        } else {
+            console.error(res)
+        }
+    }
 
     /**
      * 客户端上传
      * @param file
      */
     doUploadClientFile(file) {
-        cp.ajax(CONF.LocalAddr + "/upload/one", {
-            data: {
-                localPath: file,
-                pid: this.currNavigate().key
-            },
-            success: res => {
-                if (res.code === 0) {
-                    MODULE("list").loadFileList();
-                    MODULE("window").hide(this.uploadClientWindowDom);
-                } else {
-                    console.error(res)
-                }
-            }
-        })
+        external.invoke ? external.invoke(JSON.stringify({
+            key: "clientUploadOne",
+            value: this.currNavigate().key + "||" + file + "||" + localStorage.getItem("Authorization")
+        })) : clientUploadOne(this.currNavigate().key, file, localStorage.getItem("Authorization"));
     }
 
     doUploadClientFolder(dir) {
