@@ -1,0 +1,80 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.pick {
+    width: 480px;
+}
+
+.pick > .logo {
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    font-size: 40px;
+}
+
+.pick > .box {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+
+.pick > .box > .user {
+    height: 75px;
+    line-height: 75px;
+    font-size: 20px;
+    background: var(--background4);
+    padding: 0 10px;
+}
+
+.pick > .box > .file {
+    background: var(--background2);
+    font-size: 24px;
+}
+
+.pick > .box > .file > .name {
+    width: 100%;
+    height: 110px;
+    line-height: 110px;
+    text-align: center;
+}
+
+.pick > .box > .file > .size {
+    height: 50px;
+    line-height: 50px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.pick > .btn {
+    display: block;
+    width: 40%;
+    height: 60px;
+    line-height: 60px;
+    background: var(--color3);
+    color: var(--color4);
+    border-radius: 30px;
+    font-size: 18px;
+    text-align: center;
+    cursor: pointer;
+    float: left;
+}
+
+.pick > .btn.pick-btn {
+    margin-right: 5%;
+    margin-left: 7%;
+}
+
+.pick > .btn.save-as-btn {
+}
+
+.pick > .btn:active {
+    opacity: .7;
+}

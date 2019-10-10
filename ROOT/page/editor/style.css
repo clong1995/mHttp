@@ -1,0 +1,19 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#editor {
+    width: 100%;
+    height: 100%;
+}
+
+#editor > .w-e-toolbar {
+    border: unset !important;
+}
+#editor > .w-e-text-container {
+    height: calc(100% - 34px) !important;
+    border: unset !important;
+}

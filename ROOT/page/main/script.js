@@ -7,12 +7,12 @@ class App {
     //初始化函数
     INIT() {
         //ipc
-        try {
+        /*try {
             this.ipc = require('electron').ipcRenderer;
         } catch (e) {
             console.log("不是客户端环境");
             this.ipc = null
-        }
+        }*/
 
         /*try {
             this.BrowserWindow = require('electron').remote.BrowserWindow

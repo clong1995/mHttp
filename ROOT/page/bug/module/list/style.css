@@ -1,0 +1,63 @@
+.head {
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    border: var(--border);
+    background: var(--background2);
+    border-left: none;
+    font-weight: bold;
+    overflow: hidden;
+}
+
+.body {
+    width: 100%;
+    height: calc(100% - 30px);
+    line-height: 30px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.body > .line {
+    overflow: hidden;
+    border-bottom: var(--border);
+    border-right: var(--border);
+}
+
+.body > .line:nth-of-type(even) {
+    background: var(--background8);
+}
+
+.head > .item,
+.body > .line > .item {
+    float: left;
+    padding: 0 5px;
+    border-left: var(--border);
+    width: 150px;
+}
+
+.head > .item.title,
+.body > .line > .item.title {
+    width: 430px;
+}
+
+
+.head > .item.type,
+.body > .line > .item.type,
+.head > .item.info,
+.body > .line > .item.info {
+    width: 60px;
+}
+
+
+.head > .item.severity,
+.body > .line > .item.severity {
+    width: 70px;
+}
+
+
+.head > .item.state,
+.head > .item.priority,
+.body > .line > .item.state,
+.body > .line > .item.priority {
+    width: 80px;
+}

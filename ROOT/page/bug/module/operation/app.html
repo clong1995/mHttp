@@ -1,0 +1,59 @@
+<button class="button back-btn">
+    <i class="iconfont">&#xe61a;</i> 返回
+</button>
+
+<button class="button bug-btn">
+    <i class="iconfont">&#xe65c;</i> 提交bug
+</button>
+
+<!-- 增加bug弹窗 -->
+<div class="add-bug hide">
+    <div class="window-container">
+        <div class="window-title">提交bug</div>
+        <div class="body">
+            <div class="row">
+                <div class="title">标题</div>
+                <input type="text" class="input value title-value" placeholder="主题鲜明且简短的标题"/>
+            </div>
+            <div class="row multiple">
+                <div class="title">选项</div>
+                <div class="title small">类型</div>
+                <select class="value input type-value">
+                    <option value=1 selected>缺陷</option>
+                    <option value=2>异常</option>
+                    <option value=3>建议</option>
+                    <option value=4>吐槽</option>
+                </select>
+                <div class="title small">严重程度</div>
+                <select class="value input severity-value">
+                    <option value=1 selected>高</option>
+                    <option value=2>中</option>
+                    <option value=3>低</option>
+                    <option value=4>无</option>
+                </select>
+                <div class="title small">优先级别</div>
+                <select class="value input priority-value">
+                    <option value=1 selected>插队处理</option>
+                    <option value=2>参与排期</option>
+                    <option value=3>空档期处理</option>
+                    <option value=4>无需处理</option>
+                </select>
+            </div>
+            <div class="row">
+                <div class="title">所属模块</div>
+                <input type="text" class="input value position-value" placeholder="直白明确的bug定位"/>
+            </div>
+            <div class="row reappear">
+                <div class="title">复现步骤</div>
+                <iframe name="editor" class="value" src="/editor" frameborder="0"></iframe>
+            </div>
+            <div class="row expect">
+                <div class="title">期望结果</div>
+                <textarea class="value input expect-value" placeholder="表述清楚你认为正确的期待结果"></textarea>
+            </div>
+            <div class="row option">
+                <button class="button confirm">提交</button>
+            </div>
+        </div>
+    </div>
+</div>

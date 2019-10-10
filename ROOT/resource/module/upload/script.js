@@ -7,13 +7,13 @@ class Module {
     }
 
     INIT() {
-        this.authUrl = "http://127.0.0.1:8801/qiniu/key";
+        this.authUrl = "http://127.0.0.1:50001/qiniu/key";
         this.downloadUrl = "http://storage.quickex.com.cn";
         this.maxSize = 20;//M
         this.status = null;
         //加载七牛sdk
         cp.loadScript("/resource/lib/qiniu/qiniu.min.js", () => {
-        })
+        });
     }
 
     upload(fileDom, cb) {

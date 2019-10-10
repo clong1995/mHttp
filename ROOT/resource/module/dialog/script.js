@@ -57,7 +57,7 @@ class Module {
         }
         //等待信息
         else if (type === 'loading') {
-            icon = '&#xe623;';
+            icon = '&#xe6ab;';
             title = '等待';
         }
         cp.text(this.titleDom, title);

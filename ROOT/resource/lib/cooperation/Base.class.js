@@ -116,13 +116,22 @@ class Base {
         this.ajaxHeadersInterceptor = null;
         this.ajaxResponseInterceptor = null;
 
+        //禁用菜单
+        this.forbiddenMenu();
+    }
+
+    setClipboard(dom) {
+        dom.select();
+        document.execCommand("Copy");
+    }
+
+    forbiddenMenu() {
         window.oncontextmenu = function (event) {
             event.preventDefault();
             event.stopPropagation();
             return false;
         };
     }
-
 
     /**
      * 添加类名
@@ -1208,9 +1217,9 @@ class Base {
         let transform = target.parentNode.style.transform;
         if (zoom) {
             offset = 1 / parseFloat(zoom)
-        }else if(transform){
+        } else if (transform) {
             let substr = transform.match(/scale\((\S*)\)/);
-            if(substr[1]){
+            if (substr[1]) {
                 offset = 1 / parseFloat(substr[1])
             }
         }

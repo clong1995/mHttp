@@ -12,6 +12,7 @@ class Module {
         cp.on('.download', DOMAIN, 'click', t => this.download(t));
         cp.on('.preview', DOMAIN, 'click', t => this.preview(t));
         cp.on('.share', DOMAIN, 'click', t => this.share(t));
+        cp.on('.copy', this.shareWindowDom, 'click', () => this.copyLink());
     }
 
     INIT() {
@@ -44,8 +45,15 @@ class Module {
         this.autoSize();
         window.onresize = () => this.autoSize();
         //相应go
+        //下载列表
         window.externalInvokeLoadingList = res => this.loadingList(res);
+        //进度
         window.externalInvokeLoadingProgress = res => this.loadingProgress(res);
+        this.isClient = localStorage.getItem("client")
+    }
+
+    copyLink() {
+        cp.setClipboard(this.shareLikDom)
     }
 
     loadingProgress(res) {
@@ -79,9 +87,9 @@ class Module {
 
     share(target) {
         let p = cp.parent(target, ".item");
-        let etag = cp.attr(p, "data-etag");
+        let fid = cp.getData(p);
         let name = cp.text(cp.query(".name", p));
-        this.shareLikDom.value = CONF.QiniuAddr + "/" + etag;
+        this.shareLikDom.value = CONF.WebAddr + "/pick?f=" + fid;
         this.shareNameDom.value = name;
         MODULE("window").show(this.shareWindowDom);
     }
@@ -93,7 +101,11 @@ class Module {
             confirm: close => {
                 let p = cp.parent(target, ".item");
                 let id = cp.getData(p);
-                cp.ajax(CONF.ServerAddr + "/file/delete", {
+                let url = CONF.ServerAddr + "/file/delete";
+                if (this.recycle) {
+                    url = CONF.ServerAddr + "/file/remove";
+                }
+                cp.ajax(url, {
                     data: {
                         id: id
                     },
@@ -117,13 +129,35 @@ class Module {
         let etag = cp.attr(p, "data-etag");
         let name = cp.text(cp.query(".name", p));
         let type = cp.attr(p, "data-type");
-        if (type === "folder") {
+        if (this.isClient) {
+            if (type === "folder") {
+                MODULE("dialog").show({
+                    text: "暂不支持下载目录"
+                });
+                return;
+            }
             MODULE("dialog").show({
-                text: "请使用客户端下载文件夹"
+                type: "warn",
+                text: "保存到默认下载目录",
+                confirm: hide => {
+                    //后台下载
+                    external.invoke ? external.invoke(JSON.stringify({
+                        key: "downloadFile",
+                        value: etag
+                    })) : downloadFile(etag);
+                    hide()
+                },
+                cancel: hide => hide()
             });
-            return
+        } else {
+            if (type === "folder") {
+                MODULE("dialog").show({
+                    text: "请使用客户端下载文件夹"
+                });
+                return
+            }
+            window.saveAs(CONF.QiniuAddr + "/" + etag, name);
         }
-        window.saveAs(CONF.QiniuAddr + "/" + etag, name);
     }
 
     preview(target) {
@@ -191,7 +225,7 @@ class Module {
                                 <!-- option -->
                                 <div class="option ${v.state === 2 ? 'hide' : ''}">
                                     ${(v.type === "image" || v.type === "video" || v.type === "richText" || v.type === "text")
-                            ? `<i class="preview iconfont icon alt" data-type="${v.type}">&#xe611;</i>`
+                            ? `<i class="preview iconfont icon alt disable" data-type="${v.type}">&#xe611;</i>`
                             : ''
                         }
                                     
@@ -211,7 +245,7 @@ class Module {
                     });
                     cp.empty(this.listDom, html);
                     //如果是浏览器，则不查询
-                    if (localStorage.getItem("client")) {//客户端
+                    if (this.isClient) {//客户端
                         //定期检查是否完全上传
                         this.checkFinish();
                         //如果是在任务列表下，查询试试进度

@@ -33,10 +33,12 @@ class App {
     }
 
     doRestartTask(token) {
-        external.invoke ? external.invoke(JSON.stringify({
-            key: "restartTask",
-            value: token
-        })) : restartTask(token)
+        if (localStorage.getItem("client")) {
+            external.invoke ? external.invoke(JSON.stringify({
+                key: "restartTask",
+                value: token
+            })) : restartTask(token)
+        }
     }
 
     //提交

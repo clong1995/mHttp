@@ -29,7 +29,7 @@
     function bom(blob, opts) {
         if (typeof opts === 'undefined') opts = {
             autoBom: false
-        };else if (typeof opts !== 'object') {
+        }; else if (typeof opts !== 'object') {
             console.warn('Deprecated: Expected third argument to be a object');
             opts = {
                 autoBom: !opts
@@ -69,13 +69,14 @@
 
         try {
             xhr.send();
-        } catch (e) {}
+        } catch (e) {
+        }
 
         return xhr.status >= 200 && xhr.status <= 299;
     } // `a.click()` doesn't work for all browsers (#465)
 
 
-    function click(node) {
+    function click(node, opts) {
         try {
             node.dispatchEvent(new MouseEvent('click'));
         } catch (e) {
@@ -83,10 +84,14 @@
             evt.initMouseEvent('click', true, true, window, 0, 0, 0, 80, 20, false, false, false, false, 0, null);
             node.dispatchEvent(evt);
         }
+        if (typeof opts.success === "function") {
+            opts.success();
+        }
     }
 
     var saveAs = _global.saveAs || ( // probably in some web worker
-        typeof window !== 'object' || window !== _global ? function saveAs() {}
+        typeof window !== 'object' || window !== _global ? function saveAs() {
+            }
             /* noop */
             // Use download attribute first if possible (#193 Lumia mobile)
             : 'download' in HTMLAnchorElement.prototype ? function saveAs(blob, name, opts) {
@@ -103,9 +108,11 @@
                     a.href = blob;
 
                     if (a.origin !== location.origin) {
-                        corsEnabled(a.href) ? download(blob, name, opts) : click(a, a.target = '_blank');
+                        corsEnabled(a.href)
+                            ? download(blob, name, opts)
+                            : click(a, opts, a.target = '_blank');
                     } else {
-                        click(a);
+                        click(a, opts);
                     }
                 } else {
                     // Support blobs
@@ -115,13 +122,12 @@
                     }, 4E4); // 40s
 
                     setTimeout(function () {
-                        click(a);
+                        click(a, opts);
                     }, 0);
                 }
             } // Use msSaveOrOpenBlob as a second approach
             : 'msSaveOrOpenBlob' in navigator ? function saveAs(blob, name, opts) {
                     name = name || blob.name || 'download';
-
                     if (typeof blob === 'string') {
                         if (corsEnabled(blob)) {
                             download(blob, name, opts);
@@ -130,7 +136,7 @@
                             a.href = blob;
                             a.target = '_blank';
                             setTimeout(function () {
-                                click(a);
+                                click(a, opts);
                             });
                         }
                     } else {
@@ -160,7 +166,7 @@
                         reader.onloadend = function () {
                             var url = reader.result;
                             url = isChromeIOS ? url : url.replace(/^data:[^;]*;/, 'data:attachment/file;');
-                            if (popup) popup.location.href = url;else location = url;
+                            if (popup) popup.location.href = url; else location = url;
                             popup = null; // reverse-tabnabbing #460
                         };
 
@@ -168,7 +174,7 @@
                     } else {
                         var URL = _global.URL || _global.webkitURL;
                         var url = URL.createObjectURL(blob);
-                        if (popup) popup.location = url;else location.href = url;
+                        if (popup) popup.location = url; else location.href = url;
                         popup = null; // reverse-tabnabbing #460
 
                         setTimeout(function () {
