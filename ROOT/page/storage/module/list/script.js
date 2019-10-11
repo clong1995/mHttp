@@ -137,17 +137,15 @@ class Module {
                 return;
             }
             MODULE("dialog").show({
-                type: "warn",
-                text: "保存到默认下载目录",
+                text: "下载详情查看传输列表",
                 confirm: hide => {
                     //后台下载
                     external.invoke ? external.invoke(JSON.stringify({
                         key: "downloadFile",
-                        value: etag
-                    })) : downloadFile(etag);
+                        value: etag + "||" + name
+                    })) : downloadFile(etag, name);
                     hide()
-                },
-                cancel: hide => hide()
+                }
             });
         } else {
             if (type === "folder") {

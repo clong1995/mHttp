@@ -34,10 +34,17 @@ class App {
 
     doRestartTask(token) {
         if (localStorage.getItem("client")) {
+            //上传
             external.invoke ? external.invoke(JSON.stringify({
                 key: "restartTask",
                 value: token
-            })) : restartTask(token)
+            })) : restartTask(token);
+
+            //下载
+            external.invoke ? external.invoke(JSON.stringify({
+                key: "getDownloadProgress",
+                value: token
+            })) : getDownloadProgress(token)
         }
     }
 
