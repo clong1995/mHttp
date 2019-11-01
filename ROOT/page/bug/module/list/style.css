@@ -35,6 +35,11 @@
     width: 150px;
 }
 
+.head > .item.id,
+.body > .line > .item.id {
+    width: 95px;
+}
+
 .head > .item.title,
 .body > .line > .item.title {
     width: 430px;

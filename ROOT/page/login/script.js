@@ -10,21 +10,34 @@ class App {
 
     //初始化函数
     INIT() {
-        let client = cp.getQueryVar().client;
-        if (client) {
-            localStorage.setItem("client", "true");
-        } else {
-            localStorage.removeItem("client");
+        if (!global) {
             cp.show(this.supportInfoDom);
             cp.show(this.clientDownloadDom);
         }
 
-        //检查token
-        /*let token = localStorage.getItem("Authorization");
-        if (token) {
-            //跳转
-            cp.link("/project")
-        }*/
+        let urlParam = cp.getQueryVar();
+        if (urlParam["logout"]) {
+            //清除token
+            localStorage.clear();
+        } else {
+            //检查token
+            let token = localStorage.getItem("Authorization");
+            if (token) {
+                //通知nodejs登录成功
+                if (global) {
+                    (function sendMessage() {
+                        try {
+                            ipc.sendSync("loginSuccessMessageSync", token);
+                            cp.link("/project")
+                        } catch (e) {
+                            setTimeout(() => sendMessage(), 100)
+                        }
+                    })()
+                } else {
+                    cp.link("/project")
+                }
+            }
+        }
     }
 
     //添加事件
@@ -33,7 +46,7 @@ class App {
     }
 
     doRestartTask(token) {
-        if (localStorage.getItem("client")) {
+        if (global) {
             //上传
             external.invoke ? external.invoke(JSON.stringify({
                 key: "restartTask",
@@ -67,12 +80,29 @@ class App {
             success: res => {
                 if (res.code === 0) {
                     localStorage.setItem("Authorization", res.data);
-                    //检查未完成的上传任务
-                    this.doRestartTask(res.data);
-                    setTimeout(() => {
-                        //这里暂时延时处理，因为后期可能会把网盘独立，不耦合，或者有其他松耦合的方式
+                    if (global) {
+                        (function sendMessage() {
+                            setTimeout(() => {
+                                try {
+                                    //告诉客户端登录成功了
+                                    ipc.sendSync("loginSuccessMessageSync", res.data);
+                                    //默认首页
+                                    cp.link("/project")
+                                } catch (e) {
+                                    sendMessage();
+                                }
+                            }, 100)
+                        })()
+                    } else {
                         cp.link("/project")
-                    }, 1000);
+                    }
+
+
+                    //检查未完成的上传任务
+                    //this.doRestartTask(res.data);
+                    //setTimeout(() => {
+                    //这里暂时延时处理，因为后期可能会把网盘独立，不耦合，或者有其他松耦合的方式
+                    //}, 1000);
                 } else {
                     console.error(res)
                 }

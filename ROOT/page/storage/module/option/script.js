@@ -13,7 +13,6 @@ class Module {
         this.addrDom = cp.query(".addr", DOMAIN);
         this.optionItemDoms = cp.query(".option-item", DOMAIN, true);
         this.uploadClientWindowDom = cp.query(".upload-client-window", DOMAIN);
-
     }
 
     EVENT() {
@@ -23,18 +22,21 @@ class Module {
         cp.on('.client', DOMAIN, 'click', () => this.showDownloadClient());
         cp.on('.confirm', this.addFolderDom, 'click', () => this.confirmNewFolder());
         cp.on('.addr-list-item', this.addrListDom, 'click', t => this.goToFolder(t));
+
         //浏览器上传
         cp.on('.upload', this.addDom, 'change', t => this.doUploadWeb(t));
-        //客户端上传
-        cp.on('.upload-client', this.addDom, 'click', t => this.uploadClient(t));
-        //客户端上传文件
-        cp.on('.file', this.uploadClientWindowDom, 'click', t => this.uploadClientFile(t));
+
+        //客户端上传弹窗
+        cp.on('.upload-client', this.addDom, 'click', () => this.clientUploadWindow());
+        //客户端上传文件会话框
+        cp.on('.file', this.uploadClientWindowDom, 'click', () => this.clientUploadDialog());
+
         //客户端上传文件夹
-        cp.on('.folder', this.uploadClientWindowDom, 'click', t => this.uploadClientFolder(t));
+        //cp.on('.folder', this.uploadClientWindowDom, 'click', t => this.uploadClientFolder(t));
     }
 
     INIT() {
-        if (localStorage.getItem("client")) {//客户端
+        if (global) {//客户端
             //隐藏提示下载客户端
             cp.hide(this.infoDom);
             //隐藏通过浏览器上传
@@ -47,59 +49,21 @@ class Module {
         }
         //导航
         this.navigate = [];
-        //相应go回调
+        /*//相应go回调
         window.externalInvokeOpen = res => this.doUploadClientFile(res);
         window.externalInvokeOpenDir = res => this.doUploadClientFolder(res);
-        window.externalInvokeClientUploadOne = res => this.cbClientUploadOne(res);
+        window.externalInvokeClientUploadOne = res => this.cbClientUploadOne(res);*/
     }
 
-    cbClientUploadOne(res) {
-        if (res === 0) {
+    clientUploadDialog() {
+        //打开文件选择器
+        let file = ipc.sendSync("ShowOpenDialogMessageSync",this.currNavigate().key,localStorage.getItem("Authorization"));
+        if(file){
             MODULE("list").loadFileList();
             MODULE("window").hide(this.uploadClientWindowDom);
-        } else {
-            console.error(res)
         }
     }
 
-    /**
-     * 客户端上传
-     * @param file
-     */
-    doUploadClientFile(file) {
-        external.invoke ? external.invoke(JSON.stringify({
-            key: "clientUploadOne",
-            value: this.currNavigate().key + "||" + file + "||" + localStorage.getItem("Authorization")
-        })) : clientUploadOne(this.currNavigate().key, file, localStorage.getItem("Authorization"));
-    }
-
-    doUploadClientFolder(dir) {
-        /*cp.ajax(CONF.LocalAddr + "/upload/one", {
-            data: {
-                localPath: dir,
-                pid: this.currNavigate()
-            },
-            success: res => {
-                if (res.code === 0) {
-                    MODULE("list").loadFileList();
-                } else {
-                    console.error(res)
-                }
-            }
-        })*/
-    }
-
-    uploadClientFile() {
-        external.invoke ? external.invoke(JSON.stringify({
-            key: "openFileDialog"
-        })) : openFileDialog();
-    }
-
-    uploadClientFolder() {
-        external.invoke ? external.invoke(JSON.stringify({
-            key: "openDirDialog"
-        })) : openDirDialog()
-    }
 
     /**
      * 浏览器上传
@@ -129,7 +93,7 @@ class Module {
         });
     }
 
-    uploadClient(target) {
+    clientUploadWindow() {
         MODULE("window").show(this.uploadClientWindowDom);
     }
 

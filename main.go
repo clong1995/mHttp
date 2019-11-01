@@ -41,47 +41,10 @@ type cacheItem struct {
 
 var cacheServer = make(map[string]cacheItem)
 
-func main() {
-	addr := flag.String("addr", ":50000", "服务器端口")
-	root := flag.String("root", "./ROOT", "项目根目录")
-	cors := flag.Bool("cors", true, "跨域")
-	cache := flag.Bool("cache", false, "缓存")
-
-	//TODO 专用
-	component := flag.String("component", "./component", "组件目录")
-	flag.Parse()
-	CONF = new(config)
-	CONF.Addr = *addr
-	CONF.Root = *root
-	CONF.Cors = *cors
-	CONF.Cache = *cache
-
-	//TODO 专用
-	CONF.Component = *component
-
-	//静态资源服
-	http.Handle("/resource/", http.StripPrefix("/resource/", SetCacheHeader(http.FileServer(http.Dir(CONF.Root+"/resource")))))
-	//页面和模块内静态资源
-	http.Handle("/page/", http.StripPrefix("/page/", SetCacheHeader(http.FileServer(http.Dir(CONF.Root+"/page")))))
-	//TODO 专用
-	http.HandleFunc("/component/", componentHandle)
-	//动态页面路由
-	http.HandleFunc("/", pageHandle)
-	//服务
-	log.Fatal(http.ListenAndServe(CONF.Addr, nil))
-}
-
-func SetCacheHeader(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-		w.Header().Set("Pragma", "no-cache")
-		w.Header().Set("Expires", "0")
-		h.ServeHTTP(w, r)
-	})
-}
-
 //TODO 专用
-func componentHandle(w http.ResponseWriter, r *http.Request) {
+type componentHandle struct{}
+
+func (component componentHandle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	urlPath := r.URL.Path
 
 	//判断缓存
@@ -149,7 +112,9 @@ func componentHandle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func pageHandle(w http.ResponseWriter, r *http.Request) {
+type pageHandle struct{}
+
+func (page pageHandle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	urlPath := r.URL.Path
 
 	//判断缓存
@@ -180,6 +145,49 @@ func pageHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	makeFile(urlPath, resource, w)
+}
+
+func main() {
+	addr := flag.String("addr", ":50000", "服务器端口")
+	root := flag.String("root", "./ROOT", "项目根目录")
+	cors := flag.Bool("cors", true, "跨域")
+	cache := flag.Bool("cache", false, "缓存")
+
+	//TODO 专用
+	component := flag.String("component", "./component", "组件目录")
+	flag.Parse()
+	CONF = new(config)
+	CONF.Addr = *addr
+	CONF.Root = *root
+	CONF.Cors = *cors
+	CONF.Cache = *cache
+
+	//TODO 专用
+	CONF.Component = *component
+
+	//静态资源服
+	http.Handle("/resource/", http.StripPrefix("/resource/", SetCacheHeader(http.FileServer(http.Dir(CONF.Root+"/resource")))))
+	//页面和模块内静态资源
+	http.Handle("/page/", http.StripPrefix("/page/", SetCacheHeader(http.FileServer(http.Dir(CONF.Root+"/page")))))
+	//TODO 专用
+	http.Handle("/component/", SetCacheHeader(new(componentHandle)))
+	//动态页面路由
+	http.Handle("/", SetCacheHeader(new(pageHandle)))
+	//服务
+	log.Fatal(http.ListenAndServe(CONF.Addr, nil))
+}
+
+func SetCacheHeader(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Methods", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		h.ServeHTTP(w, r)
+	})
 }
 
 func existsAndWrite(ckPath string, w http.ResponseWriter) bool {

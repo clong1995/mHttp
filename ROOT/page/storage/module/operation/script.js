@@ -13,7 +13,7 @@ class Module {
 
     topList() {
         let taskDom = "";
-        if (localStorage.getItem("client")) {
+        if (global) {
             taskDom = `<div class="file-item" data-type="taskBucket">传输列表</div>`;
         }
         cp.ajax(CONF.ServerAddr + "/file/listTopFolder", {

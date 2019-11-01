@@ -35,6 +35,11 @@
     width: 150px;
 }
 
+.head > .item.name,
+.body > .line > .item.name {
+    width: 95px;
+}
+
 .head > .item.company,
 .body > .line > .item.company {
     width: 200px;

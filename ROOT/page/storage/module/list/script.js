@@ -38,51 +38,17 @@ class Module {
             dmg: "&#xe69c;",
             pkg: "&#xe65b;",
             apk: "&#xe65a;",
-            pdf: "&#xe740;"
+            pdf: "&#xe740;",
+            jar: "&#xe662;"
         };
         this.recycle = false;
         this.defaultSize = 125;
         this.autoSize();
         window.onresize = () => this.autoSize();
-        //相应go
-        //下载列表
-        window.externalInvokeLoadingList = res => this.loadingList(res);
-        //进度
-        window.externalInvokeLoadingProgress = res => this.loadingProgress(res);
-        this.isClient = localStorage.getItem("client")
     }
 
     copyLink() {
         cp.setClipboard(this.shareLikDom)
-    }
-
-    loadingProgress(res) {
-        clearTimeout(this.stoLoadingProgress);
-        let uploadingDoms = cp.query(".loading", this.listDom, true);
-        for (let key in res) {
-            [...uploadingDoms].some(v => {
-                if (cp.getData(v, "etag") === key) {
-                    let imgDom = cp.query(".img", v);
-                    let progressDom = cp.query(".progress", imgDom);
-                    if (!progressDom) {
-                        //移除旋转
-                        cp.remove(".animation_rotate", v);
-                        //创建progress
-                        progressDom = cp.createDom("span", {
-                            "class": "progress"
-                        });
-                        cp.append(imgDom, progressDom)
-                    }
-                    cp.text(progressDom, res[key] + "%");
-                    if (parseInt(res[key]) >= 100) {
-                        cp.remove(v);
-                    }
-                    return true
-                }
-            })
-        }
-        console.log("检查进度");
-        this.stoLoadingProgress = setTimeout(() => this.progress(), 3000)
     }
 
     share(target) {
@@ -129,7 +95,7 @@ class Module {
         let etag = cp.attr(p, "data-etag");
         let name = cp.text(cp.query(".name", p));
         let type = cp.attr(p, "data-type");
-        if (this.isClient) {
+        if (global) {
             if (type === "folder") {
                 MODULE("dialog").show({
                     text: "暂不支持下载目录"
@@ -243,10 +209,10 @@ class Module {
                     });
                     cp.empty(this.listDom, html);
                     //如果是浏览器，则不查询
-                    if (this.isClient) {//客户端
+                    if (global) {//客户端
                         //定期检查是否完全上传
                         this.checkFinish();
-                        //如果是在任务列表下，查询试试进度
+                        //如果是在任务列表下，查询时时进度
                         this.progress();
                     }
                 } else {
@@ -256,12 +222,38 @@ class Module {
         });
     }
 
+    //查询进度
     progress() {
         let {type} = MODULE("option").currNavigate();
         if (type === "taskBucket") {
-            external.invoke ? external.invoke(JSON.stringify({
-                key: "getLoadingProgress"
-            })) : getLoadingProgress()
+            clearTimeout(this.stoLoadingProgress);
+            //请求进度
+            let res = ipc.sendSync("getProgressMessageSync");
+            let data = res.data;
+            let uploadingDoms = cp.query(".loading", this.listDom, true);
+            for (let key in data) {
+                [...uploadingDoms].some(v => {
+                    if (cp.getData(v, "etag") === key) {
+                        let imgDom = cp.query(".img", v);
+                        let progressDom = cp.query(".progress", imgDom);
+                        if (!progressDom) {
+                            //移除旋转
+                            cp.remove(".animation_rotate", v);
+                            //创建progress
+                            progressDom = cp.createDom("span", {
+                                "class": "progress"
+                            });
+                            cp.append(imgDom, progressDom)
+                        }
+                        cp.text(progressDom, data[key] + "%");
+                        if (parseInt(data[key]) >= 100) {
+                            cp.remove(v);
+                        }
+                        return true
+                    }
+                })
+            }
+            this.stoLoadingProgress = setTimeout(() => this.progress(), 2000)
         }
     }
 
@@ -305,23 +297,21 @@ class Module {
     }
 
     taskList() {
-        external.invoke ? external.invoke(JSON.stringify({
-            key: "getLoadingList"
-        })) : getLoadingList()
-    }
-
-    loadingList(res) {
-        let etags = res.split(",");
-        //获取未完成的文件列表
-        this.showFileList(CONF.ServerAddr + "/file/uploading", {
-            etags: etags
-        })
+        let res = ipc.sendSync("getLoadingListMessageSync");
+        if (res.data) {
+            let etags = res.data[0].split(",");
+            //获取未完成的文件列表
+            this.showFileList(CONF.ServerAddr + "/file/uploading", {
+                etags: etags
+            })
+        }
     }
 
     checkFinish() {
         let ids = [];
         cp.query(".own", this.listDom, true).forEach(v =>
             cp.hasClass(v, "loading") && ids.push(cp.getData(v)));
+        //未完成的
         if (ids.length) {
             cp.ajax(CONF.ServerAddr + "/file/checkFinish", {
                 data: {
@@ -338,7 +328,7 @@ class Module {
             clearTimeout(this.stoCheckFinish);
             this.stoCheckFinish = setTimeout(() => {
                 this.checkFinish()
-            }, 5000)
+            }, 2000)
         }
     }
 

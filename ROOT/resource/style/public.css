@@ -43,14 +43,14 @@ body {
     font-size: 13px;
     background: var(--background);
     color: var(--color);
-    min-width: 1024px;
-    min-height: 470px;
+    min-width: 1050px;
+    min-height: 656px;
 }
 
 @font-face {
     font-family: 'iconfont';
     /*src: url('../iconfont/iconfont.woff2');*/
-    src: url('//at.alicdn.com/t/font_722315_wo0tg66964.woff2');
+    src: url('//at.alicdn.com/t/font_722315_q2lmijovumo.woff2');
 }
 
 .iconfont {
