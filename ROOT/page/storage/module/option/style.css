@@ -12,6 +12,12 @@
     position: relative;
 }
 
+.option-item.upload-progress.active,
+.option-item.download-progress.active {
+    background: var(--color2);
+    color: var(--color4);
+}
+
 .option-item.add > .upload,
 .option-item.add > .upload-client {
     position: absolute;
@@ -153,6 +159,7 @@
     text-align: center;
     margin: 0 auto;
 }
+
 .upload-client-window .body > .type > .text {
     height: 20px;
     line-height: 20px;

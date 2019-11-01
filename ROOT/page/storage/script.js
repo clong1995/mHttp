@@ -6,7 +6,6 @@ class App {
     //初始化函数
     INIT() {
         let token = localStorage.getItem("Authorization");
-
         //重启上传列表
         (function sendMessage() {
             try {

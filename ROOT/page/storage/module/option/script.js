@@ -11,6 +11,8 @@ class Module {
         this.uploadClientDom = cp.query(".upload-client", this.addDom);
         this.newFolderDom = cp.query(".new-folder", DOMAIN);
         this.addrDom = cp.query(".addr", DOMAIN);
+        this.uploadProgressDom = cp.query(".upload-progress", DOMAIN);
+        this.downloadProgressDom = cp.query(".download-progress", DOMAIN);
         this.optionItemDoms = cp.query(".option-item", DOMAIN, true);
         this.uploadClientWindowDom = cp.query(".upload-client-window", DOMAIN);
     }
@@ -31,8 +33,9 @@ class Module {
         //客户端上传文件会话框
         cp.on('.file', this.uploadClientWindowDom, 'click', () => this.clientUploadDialog());
 
-        //客户端上传文件夹
-        //cp.on('.folder', this.uploadClientWindowDom, 'click', t => this.uploadClientFolder(t));
+        //点击上传进度
+        cp.on('.upload-progress', DOMAIN, 'click', t => this.uploadProgress(t));
+        cp.on('.download-progress', DOMAIN, 'click', t => this.downloadProgress(t));
     }
 
     INIT() {
@@ -53,12 +56,27 @@ class Module {
         window.externalInvokeOpen = res => this.doUploadClientFile(res);
         window.externalInvokeOpenDir = res => this.doUploadClientFolder(res);
         window.externalInvokeClientUploadOne = res => this.cbClientUploadOne(res);*/
+        this.currProgress = "upload";
+    }
+
+    uploadProgress(target) {
+        this.currProgress = "upload";
+        cp.addActive(target);
+        cp.removeActive(this.downloadProgressDom);
+        MODULE("list").uploadTaskList();
+    }
+
+    downloadProgress(target) {
+        this.currProgress = "download";
+        cp.addActive(target);
+        cp.removeActive(this.uploadProgressDom);
+        MODULE("list").downloadTaskList();
     }
 
     clientUploadDialog() {
         //打开文件选择器
-        let file = ipc.sendSync("ShowOpenDialogMessageSync",this.currNavigate().key,localStorage.getItem("Authorization"));
-        if(file){
+        let file = ipc.sendSync("ShowOpenDialogMessageSync", this.currNavigate().key, localStorage.getItem("Authorization"));
+        if (file) {
             MODULE("list").loadFileList();
             MODULE("window").hide(this.uploadClientWindowDom);
         }
@@ -185,6 +203,13 @@ class Module {
     hideForBucket(key) {
         cp.show(this.optionItemDoms);
         switch (key) {
+            case "myBucket":
+            case "exhibitionBucket":
+            case "shareBucket":
+            case "departmentBucket":
+                cp.hide(this.uploadProgressDom);
+                cp.hide(this.downloadProgressDom);
+                break;
             case "taskBucket":
                 cp.hide(this.backDom);
                 cp.hide(this.addDom);
@@ -194,6 +219,8 @@ class Module {
             case "recycleBucket":
                 cp.hide(this.addDom);
                 cp.hide(this.newFolderDom);
+                cp.hide(this.uploadProgressDom);
+                cp.hide(this.downloadProgressDom);
                 break;
         }
     }

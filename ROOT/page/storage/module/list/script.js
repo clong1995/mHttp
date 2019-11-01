@@ -106,10 +106,8 @@ class Module {
                 text: "下载详情查看传输列表",
                 confirm: hide => {
                     //后台下载
-                    external.invoke ? external.invoke(JSON.stringify({
-                        key: "downloadFile",
-                        value: etag + "||" + name
-                    })) : downloadFile(etag, name);
+                    let res = ipc.sendSync("downloadFileMessageSync", etag, name);
+                    console.log(res);
                     hide()
                 }
             });
@@ -158,8 +156,15 @@ class Module {
             data = {}
         }
         if (type === "taskBucket") {//任务列表
-            cp.empty(this.listDom);
-            this.taskList();
+            let progress = MODULE("option").currProgress;
+            //激活上传
+            if (progress === "upload") {
+                //默认打开上传列表
+                this.uploadTaskList();
+            } else {
+                //默认打开上传列表
+                this.downloadTaskList();
+            }
             return;
         }
         //加载列表
@@ -171,32 +176,52 @@ class Module {
             data: data,
             success: res => {
                 if (res.code === 0) {
-                    let html = "";
-                    res.data.forEach(v => {
-                        html += `<div class="item ${v.state ? "loading" : ""} ${v.user}" data-id=${v.id} data-etag="${v.etag}" data-type="${v.type}" data-mime="${v.mime}">
+                    this.drawList(res.data);
+                    //如果是浏览器，则不查询
+                    if (global) {//客户端
+                        //定期检查是否完全上传
+                        this.checkFinish();
+                        //如果是在任务列表下，查询时时进度
+                        this.uploadProgress();
+                    }
+                } else {
+                    console.error(res)
+                }
+            }
+        });
+    }
+
+    drawList(data) {
+        let html = "";
+        data.forEach(v => {
+            html += `<div class="item ${v.state ? "loading" : ""} ${v.user}" 
+                            data-id=${v.id} 
+                            data-etag="${v.etag}" 
+                            data-type="${v.type}" 
+                            data-mime="${v.mime}">
                             <div class="inner">
                                 <!-- icon -->
                                 <div class="img enter centerWrap">
-                                    ${v.type === "image" && v.state !== 2
-                            ? `<div class="image centerBg" style="background-image:url(${CONF.QiniuAddr}/${v.etag}?${CONF.QiniuThumbnail})"></div>`
-                            : `${v.state === 2
-                                ? `<i class='iconfont animation_rotate'>&#xe6ab;</i><i class='iconfont hide'>${this.icon[v.type]}</i>`
-                                : `<i class='iconfont'>${this.icon[v.type]}</i>`
-                            }`
-                        }       
+                                    ${v.type === "image" && v.state !== 2 //图片&&(正常||删除)
+                ? `<div class="image centerBg" style="background-image:url(${CONF.QiniuAddr}/${v.etag}?${CONF.QiniuThumbnail})"></div>`
+                : `${v.state === 2 //未传输完成
+                    ? `<i class='iconfont animation_rotate'>&#xe6ab;</i><i class='iconfont hide'>${this.icon[v.type]}</i>`
+                    : `<i class='iconfont'>${this.icon[v.type]}</i>`
+                }`
+            }       
                                 </div>
                                 
                                 <!-- option -->
                                 <div class="option ${v.state === 2 ? 'hide' : ''}">
                                     ${(v.type === "image" || v.type === "video" || v.type === "richText" || v.type === "text")
-                            ? `<i class="preview iconfont icon alt disable" data-type="${v.type}">&#xe611;</i>`
-                            : ''
-                        }
+                ? `<i class="preview iconfont icon alt disable" data-type="${v.type}">&#xe611;</i>`
+                : ''
+            }
                                     
                                     ${this.recycle
-                            ? ""
-                            : '<i class="share iconfont icon alt">&#xe602;</i>'
-                        }
+                ? ""
+                : '<i class="share iconfont icon alt">&#xe602;</i>'
+            }
                                     <i class="download iconfont icon alt">&#xe635;</i>
                                     <i class="delete iconfont icon alt">&#xe624;</i>
                                 </div>
@@ -206,29 +231,17 @@ class Module {
                                 
                             </div>
                         </div>`;
-                    });
-                    cp.empty(this.listDom, html);
-                    //如果是浏览器，则不查询
-                    if (global) {//客户端
-                        //定期检查是否完全上传
-                        this.checkFinish();
-                        //如果是在任务列表下，查询时时进度
-                        this.progress();
-                    }
-                } else {
-                    console.error(res)
-                }
-            }
         });
+        cp.empty(this.listDom, html);
     }
 
     //查询进度
-    progress() {
+    uploadProgress() {
         let {type} = MODULE("option").currNavigate();
         if (type === "taskBucket") {
             clearTimeout(this.stoLoadingProgress);
             //请求进度
-            let res = ipc.sendSync("getProgressMessageSync");
+            let res = ipc.sendSync("getUploadProgressMessageSync");
             let data = res.data;
             let uploadingDoms = cp.query(".loading", this.listDom, true);
             for (let key in data) {
@@ -296,15 +309,67 @@ class Module {
         }
     }
 
-    taskList() {
-        let res = ipc.sendSync("getLoadingListMessageSync");
-        if (res.data) {
+    uploadTaskList() {
+        //上传的文件进度
+        let res = ipc.sendSync("getUploadListMessageSync");
+        if (res.data.length > 0) {
             let etags = res.data[0].split(",");
             //获取未完成的文件列表
             this.showFileList(CONF.ServerAddr + "/file/uploading", {
                 etags: etags
             })
         }
+    }
+
+    downloadTaskList() {
+        //下载的文件进度
+        let res = ipc.sendSync("getDownloadProgressMessageSync");
+        let data = [];
+        for (let k in res.data) {
+            data.push({
+                //size,progress\
+                id: "",
+                type: "file",
+                mime: "",
+                etag: res.data["etag"],
+                name: res.data["name"],
+                state: 2,
+            })
+        }
+        this.drawList(data);
+        //时时请求下载进度
+        window.clearTimeout(this.stoDownloadProgress);
+        let _this = this;
+        (function downloadProgress() {
+            let res = ipc.sendSync("getDownloadProgressMessageSync");
+            let data = res.data;
+
+            let uploadingDoms = cp.query(".loading", this.listDom, true);
+            for (let key in data) {
+                [...uploadingDoms].some(v => {
+                    if (cp.getData(v, "etag") === key) {
+                        let imgDom = cp.query(".img", v);
+                        let progressDom = cp.query(".progress", imgDom);
+                        if (!progressDom) {
+                            //移除旋转
+                            cp.remove(".animation_rotate", v);
+                            //创建progress
+                            progressDom = cp.createDom("span", {
+                                "class": "progress"
+                            });
+                            cp.append(imgDom, progressDom)
+                        }
+                        cp.text(progressDom, data["progress"] + "%");
+                        if (parseInt(data["progress"]) >= 100) {
+                            cp.remove(v);
+                        }
+                        return true
+                    }
+                })
+            }
+
+            _this.stoDownloadProgress = setTimeout(() => downloadProgress(), 1000)
+        })()
     }
 
     checkFinish() {
