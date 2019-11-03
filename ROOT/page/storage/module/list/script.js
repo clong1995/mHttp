@@ -162,7 +162,7 @@ class Module {
                 //默认打开上传列表
                 this.uploadTaskList();
             } else {
-                //默认打开上传列表
+                //下载进度列表
                 this.downloadTaskList();
             }
             return;
@@ -195,7 +195,7 @@ class Module {
         let html = "";
         data.forEach(v => {
             html += `<div class="item ${v.state ? "loading" : ""} ${v.user}" 
-                            data-id=${v.id} 
+                            data-id="${v.id}" 
                             data-etag="${v.etag}" 
                             data-type="${v.type}" 
                             data-mime="${v.mime}">
@@ -310,44 +310,53 @@ class Module {
     }
 
     uploadTaskList() {
+        cp.empty(this.listDom);
         //上传的文件进度
         let res = ipc.sendSync("getUploadListMessageSync");
-        if (res.data.length > 0) {
-            let etags = res.data[0].split(",");
-            //获取未完成的文件列表
-            this.showFileList(CONF.ServerAddr + "/file/uploading", {
-                etags: etags
-            })
+        if (res.err === "") {
+            if (res.data.length > 0) {
+                let etags = res.data[0].split(",");
+                //获取未完成的文件列表
+                this.showFileList(CONF.ServerAddr + "/file/uploading", {
+                    etags: etags
+                })
+            }
+        } else {
+            console.log(res)
         }
     }
 
     downloadTaskList() {
+        cp.empty(this.listDom);
         //下载的文件进度
         let res = ipc.sendSync("getDownloadProgressMessageSync");
-        let data = [];
-        for (let k in res.data) {
-            data.push({
-                //size,progress\
-                id: "",
-                type: "file",
-                mime: "",
-                etag: res.data["etag"],
-                name: res.data["name"],
-                state: 2,
-            })
+        if (res.err !== "") {
+            return
         }
-        this.drawList(data);
+        res.data.forEach(v => {
+            //size,progress
+            v.id = "";
+            v.type = "file";
+            v.mime = "";
+            v.state = 2
+        });
+
+        //画出页面
+        this.drawList(res.data);
+
         //时时请求下载进度
         window.clearTimeout(this.stoDownloadProgress);
         let _this = this;
         (function downloadProgress() {
             let res = ipc.sendSync("getDownloadProgressMessageSync");
             let data = res.data;
-
-            let uploadingDoms = cp.query(".loading", this.listDom, true);
-            for (let key in data) {
+            let uploadingDoms = cp.query(".loading", _this.listDom, true);
+            data.forEach(vd => {
                 [...uploadingDoms].some(v => {
-                    if (cp.getData(v, "etag") === key) {
+
+                    console.log(cp.getData(v, "etag"), vd.etag);
+
+                    if (cp.getData(v, "etag") === vd.etag) {
                         let imgDom = cp.query(".img", v);
                         let progressDom = cp.query(".progress", imgDom);
                         if (!progressDom) {
@@ -359,15 +368,14 @@ class Module {
                             });
                             cp.append(imgDom, progressDom)
                         }
-                        cp.text(progressDom, data["progress"] + "%");
+                        cp.text(progressDom, vd.progress + "%");
                         if (parseInt(data["progress"]) >= 100) {
                             cp.remove(v);
                         }
                         return true
                     }
                 })
-            }
-
+            });
             _this.stoDownloadProgress = setTimeout(() => downloadProgress(), 1000)
         })()
     }

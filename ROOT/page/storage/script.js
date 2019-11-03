@@ -10,7 +10,6 @@ class App {
         (function sendMessage() {
             try {
                 let res = ipc.sendSync("uploadRestartTaskMessageSync", token);
-                console.log(res);
             } catch (e) {
                 setTimeout(() => sendMessage(), 100);
             }
