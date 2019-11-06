@@ -10,7 +10,7 @@ class App {
 
     //初始化函数
     INIT() {
-        if (!global) {
+        if (!window.global) {
             cp.show(this.supportInfoDom);
             cp.show(this.clientDownloadDom);
         }
@@ -24,7 +24,7 @@ class App {
             let token = localStorage.getItem("Authorization");
             if (token) {
                 //通知nodejs登录成功
-                if (global) {
+                if (window.global) {
                     (function sendMessage() {
                         try {
                             ipc.sendSync("loginSuccessMessageSync", token);
@@ -43,22 +43,6 @@ class App {
     //添加事件
     EVENT() {
         cp.on('.submit', this.signinDom, 'click', () => this.submit());
-    }
-
-    doRestartTask(token) {
-        if (global) {
-            //上传
-            external.invoke ? external.invoke(JSON.stringify({
-                key: "restartTask",
-                value: token
-            })) : restartTask(token);
-
-            //下载
-            external.invoke ? external.invoke(JSON.stringify({
-                key: "getDownloadProgress",
-                value: token
-            })) : getDownloadProgress(token)
-        }
     }
 
     //提交
@@ -80,7 +64,7 @@ class App {
             success: res => {
                 if (res.code === 0) {
                     localStorage.setItem("Authorization", res.data);
-                    if (global) {
+                    if (window.global) {
                         (function sendMessage() {
                             setTimeout(() => {
                                 try {

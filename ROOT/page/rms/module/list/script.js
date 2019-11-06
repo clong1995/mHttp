@@ -50,18 +50,18 @@ class Module {
                                 ${v.name ? v.name : "暂无"}
                             </div>
                             <div class="item company">
-                                ${v.company ? v.company : "暂无"}
+                                ${v.company_name ? v.company_name : "暂无"}
                             </div>
                             <div class="item auth">
-                                <button class="button">配置</button>
+                                <button class="button disable">配置</button>
                             </div>
                             <div class="item setting">
-                                 <button class="button">重置密码</button>
-                                 <button class="button">停用</button>
+                                 <button class="button disable">重置密码</button>
+                                 <button class="button disable">停用</button>
                                  <button class="button delete">删除</button>
                             </div>
                             <div class="item info">
-                                <button class="button">查看</button>
+                                <button class="button disable">查看</button>
                             </div>
                         </div>`;
                     });

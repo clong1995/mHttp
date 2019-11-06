@@ -1,8 +1,9 @@
+const IP = "127.0.0.1";
 const CONF = {
     //页面地址
-    WebAddr: "http://127.0.0.1:50000",
+    WebAddr: "http://" + IP + ":50000",
     //服务地址
-    ServerAddr: "http://127.0.0.1:50001",
+    ServerAddr: "http://" + IP + ":50001",
     //本地址，不需要改！
     LocalAddr: "http://127.0.0.1:50003",
     QiniuAddr: "http://storage.quickex.com.cn",

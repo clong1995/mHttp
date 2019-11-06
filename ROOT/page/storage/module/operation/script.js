@@ -13,7 +13,7 @@ class Module {
 
     topList() {
         let taskDom = "";
-        if (global) {
+        if (window.global) {
             taskDom = `<div class="file-item" data-type="taskBucket">传输列表</div>`;
         }
         cp.ajax(CONF.ServerAddr + "/file/listTopFolder", {
@@ -25,7 +25,7 @@ class Module {
                             //记录顶级目录
                             MODULE("option").initNavigate(v.id, v.name, v.type);
                             //加载列表
-                            !i && MODULE("list").loadFileList();
+                            MODULE("list").loadFileList();
                         }
                         html += `<div class="file-item ${i ? "" : "active"}" data-id="${v.id}" data-type="${v.type}">${v.name}</div>`
                     });
@@ -38,6 +38,9 @@ class Module {
     }
 
     selectFileItem(target) {
+        if (cp.hasActive(target)) {
+            return
+        }
         cp.toggleActive(target);
         let id = cp.getData(target);
         let name = cp.text(target);

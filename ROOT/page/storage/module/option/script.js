@@ -18,7 +18,7 @@ class Module {
     }
 
     EVENT() {
-        cp.on('.new-folder', DOMAIN, 'click', () => this.newFolder());
+        cp.on('.new-folder', DOMAIN, 'click', () => this.showNewFolderWinodw());
         cp.on('.back', DOMAIN, 'click', () => this.goBack());
         cp.on('.refresh', DOMAIN, 'click', () => this.refresh());
         cp.on('.client', DOMAIN, 'click', () => this.showDownloadClient());
@@ -39,7 +39,7 @@ class Module {
     }
 
     INIT() {
-        if (global) {//客户端
+        if (window.global) {//客户端
             //隐藏提示下载客户端
             cp.hide(this.infoDom);
             //隐藏通过浏览器上传
@@ -61,16 +61,18 @@ class Module {
 
     uploadProgress(target) {
         this.currProgress = "upload";
-        cp.addActive(target);
         cp.removeActive(this.downloadProgressDom);
-        MODULE("list").uploadTaskList();
+
+        cp.addActive(target);
+        MODULE("list").loadFileList();
     }
 
     downloadProgress(target) {
         this.currProgress = "download";
-        cp.addActive(target);
         cp.removeActive(this.uploadProgressDom);
-        MODULE("list").downloadTaskList();
+
+        cp.addActive(target);
+        MODULE("list").loadFileList();
     }
 
     clientUploadDialog() {
@@ -176,7 +178,7 @@ class Module {
         cp.html(this.addrListDom, html)
     }
 
-    newFolder() {
+    showNewFolderWinodw() {
         MODULE("window").show(this.addFolderDom);
     }
 
@@ -202,11 +204,21 @@ class Module {
 
     hideForBucket(key) {
         cp.show(this.optionItemDoms);
+        if(!window.global){
+            cp.hide(this.uploadProgressDom);
+            cp.hide(this.downloadProgressDom);
+        }
         switch (key) {
             case "myBucket":
             case "exhibitionBucket":
             case "shareBucket":
             case "departmentBucket":
+                cp.hide(this.uploadProgressDom);
+                cp.hide(this.downloadProgressDom);
+                break;
+            case "folder-department":
+                cp.hide(this.addDom);
+                cp.hide(this.newFolderDom);
                 cp.hide(this.uploadProgressDom);
                 cp.hide(this.downloadProgressDom);
                 break;

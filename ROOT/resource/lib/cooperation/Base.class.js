@@ -783,6 +783,7 @@ class Base {
         afterend：在 element 元素的后面。
         */
         if (!str) {
+            this.empty(dom);
             return dom
         }
         if (position) {

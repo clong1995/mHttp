@@ -31,6 +31,9 @@ class Module {
             ppt: "&#xe7a2;",
             video: "&#xe63c;",
             folder: "&#xe63b;",
+            "folder-company": "&#xe66c;",
+            "folder-department": "&#xe652;",
+            "folder-user": "&#xe666;",
             image: "&#xe643;",
             richText: "&#xe650;",
             audio: "&#xe623;",
@@ -41,7 +44,6 @@ class Module {
             pdf: "&#xe740;",
             jar: "&#xe662;"
         };
-        this.recycle = false;
         this.defaultSize = 125;
         this.autoSize();
         window.onresize = () => this.autoSize();
@@ -68,7 +70,7 @@ class Module {
                 let p = cp.parent(target, ".item");
                 let id = cp.getData(p);
                 let url = CONF.ServerAddr + "/file/delete";
-                if (this.recycle) {
+                if (MODULE("option").currNavigate().type === "recycleBucket") {
                     url = CONF.ServerAddr + "/file/remove";
                 }
                 cp.ajax(url, {
@@ -95,7 +97,7 @@ class Module {
         let etag = cp.attr(p, "data-etag");
         let name = cp.text(cp.query(".name", p));
         let type = cp.attr(p, "data-type");
-        if (global) {
+        if (window.global) {
             if (type === "folder") {
                 MODULE("dialog").show({
                     text: "暂不支持下载目录"
@@ -140,49 +142,116 @@ class Module {
     }
 
     loadFileList() {
-        this.recycle = false;//是否在回收站内
+        //清理所有进度
+        this.cleanAllProgressSTO();
         let {key, type} = MODULE("option").currNavigate();
-
-        //隐藏不必要的菜单
-        MODULE("option").hideForBucket(type);
-
-        let url = CONF.ServerAddr + "/file/list";
-        let data = {
-            pid: key
-        };
-        if (type === "recycleBucket") {//回收站
-            this.recycle = true;
-            url = CONF.ServerAddr + "/file/deleteList";
-            data = {}
+        console.log(key, type);
+        //自己所处的部门
+        if (type === "departmentBucket") {
+            //隐藏不必要的菜单
+            //MODULE("option").hideForBucket(type);
+            let url = CONF.ServerAddr + "/file/departmentList";
+            let postData = {};
+            //加载列表
+            this.showFileList(url, postData, () => {
+                //并上公共的
+                let url = CONF.ServerAddr + "/file/departmentPublic";
+                //加载列表
+                this.showFileList(url, {}, null, true)
+            })
         }
-        if (type === "taskBucket") {//任务列表
+        //用户的文件
+        /*else if (type === "folder-user") {
+            //隐藏不必要的菜单
+            //MODULE("option").hideForBucket(type);
+            let url = CONF.ServerAddr + "/file/listByPid";
+            let postData = {
+                pid: key
+            };
+            //加载列表
+            this.showFileList(url, postData)
+        }*/
+        //回收站
+        else if (type === "recycleBucket") {
+            //隐藏不必要的菜单
+            MODULE("option").hideForBucket(type);
+            let url = CONF.ServerAddr + "/file/deleteList";
+            let postData = {};
+            //加载列表
+            this.showFileList(url, postData)
+        }
+        //任务列表
+        else if (type === "taskBucket" && window.global) {
+            //隐藏不必要的菜单
+            MODULE("option").hideForBucket(type);
             let progress = MODULE("option").currProgress;
-            //激活上传
-            if (progress === "upload") {
+            if (progress === "upload" || !progress) {//上传进度
                 //默认打开上传列表
                 this.uploadTaskList();
-            } else {
+            } else if (progress === "download") {//下载进度
                 //下载进度列表
                 this.downloadTaskList();
             }
-            return;
         }
-        //加载列表
-        this.showFileList(url, data)
+        //TODO 我的文件
+        else if (type === "myBucket") {
+            //隐藏不必要的菜单
+            MODULE("option").hideForBucket(type);
+            let url = CONF.ServerAddr + "/file/myList";
+            let postData = {
+                pid: key
+            };
+            //加载列表
+            this.showFileList(url, postData)
+        }
+        //TODO 展厅
+        else if (type === "exhibitionBucket") {
+            //隐藏不必要的菜单
+            MODULE("option").hideForBucket(type);
+            let url = CONF.ServerAddr + "/file/list";
+            let postData = {
+                pid: key
+            };
+            //加载列表
+            this.showFileList(url, postData)
+        }
+        //TODO 分享
+        else if (type === "shareBucket") {
+            //隐藏不必要的菜单
+            MODULE("option").hideForBucket(type);
+            let url = CONF.ServerAddr + "/file/list";
+            let postData = {
+                pid: key
+            };
+            //加载列表
+            this.showFileList(url, postData)
+        }
+        //TODO 这里有风险，只要有pid，就能进入任何文件，进入普通文件
+        else {
+            MODULE("option").hideForBucket(type);
+            let url = CONF.ServerAddr + "/file/list";
+            let postData = {
+                pid: key
+            };
+            //加载列表
+            this.showFileList(url, postData)
+        }
     }
 
-    showFileList(url, data) {
+    showFileList(url, data, cb, retain = false) {
         cp.ajax(url, {
             data: data,
             success: res => {
                 if (res.code === 0) {
-                    this.drawList(res.data);
-                    //如果是浏览器，则不查询
-                    if (global) {//客户端
-                        //定期检查是否完全上传
-                        this.checkFinish();
-                        //如果是在任务列表下，查询时时进度
-                        this.uploadProgress();
+                    this.drawList(res.data, retain);
+                    if (window.global) {//客户端检查完成状态
+                        let {type} = MODULE("option").currNavigate();
+                        if (type !== "taskBucket" && type !== "recycleBucket") { //在非任务列表，非回收站，查询上传完成状态
+                            this.checkUploadFinish();
+                        }
+                    }
+                    if (cb && typeof cb === "function") {
+                        cb();
                     }
                 } else {
                     console.error(res)
@@ -191,8 +260,9 @@ class Module {
         });
     }
 
-    drawList(data) {
+    drawList(data, retain = false) {
         let html = "";
+        let type = MODULE("option").currNavigate().type;
         data.forEach(v => {
             html += `<div class="item ${v.state ? "loading" : ""} ${v.user}" 
                             data-id="${v.id}" 
@@ -213,17 +283,27 @@ class Module {
                                 
                                 <!-- option -->
                                 <div class="option ${v.state === 2 ? 'hide' : ''}">
+                                    
+                                    <!-- 预览按钮 -->
                                     ${(v.type === "image" || v.type === "video" || v.type === "richText" || v.type === "text")
                 ? `<i class="preview iconfont icon alt disable" data-type="${v.type}">&#xe611;</i>`
                 : ''
             }
                                     
-                                    ${this.recycle
+                                    <!-- 分享按钮 -->
+                                    ${type === "recycleBucket"
                 ? ""
                 : '<i class="share iconfont icon alt">&#xe602;</i>'
             }
+                                    
+                                    <!-- 下载按钮 -->
                                     <i class="download iconfont icon alt">&#xe635;</i>
-                                    <i class="delete iconfont icon alt">&#xe624;</i>
+                                    
+                                    <!-- 删除按钮 -->
+                                    ${(type === "departmentBucket" || type === "folder-department")
+                ? ""
+                : '<i class="delete iconfont icon alt">&#xe624;</i>'
+            }
                                 </div>
                                 
                                 <!-- name -->
@@ -232,42 +312,37 @@ class Module {
                             </div>
                         </div>`;
         });
-        cp.empty(this.listDom, html);
+        cp.html(this.listDom, html, retain ? "beforeend" : null);
     }
 
-    //查询进度
+    //查询上传进度
     uploadProgress() {
-        let {type} = MODULE("option").currNavigate();
-        if (type === "taskBucket") {
-            clearTimeout(this.stoLoadingProgress);
-            //请求进度
-            let res = ipc.sendSync("getUploadProgressMessageSync");
-            let data = res.data;
-            let uploadingDoms = cp.query(".loading", this.listDom, true);
-            for (let key in data) {
-                [...uploadingDoms].some(v => {
-                    if (cp.getData(v, "etag") === key) {
-                        let imgDom = cp.query(".img", v);
-                        let progressDom = cp.query(".progress", imgDom);
-                        if (!progressDom) {
-                            //移除旋转
-                            cp.remove(".animation_rotate", v);
-                            //创建progress
-                            progressDom = cp.createDom("span", {
-                                "class": "progress"
-                            });
-                            cp.append(imgDom, progressDom)
-                        }
-                        cp.text(progressDom, data[key] + "%");
-                        if (parseInt(data[key]) >= 100) {
-                            cp.remove(v);
-                        }
-                        return true
+        let res = ipc.sendSync("getUploadProgressMessageSync");
+        let data = res.data;
+        let uploadingDoms = cp.query(".loading", this.listDom, true);
+        for (let key in data) {
+            [...uploadingDoms].some(v => {
+                if (cp.getData(v, "etag") === key) {
+                    let imgDom = cp.query(".img", v);
+                    let progressDom = cp.query(".progress", imgDom);
+                    if (!progressDom) {
+                        //移除旋转
+                        cp.remove(".animation_rotate", v);
+                        //创建progress
+                        progressDom = cp.createDom("span", {
+                            "class": "progress"
+                        });
+                        cp.append(imgDom, progressDom)
                     }
-                })
-            }
-            this.stoLoadingProgress = setTimeout(() => this.progress(), 2000)
+                    cp.text(progressDom, data[key] + "%");
+                    if (parseInt(data[key]) >= 100) {
+                        cp.remove(v);
+                    }
+                    return true
+                }
+            })
         }
+        this.uploadProgressSTO = setTimeout(() => this.uploadProgress(), 2000)
     }
 
     autoSize() {
@@ -301,7 +376,8 @@ class Module {
     enter(target) {
         let p = cp.parent(target, ".item");
         let type = cp.attr(p, "data-type");
-        if (type === "folder") {//文件夹才可以进入
+        let folder = type.split("-");
+        if (folder[0] === "folder") {//文件夹才可以进入
             let id = cp.getData(p);
             let name = cp.text(cp.query(".name", p));
             MODULE("option").setNavigate(id, name, type);
@@ -312,14 +388,14 @@ class Module {
     uploadTaskList() {
         cp.empty(this.listDom);
         //上传的文件进度
-        let res = ipc.sendSync("getUploadListMessageSync");
+        let res = ipc.sendSync("uploadListMessageSync");
         if (res.err === "") {
             if (res.data.length > 0) {
                 let etags = res.data[0].split(",");
                 //获取未完成的文件列表
                 this.showFileList(CONF.ServerAddr + "/file/uploading", {
                     etags: etags
-                })
+                }, () => this.uploadProgress()); //查询进度
             }
         } else {
             console.log(res)
@@ -329,7 +405,7 @@ class Module {
     downloadTaskList() {
         cp.empty(this.listDom);
         //下载的文件进度
-        let res = ipc.sendSync("getDownloadProgressMessageSync");
+        let res = ipc.sendSync("downloadProgressMessageSync");
         if (res.err !== "") {
             return
         }
@@ -340,22 +416,19 @@ class Module {
             v.mime = "";
             v.state = 2
         });
-
         //画出页面
         this.drawList(res.data);
 
-        //时时请求下载进度
-        window.clearTimeout(this.stoDownloadProgress);
+
         let _this = this;
         (function downloadProgress() {
-            let res = ipc.sendSync("getDownloadProgressMessageSync");
+            let res = ipc.sendSync("downloadProgressMessageSync");
             let data = res.data;
+
+            //找出界面上的loading
             let uploadingDoms = cp.query(".loading", _this.listDom, true);
             data.forEach(vd => {
                 [...uploadingDoms].some(v => {
-
-                    console.log(cp.getData(v, "etag"), vd.etag);
-
                     if (cp.getData(v, "etag") === vd.etag) {
                         let imgDom = cp.query(".img", v);
                         let progressDom = cp.query(".progress", imgDom);
@@ -369,18 +442,21 @@ class Module {
                             cp.append(imgDom, progressDom)
                         }
                         cp.text(progressDom, vd.progress + "%");
-                        if (parseInt(data["progress"]) >= 100) {
+                        if (parseInt(vd.progress) >= 100) {
                             cp.remove(v);
                         }
                         return true
                     }
                 })
             });
-            _this.stoDownloadProgress = setTimeout(() => downloadProgress(), 1000)
+            if (uploadingDoms.length) {
+                _this.downloadProgressSTO = setTimeout(() => downloadProgress(), 1000)
+            }
         })()
     }
 
-    checkFinish() {
+    //检查上传完成
+    checkUploadFinish() {
         let ids = [];
         cp.query(".own", this.listDom, true).forEach(v =>
             cp.hasClass(v, "loading") && ids.push(cp.getData(v)));
@@ -392,20 +468,19 @@ class Module {
                 },
                 success: res => {
                     if (res.code === 0) {
-                        res.data.forEach(v => this.loadFinish(v.id))
+                        res.data.forEach(v => this.uploadFinish(v.id))
                     } else {
                         console.error(res)
                     }
                 }
             });
-            clearTimeout(this.stoCheckFinish);
-            this.stoCheckFinish = setTimeout(() => {
-                this.checkFinish()
-            }, 2000)
         }
+        //持续监听未完成的界面
+        this.checkUploadFinishSTO = setTimeout(() => this.checkUploadFinish(), 2000)
     }
 
-    loadFinish(id) {
+    //上传完成
+    uploadFinish(id) {
         cp.query(".loading", this.listDom, true).forEach(v => {
             if (cp.getData(v) === id) {
                 let imgDom = cp.query(".img", v);
@@ -416,5 +491,11 @@ class Module {
                 return true
             }
         })
+    }
+
+    cleanAllProgressSTO() {
+        clearTimeout(this.uploadProgressSTO);
+        clearTimeout(this.downloadProgressSTO);
+        clearTimeout(this.checkUploadFinishSTO);
     }
 }

@@ -6,10 +6,11 @@ class App {
     //初始化函数
     INIT() {
         let token = localStorage.getItem("Authorization");
-        //重启上传列表
+        //重启任务列表
         (function sendMessage() {
             try {
-                let res = ipc.sendSync("uploadRestartTaskMessageSync", token);
+                ipc.sendSync("uploadRestartTaskMessageSync", token);
+                ipc.sendSync("downloadRestartTaskMessageSync", token);
             } catch (e) {
                 setTimeout(() => sendMessage(), 100);
             }

@@ -15,10 +15,27 @@
     border-bottom: var(--border);
 }
 
-#list {
+.content {
     width: calc(100% - 150px);
-    height: calc(100% - 45px - 15px);
+    height: calc(100% - 20px);
     float: left;
+}
+
+
+#basic {
     overflow: hidden;
-    padding: 10px;
+}
+
+table {
+    border: var(--color6);
+    width: 98%;
+    margin: 20px auto 0 auto;
+}
+
+table tr {
+    height: 30px;
+}
+
+table tr > td{
+    padding: 0 5px;
 }
