@@ -783,7 +783,7 @@ class Base {
         afterend：在 element 元素的后面。
         */
         if (!str) {
-            this.empty(dom);
+            //this.empty(dom); //当追加空的的时候，不能清空
             return dom
         }
         if (position) {
@@ -1187,6 +1187,8 @@ class Base {
                     eventTarget.get(key).has('rightClick') && eventTarget.get(key).get('rightClick').forEach(v => this._rightClick(node, realTarget, v, e));
                     //中键
                     eventTarget.get(key).has('centerClick') && eventTarget.get(key).get('centerClick').forEach(v => this._centerClick(node, realTarget, v, e));
+                    //TODO 双击
+                    //TODO 长按
                 }
                 if (event === 'mouseover') {
                     eventTarget.get(key).has('resize') && eventTarget.get(key).get('resize').forEach(v => this._resize(node, realTarget, v));

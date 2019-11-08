@@ -27,7 +27,9 @@ class Module {
         //翻页效果
         this.pageFlipOverDom = cp.query('.flip-over-value', this.pageDom);
 
-
+        //动态数据窗口
+        this.showRealDataEditWindowDom = cp.query('.real-data-window', DOMAIN);
+        this.realDataExampleDom = cp.query('.example', this.showRealDataEditWindowDom);
     }
 
     EVENT() {
@@ -41,8 +43,10 @@ class Module {
         cp.on('.saveTemplate-btn', this.pageDom, 'click', t => this.saveTemplate());
         //改变组件参数
         cp.on('.value', this.componentDom, 'change', t => this.changeComponent(t));
-        //编辑器
-        cp.on('.dataEdit', this.componentDom, 'click', () => this.showDataEdit());
+
+        //数据编辑器
+        cp.on('.data-edit', this.componentDom, 'click', () => this.showDataEdit());
+        cp.on('.real-data-edit', this.componentDom, 'click', () => this.showRealDataEdit());
     }
 
     INIT() {
@@ -126,6 +130,20 @@ class Module {
             this.setComponentEntity(id, "data", data, this.componentDom.name);
         });
         this.APP.dataEditShow();
+    }
+
+    showRealDataEdit() {
+        let id = this.componentDom.id.split("_")[1];
+        let componentData = this.APP.getComponentData(id);
+        let realData = componentData.realData;
+        /*MODULE("table").init(data, data => {
+            componentData.data = data;
+            this.setComponentEntity(id, "data", data, this.componentDom.name);
+        });
+        this.APP.dataEditShow();*/
+        this.realDataExampleDom.value = realData.body;
+
+        MODULE("window").show(this.showRealDataEditWindowDom);
     }
 
     /**
@@ -550,8 +568,18 @@ class Module {
         if (data.data) {
             editHtml += `
                     <div class="row data">
-                        <div class="name">数据</div>
-                        <button class="value input dataEdit">数据编辑器</button>
+                        <div class="name">静态</div>
+                        <button class="value input data-edit">数据编辑器</button>
+                    </div>
+                    `;
+        }
+
+        //动态数据
+        if (data.realData) {
+            editHtml += `
+                    <div class="row data">
+                        <div class="name">动态</div>
+                        <button class="value input real-data-edit">数据接收器</button>
                     </div>
                     `;
         }

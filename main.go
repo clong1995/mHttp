@@ -140,7 +140,6 @@ func (page pageHandle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	//resource
 	resource := CONF.Root + "/resource"
-	log.Println(resource)
 	if !existsAndWrite(resource, w) {
 		return
 	}

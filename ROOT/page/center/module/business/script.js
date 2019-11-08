@@ -17,10 +17,6 @@ class Module {
     loadItem() {
         let html = '';
         [{
-            icon: "&#xe7ee;",
-            key: "login?logout=true",
-            name: "退出登录"
-        }, {
             icon: "&#xe682;",
             key: "userInfo",
             name: "个人信息"

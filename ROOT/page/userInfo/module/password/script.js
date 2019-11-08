@@ -47,10 +47,10 @@ class Module {
             success: res => {
                 if (res.code === 0) {
                     MODULE("dialog").show({
-                        text: "修改成功，即将自动退出！",
-                        confirm() {
+                        text: "修改成功，请牢记密码!"
+                        /*confirm() {
                             cp.link("/login?logout=true")
-                        }
+                        }*/
                     });
                 } else {
                     MODULE("dialog").show({

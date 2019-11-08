@@ -4,6 +4,10 @@ class Module {
         this.shareWindowDom = cp.query('.share-window', DOMAIN);
         this.shareLikDom = cp.query('.link', this.shareWindowDom);
         this.shareNameDom = cp.query('.name', this.shareWindowDom);
+
+        this.fileRightMenuDom = cp.query('.file-right-menu', DOMAIN);
+        this.renameWindowDom = cp.query('.rename-window', DOMAIN);
+        this.renameWindowNameDom = cp.query('.name', this.renameWindowDom);
     }
 
     EVENT() {
@@ -13,6 +17,16 @@ class Module {
         cp.on('.preview', DOMAIN, 'click', t => this.preview(t));
         cp.on('.share', DOMAIN, 'click', t => this.share(t));
         cp.on('.copy', this.shareWindowDom, 'click', () => this.copyLink());
+
+        //右键
+        cp.on(".file-right-menu", DOMAIN, 'blur', () => this.hideFileRightMenu());
+        cp.on(".item", this.listDom, 'mousedown', (t, _, e) => this.showFileRightMenu(t, _, e));
+        cp.on(".rename", this.fileRightMenuDom, 'click', () => this.showRenameWindow());
+        cp.on(".copy", this.fileRightMenuDom, 'click', () => this.copyFile());
+        cp.on(".cut", this.fileRightMenuDom, 'click', () => this.cutFile());
+
+
+        cp.on(".confirm", this.renameWindowDom, 'click', () => this.confirmRename());
     }
 
     INIT() {
@@ -47,6 +61,7 @@ class Module {
         this.defaultSize = 125;
         this.autoSize();
         window.onresize = () => this.autoSize();
+        this.fileRightClickId = null;
     }
 
     copyLink() {
@@ -142,14 +157,17 @@ class Module {
     }
 
     loadFileList() {
+        cp.empty(this.listDom);
         //清理所有进度
         this.cleanAllProgressSTO();
         let {key, type} = MODULE("option").currNavigate();
-        console.log(key, type);
+        let rType = MODULE("option").currRootNavigate().type;
+        //console.log(rType);
+        //隐藏不必要的菜单
+        MODULE("option").hideForBucket(rType);
+        //console.log(key, type);
         //自己所处的部门
         if (type === "departmentBucket") {
-            //隐藏不必要的菜单
-            //MODULE("option").hideForBucket(type);
             let url = CONF.ServerAddr + "/file/departmentList";
             let postData = {};
             //加载列表
@@ -160,21 +178,8 @@ class Module {
                 this.showFileList(url, {}, null, true)
             })
         }
-        //用户的文件
-        /*else if (type === "folder-user") {
-            //隐藏不必要的菜单
-            //MODULE("option").hideForBucket(type);
-            let url = CONF.ServerAddr + "/file/listByPid";
-            let postData = {
-                pid: key
-            };
-            //加载列表
-            this.showFileList(url, postData)
-        }*/
         //回收站
         else if (type === "recycleBucket") {
-            //隐藏不必要的菜单
-            MODULE("option").hideForBucket(type);
             let url = CONF.ServerAddr + "/file/deleteList";
             let postData = {};
             //加载列表
@@ -182,8 +187,6 @@ class Module {
         }
         //任务列表
         else if (type === "taskBucket" && window.global) {
-            //隐藏不必要的菜单
-            MODULE("option").hideForBucket(type);
             let progress = MODULE("option").currProgress;
             if (progress === "upload" || !progress) {//上传进度
                 //默认打开上传列表
@@ -195,8 +198,6 @@ class Module {
         }
         //TODO 我的文件
         else if (type === "myBucket") {
-            //隐藏不必要的菜单
-            MODULE("option").hideForBucket(type);
             let url = CONF.ServerAddr + "/file/myList";
             let postData = {
                 pid: key
@@ -206,8 +207,6 @@ class Module {
         }
         //TODO 展厅
         else if (type === "exhibitionBucket") {
-            //隐藏不必要的菜单
-            MODULE("option").hideForBucket(type);
             let url = CONF.ServerAddr + "/file/list";
             let postData = {
                 pid: key
@@ -217,8 +216,6 @@ class Module {
         }
         //TODO 分享
         else if (type === "shareBucket") {
-            //隐藏不必要的菜单
-            MODULE("option").hideForBucket(type);
             let url = CONF.ServerAddr + "/file/list";
             let postData = {
                 pid: key
@@ -228,7 +225,6 @@ class Module {
         }
         //TODO 这里有风险，只要有pid，就能进入任何文件，进入普通文件
         else {
-            MODULE("option").hideForBucket(type);
             let url = CONF.ServerAddr + "/file/list";
             let postData = {
                 pid: key
@@ -263,6 +259,7 @@ class Module {
     drawList(data, retain = false) {
         let html = "";
         let type = MODULE("option").currNavigate().type;
+        let rType = MODULE("option").currRootNavigate().type;
         data.forEach(v => {
             html += `<div class="item ${v.state ? "loading" : ""} ${v.user}" 
                             data-id="${v.id}" 
@@ -300,9 +297,9 @@ class Module {
                                     <i class="download iconfont icon alt">&#xe635;</i>
                                     
                                     <!-- 删除按钮 -->
-                                    ${(type === "departmentBucket" || type === "folder-department")
-                ? ""
-                : '<i class="delete iconfont icon alt">&#xe624;</i>'
+                                    ${(v.user === "own" && v.type !== "folder-user")
+                ? '<i class="delete iconfont icon alt">&#xe624;</i>'
+                : ""
             }
                                 </div>
                                 
@@ -497,5 +494,48 @@ class Module {
         clearTimeout(this.uploadProgressSTO);
         clearTimeout(this.downloadProgressSTO);
         clearTimeout(this.checkUploadFinishSTO);
+    }
+
+    showFileRightMenu(target, _, evt) {
+        if (evt.button === 2) {
+            let x = evt.clientX,
+                y = evt.clientY;
+            cp.css(this.fileRightMenuDom, {
+                top: y + "px",
+                left: x + "px"
+            });
+            cp.show(this.fileRightMenuDom);
+            setTimeout(() => this.fileRightMenuDom.focus(), 100);
+            this.fileRightClickId = cp.getData(target);
+        }
+    }
+
+    hideFileRightMenu() {
+        cp.hide(this.fileRightMenuDom)
+    }
+
+    showRenameWindow() {
+        let target = this.findFileDomByDataId(this.fileRightClickId);
+        this.renameWindowNameDom.value = cp.text(cp.query(".name", target));
+        MODULE("window").show(this.renameWindowDom);
+        this.hideFileRightMenu();
+    }
+
+    confirmRename() {
+        let target = this.findFileDomByDataId(this.fileRightClickId);
+        cp.text(cp.query(".name", target), this.renameWindowNameDom.value);
+        MODULE("window").hide(this.renameWindowDom);
+    }
+
+    copyFile() {
+
+    }
+
+    cutFile() {
+
+    }
+
+    findFileDomByDataId(dataId) {
+        return [...cp.query(".item", this.listDom, true)].find(v => cp.getData(v) === dataId)
     }
 }

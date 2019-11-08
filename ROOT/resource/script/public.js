@@ -36,17 +36,13 @@ const ajaxHeadersInterceptor = url => {
 //消息体处理
 const ajaxResponseInterceptor = res => {
     if (res.code !== 0) {
+        console.error(res);
         if (res.code === 2) { //认证错误
             localStorage.removeItem("Authorization");
             cp.link("/login");
-        } else if (res.code === 3) {
-            //请求异常
-        } else if (res.code === 4) {
-            //参数异常
+            //终止程序
+            return false;
         }
-        console.error(res);
-        //终止程序
-        return false;
     }
     return res;
 };

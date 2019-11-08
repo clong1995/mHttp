@@ -83,3 +83,39 @@
     <button class="button">缩放</button>
     -->
 </div>
+
+
+<!-- 动态数九弹窗 -->
+<div class="real-data-window hide">
+    <div class="window-container">
+        <div class="window-title">设置动态数据</div>
+        <div class="body">
+            使用说明: <span class="info">http协议，post方法，通用header，200响应，json结果，服务端跨域</span><br><br>
+            请求接口: <input class="api input" type="text" placeholder="http://xxxx"><br>
+            更新频率: <select class="rate input">
+                <option selected value="0">启动时仅请求一次</option>
+                <optgroup label="秒级自动更新">
+                    <option value="5">每 5 秒</option>
+                    <option value="30">每 30 秒</option>
+                    <option value="60">每 60 秒</option>
+                </optgroup>
+                <optgroup label="分钟级自动更新">
+                    <option value="5">每 5 分钟</option>
+                    <option value="5">每 10 分钟</option>
+                    <option value="5">每 30 分钟</option>
+                    <option value="5">每 60 分钟</option>
+                </optgroup>
+                <optgroup label="小时级自动更新">
+                    <option value="5">每 2 小时</option>
+                    <option value="5">每 4 小时</option>
+                    <option value="5">每 8 小时</option>
+                </optgroup>
+            </select>　
+            <input checked type="checkbox"> 数据异常,启用静态数据<br>
+            请求参数: <textarea class="param input" placeholder="raw的json结构，可选填"></textarea><br>
+            数据样例: <textarea class="example input" disabled readonly>{}</textarea><br>
+            <button class="test button">测试</button>
+            <button class="confirm button">确定</button>
+        </div>
+    </div>
+</div>

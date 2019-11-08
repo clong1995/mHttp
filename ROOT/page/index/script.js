@@ -63,10 +63,6 @@ class App {
             },
             success: res => {
                 if (res.code === 0) {
-                    this.getModule("dialog").show({
-                        type: "loading",
-                        text: "请稍后..."
-                    });
                     localStorage.setItem("Authorization", res.data);
                     if (window.global) {
                         (function sendMessage() {
@@ -85,16 +81,14 @@ class App {
                         cp.link("/project")
                     }
 
+
                     //检查未完成的上传任务
                     //this.doRestartTask(res.data);
                     //setTimeout(() => {
                     //这里暂时延时处理，因为后期可能会把网盘独立，不耦合，或者有其他松耦合的方式
                     //}, 1000);
                 } else {
-                    this.getModule("dialog").show({
-                        type: "warn",
-                        text: "密码错误，多次错误将锁定用户！"
-                    });
+                    console.error(res)
                 }
             }
         })

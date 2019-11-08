@@ -49,9 +49,6 @@ class Module {
                             <div class="item name">
                                 ${v.name ? v.name : "暂无"}
                             </div>
-                            <div class="item company">
-                                ${v.company_name ? v.company_name : "暂无"}
-                            </div>
                             <div class="item auth">
                                 <button class="button disable">配置</button>
                             </div>

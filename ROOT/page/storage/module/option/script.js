@@ -170,6 +170,10 @@ class Module {
         return this.navigate[len - 1];
     }
 
+    currRootNavigate() {
+        return this.navigate[0];
+    }
+
     changeAddr() {
         let html = "";
         this.navigate.forEach(v => {
@@ -204,7 +208,7 @@ class Module {
 
     hideForBucket(key) {
         cp.show(this.optionItemDoms);
-        if(!window.global){
+        if (!window.global) {
             cp.hide(this.uploadProgressDom);
             cp.hide(this.downloadProgressDom);
         }
