@@ -5,9 +5,13 @@ class Module {
         this.shareLikDom = cp.query('.link', this.shareWindowDom);
         this.shareNameDom = cp.query('.name', this.shareWindowDom);
 
+        //文件右键
         this.fileRightMenuDom = cp.query('.file-right-menu', DOMAIN);
         this.renameWindowDom = cp.query('.rename-window', DOMAIN);
         this.renameWindowNameDom = cp.query('.name', this.renameWindowDom);
+
+        //右键
+        this.rightMenuDom = cp.query('.right-menu', DOMAIN);
     }
 
     EVENT() {
@@ -18,12 +22,17 @@ class Module {
         cp.on('.share', DOMAIN, 'click', t => this.share(t));
         cp.on('.copy', this.shareWindowDom, 'click', () => this.copyLink());
 
-        //右键
+        //文件右键
         cp.on(".file-right-menu", DOMAIN, 'blur', () => this.hideFileRightMenu());
         cp.on(".item", this.listDom, 'mousedown', (t, _, e) => this.showFileRightMenu(t, _, e));
         cp.on(".rename", this.fileRightMenuDom, 'click', () => this.showRenameWindow());
         cp.on(".copy", this.fileRightMenuDom, 'click', () => this.copyFile());
         cp.on(".cut", this.fileRightMenuDom, 'click', () => this.cutFile());
+
+        //右键
+        cp.on(".right-menu", DOMAIN, 'blur', () => this.hideRightMenu());
+        cp.on(".list", this.listDom, 'mousedown', (t, t1, e) => this.showRightMenu(t, t1, e));
+        cp.on(".paste", this.rightMenuDom, 'click', () => this.pasteFile());
 
 
         cp.on(".confirm", this.renameWindowDom, 'click', () => this.confirmRename());
@@ -61,7 +70,9 @@ class Module {
         this.defaultSize = 125;
         this.autoSize();
         window.onresize = () => this.autoSize();
-        this.fileRightClickId = null;
+        app.fileRightClickId = null;
+        app.rightAction = null;
+        app.originFile = null;
     }
 
     copyLink() {
@@ -339,7 +350,7 @@ class Module {
                 }
             })
         }
-        this.uploadProgressSTO = setTimeout(() => this.uploadProgress(), 2000)
+        this.uploadProgressSTO = setTimeout(() => this.uploadProgress(), 1000)
     }
 
     autoSize() {
@@ -506,7 +517,23 @@ class Module {
             });
             cp.show(this.fileRightMenuDom);
             setTimeout(() => this.fileRightMenuDom.focus(), 100);
-            this.fileRightClickId = cp.getData(target);
+            app.fileRightClickId = cp.getData(target);
+        }
+    }
+
+    showRightMenu(target, target1, evt) {
+        if (target !== target1) {
+            return
+        }
+        if (evt.button === 2) {
+            let x = evt.clientX,
+                y = evt.clientY;
+            cp.css(this.rightMenuDom, {
+                top: y + "px",
+                left: x + "px"
+            });
+            cp.show(this.rightMenuDom);
+            setTimeout(() => this.rightMenuDom.focus(), 100);
         }
     }
 
@@ -514,26 +541,98 @@ class Module {
         cp.hide(this.fileRightMenuDom)
     }
 
+    hideRightMenu() {
+        cp.hide(this.rightMenuDom)
+    }
+
     showRenameWindow() {
-        let target = this.findFileDomByDataId(this.fileRightClickId);
+        app.rightAction = "rename";
+        let target = this.findFileDomByDataId(app.fileRightClickId);
         this.renameWindowNameDom.value = cp.text(cp.query(".name", target));
         MODULE("window").show(this.renameWindowDom);
         this.hideFileRightMenu();
     }
 
     confirmRename() {
-        let target = this.findFileDomByDataId(this.fileRightClickId);
-        cp.text(cp.query(".name", target), this.renameWindowNameDom.value);
-        MODULE("window").hide(this.renameWindowDom);
+        if (!(app.rightAction === "rename" && app.fileRightClickId)) {
+            return
+        }
+        let target = this.findFileDomByDataId(app.fileRightClickId);
+        let newName = this.renameWindowNameDom.value;
+        let fileId = cp.getData(target);
+        cp.ajax(CONF.ServerAddr + "/file/rename", {
+            data: {
+                id: fileId,
+                name: newName
+            },
+            success: res => {
+                if (res.code === 0) {
+                    cp.text(cp.query(".name", target), newName);
+                    app.rightAction = null;
+                    app.fileRightClickId = null;
+                    app.originFile = null;
+                    MODULE("window").hide(this.renameWindowDom);
+                } else {
+                    console.error(res)
+                }
+            }
+        });
     }
 
     copyFile() {
-
+        app.rightAction = "copy";
+        this.hideFileRightMenu();
+        app.originFile = MODULE("option").currNavigate().key;
     }
 
     cutFile() {
-
+        app.rightAction = "cut";
+        app.originFile = MODULE("option").currNavigate().key;
+        this.hideFileRightMenu();
     }
+
+    pasteFile() {
+        console.log(app.rightAction);
+        //当前文件夹
+        let currKey = MODULE("option").currNavigate().key;
+        let url = "";
+        if (!app.fileRightClickId) {
+            this.hideRightMenu();
+            return;
+        }
+
+        if (app.rightAction === "copy") {
+            url = "/file/copy";
+        } else if (app.rightAction === "cut") {
+            //检查是否是同一个文件夹
+            if (currKey === app.originFile) {
+                this.hideRightMenu();
+                return;
+            }
+            url = "/file/cut";
+        } else {
+            return;
+        }
+
+        cp.ajax(CONF.ServerAddr + url, {
+            data: {
+                dist: currKey,
+                file: app.fileRightClickId
+            },
+            success: res => {
+                if (res.code === 0) {
+                    app.rightAction = null;
+                    app.fileRightClickId = null;
+                    app.originFile = null;
+                    this.hideRightMenu();
+                    this.loadFileList();
+                } else {
+                    console.error(res)
+                }
+            }
+        });
+    }
+
 
     findFileDomByDataId(dataId) {
         return [...cp.query(".item", this.listDom, true)].find(v => cp.getData(v) === dataId)

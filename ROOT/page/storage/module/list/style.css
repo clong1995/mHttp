@@ -142,7 +142,7 @@
 .share-window .body > .copy {
 }
 
-
+/*文件右键*/
 .file-right-menu {
     outline: none;
     position: absolute;
@@ -171,7 +171,36 @@
     font-weight: bolder;
 }
 
+/*右键菜单*/
+.right-menu {
+    outline: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    overflow: hidden;
+    width: 70px;
+    height: auto;
+    background-color: var(--background2);
+    border: var(--border);
+    border-bottom: none;
+    font-size: 11px;
+}
 
+.right-menu > .li {
+    width: 100%;
+    height: 25px;
+    line-height: 25px;
+    border-bottom: var(--border);
+    padding: 0 5px;
+}
+
+.right-menu > .li:hover {
+    background-color: var(--background5);
+    font-weight: bolder;
+}
+
+/*改名弹窗*/
 .rename-window {
     background: var(--background8);
 }
