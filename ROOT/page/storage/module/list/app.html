@@ -21,9 +21,11 @@
     <div class="li info disable">详细信息</div>
 </div>
 <div class="right-menu hide" tabindex="-1">
+    <div class="li refresh">刷新</div>
+    <div class="li new-folder">新建文件夹</div>
     <div class="li paste">粘贴</div>
-    <div class="li select-all disable">全选</div>
-    <div class="li select-all disable">取消全选</div>
+    <div class="li select-all">全选</div>
+    <div class="li no-select-all">取消全选</div>
 </div>
 
 <!-- 重命名 -->
@@ -33,6 +35,16 @@
         <div class="body">
             名称 <input class="name input" type="text"><br>
             <button class="confirm button">确定</button>
+        </div>
+    </div>
+</div>
+
+<!-- 预览 -->
+<div class="preview-window hide">
+    <div class="window-container">
+        <div class="window-title">预览</div>
+        <div class="body">
+            <iframe src=""></iframe>
         </div>
     </div>
 </div>

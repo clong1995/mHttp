@@ -1,0 +1,29 @@
+#category {
+    width: 150px;
+    height: calc(100% - 20px);
+    background: var(--background2);
+    float: left;
+    border-right: var(--border);
+}
+
+#business {
+    width: 100%;
+    height: calc(100% - 20px);
+}
+
+#operation {
+    width: calc(100% - 150px);
+    height: 40px;
+    line-height: 40px;
+    float: left;
+    padding-left: 10px;
+    border-bottom: var(--border);
+}
+
+#list {
+    width: calc(100% - 150px);
+    height: calc(100% - 45px - 10px);
+    float: left;
+    overflow: hidden;
+    padding: 10px;
+}

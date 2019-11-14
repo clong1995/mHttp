@@ -2068,7 +2068,11 @@ class Base {
     }
 
     addActive(dom) {
-        this.addClass(dom, 'active');
+        if (dom) {
+            dom.length !== undefined
+                ? dom.forEach(v => this.addActive(v))
+                : this.addClass(dom, 'active');
+        }
     }
 
     hasActive(dom) {
@@ -2076,20 +2080,28 @@ class Base {
     }
 
     removeActive(dom) {
-        dom && this.removeClass(dom, 'active');
+        if (dom) {
+            dom.length !== undefined
+                ? dom.forEach(v => this.removeActive(v))
+                : this.removeClass(dom, 'active');
+        }
     }
 
     toggleActive(dom) {
         //去掉已激活元素
-        this.removeActive(dom.parentNode.querySelector(".active"));
+        this.removeActive(this.query(".active", dom.parentNode, true));
         //激活自己
         this.addActive(dom);
     }
 
-    toggleActiveSelf(dom) {
-        this.hasClass(dom, "active")
-            ? this.removeActive(dom)
-            : this.addActive(dom);
+    toggleActiveSelf(dom, add, remove) {
+        if (this.hasClass(dom, "active")) {
+            typeof add === "function" && remove(dom);
+            this.removeActive(dom);
+        } else {
+            typeof add === "function" && add(dom);
+            this.addActive(dom);
+        }
     }
 
     getData(dom, suffix = "id") {

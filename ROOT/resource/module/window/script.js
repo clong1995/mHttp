@@ -11,7 +11,9 @@ class Module {
         this._sheetStyle();
     }
 
-    show(dom) {
+    show(dom, open = null, close = null) {
+        //打开时候执行的函数
+        typeof open === "function" && open(dom);
         if (cp.hasClass(dom, 'window-wrap')) {
             cp.show(dom);
             return
@@ -25,12 +27,16 @@ class Module {
         let titleDom = cp.query(".window-title", dom);
         cp.append(titleDom, closeDom);
         //绑定关闭事件
-        closeDom.onclick = () => this.hide(dom);
+        closeDom.onclick = () => {
+            typeof close === "function" && close(dom);
+            this.hide(dom);
+        };
         cp.show(dom);
     }
 
-    hide(dom) {
+    hide(dom, close = null) {
         cp.hide(dom);
+        typeof close === "function" && close();
     }
 
     //内置样式

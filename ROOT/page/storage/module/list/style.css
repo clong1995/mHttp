@@ -10,6 +10,11 @@
     padding-bottom: 10px;
 }
 
+
+.list > .item.active > .inner {
+    border: 1px solid var(--color5);
+}
+
 .list > .item > .inner {
     width: 100%;
     height: 100%;
@@ -139,9 +144,6 @@
     margin-top: 7px;
 }
 
-.share-window .body > .copy {
-}
-
 /*文件右键*/
 .file-right-menu {
     outline: none;
@@ -179,7 +181,7 @@
     left: 0;
     z-index: 3;
     overflow: hidden;
-    width: 70px;
+    width: 75px;
     height: auto;
     background-color: var(--background2);
     border: var(--border);
@@ -223,4 +225,25 @@
 
 .rename-window .body > .confirm {
     margin-top: 10px;
+}
+
+/*预览弹窗*/
+.preview-window {
+    background: var(--background8);
+}
+
+.preview-window > .window-container {
+
+}
+
+.preview-window .body {
+    width: 1024px;
+    height: 768px;
+    text-align: center;
+}
+
+.preview-window .body > iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
